@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  prospectix_api:
+    image: registry.dev.juniorisep.com/interne/prospectix_api:prod
+    container_name: prospectix_api
+    build: 
+      context: .
+      target: production
+      dockerfile: ./Dockerfile
+    environment:
+      - PORT=3000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PW=postgres
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: yarn run start
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:alpine
+    container_name: postgres
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+    
+    
+    
