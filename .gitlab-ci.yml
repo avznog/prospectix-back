@@ -19,7 +19,7 @@ build:
       - echo $CI_REGISTRY_IMAGE
       - docker build --tag $CI_REGISTRY_IMAGE:prod
   only:
-    -master
+    - master
 
 deploy:
     stage: deploy
