@@ -8,6 +8,6 @@ export class AppController {
   @Get()
   getHello(): string {
     return this.appService.getHello();
-    //test final avec restart 
+    //testing avec gitmoji avec restart
   }
 }
