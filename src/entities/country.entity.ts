@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Prospect } from "./prospect.entity";
 
 @Entity({name:"country"})
 export class Country{
@@ -6,5 +7,8 @@ export class Country{
     id: number;
 
     @Column()
-    countryName: string;
+    name: string;
+
+    @OneToMany(() => Prospect, prospect => prospect.country, { lazy: true })
+    prospect: Promise<Prospect[]>;
 }

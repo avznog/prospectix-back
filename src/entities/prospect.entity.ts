@@ -1,5 +1,8 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Activity } from "./activity.entity";
+import { City } from "./city.entity";
 import { Country } from "./country.entity";
+import { ProspectContact } from "./prospectcontact.entity";
 
 @Entity({ name: "prospects" })
 export class Prospect extends BaseEntity{
@@ -10,7 +13,7 @@ export class Prospect extends BaseEntity{
     @Column()
     companyName: string;
 
-    @Column()
+    @ManyToOne(() => Activity)
     activityDomain: string;
 
     @Column()
@@ -19,10 +22,10 @@ export class Prospect extends BaseEntity{
     @Column()
     streetAddress: string;
 
-    @Column()
-    city: number;
+    @ManyToOne(() => City)
+    city: City;
 
-    @Column()
+    @ManyToOne(() => Country)
     country: Country;
 
     @Column()
@@ -39,4 +42,7 @@ export class Prospect extends BaseEntity{
 
     @Column()
     nbNo: number;
+
+    @OneToMany(() => ProspectContact, prospectContact => prospectContact.prospect, { lazy: true })
+    prospectContact: Promise<ProspectContact[]>;
 }

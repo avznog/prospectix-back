@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Prospect } from "./prospect.entity";
 
 @Entity({name:"prospect_contact"})
@@ -6,8 +6,8 @@ export class ProspectContact extends BaseEntity{
     @PrimaryGeneratedColumn("increment")
     id: number;
 
-    @Column()
-    idProspect: number;
+    @ManyToOne(() => Prospect)
+    prospect: Prospect;
 
     @Column()
     firstname: string;
@@ -17,4 +17,6 @@ export class ProspectContact extends BaseEntity{
 
     @Column()
     position: string;
+
+
 }
