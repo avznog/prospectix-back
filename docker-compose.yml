@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   prospectix_api:
-    image: registry.dev.juniorisep.com/interne/prospectix_api:prod
+    image: $CI_REGISTRY_IMAGE:prod
     container_name: prospectix_api
     build: 
       context: .
