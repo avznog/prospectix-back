@@ -10,5 +10,5 @@ export class Country{
     name: string;
 
     @OneToMany(() => Prospect, prospect => prospect.country, { lazy: true })
-    prospect: Promise<Prospect[]>;
+    prospects: Prospect[];
 }

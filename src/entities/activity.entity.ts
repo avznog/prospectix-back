@@ -9,6 +9,6 @@ export class Activity extends BaseEntity{
     @Column()
     name: string;
 
-    @OneToMany(() => Prospect, prospect => prospect.activityDomain, { lazy: true })
-    prospect: Promise<Activity>;
+    @OneToMany(() => Prospect, prospect => prospect.activity, { lazy: true })
+    prospects: Prospect[];
 }

@@ -1,5 +1,7 @@
 import { MeetingType } from "src/constants/meeting.type";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { CDP } from "./cdp.entity";
+import { Prospect } from "./prospect.entity";
 
 @Entity({name:"meeting"})
 export class Meeting extends BaseEntity{
@@ -12,9 +14,9 @@ export class Meeting extends BaseEntity{
     @Column()
     date: Date;
 
-    @Column()
-    idCDP: number;
+    @ManyToOne(() => CDP)
+    cdp: CDP;
 
-    @Column()
-    idProspect: number;
+    @ManyToOne(() => Prospect)
+    prospect: Prospect;
 }

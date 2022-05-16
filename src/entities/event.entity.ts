@@ -1,17 +1,18 @@
 import { EventType } from "puppeteer";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { CDP } from "./cdp.entity";
+import { Prospect } from "./prospect.entity";
 
 @Entity({name:"event"})
 export class Event extends BaseEntity{
     @PrimaryGeneratedColumn("increment")
     id: number;
 
-    @Column()
-    idCDP: CDP;
+    @ManyToOne(() => CDP)
+    cdp: CDP;
 
-    @Column()
-    prospect: number;
+    @ManyToOne(() => Prospect)
+    prospect: Prospect;
 
     @Column()
     event: EventType;

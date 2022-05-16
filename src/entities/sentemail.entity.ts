@@ -1,16 +1,17 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { CDP } from "./cdp.entity";
+import { Email } from "./email.entity";
 
 @Entity({name: "sent_email"})
 export class SentEmail extends BaseEntity{
     @PrimaryGeneratedColumn("increment")
     id: number;
 
-    @Column()
-    idCDP: CDP;
+    @ManyToOne(() => CDP)
+    cdp: CDP;
 
-    @Column()
-    email: string;
+    @ManyToOne(() => Email)
+    email: Email;
 
     @Column()
     object: string;

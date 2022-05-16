@@ -1,4 +1,6 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Prospect } from "./prospect.entity";
+import { ProspectContact } from "./prospectcontact.entity";
 
 @Entity({name:"website"})
 export class Website extends BaseEntity{
@@ -6,8 +8,11 @@ export class Website extends BaseEntity{
     id: number;
 
     @Column()
-    idOwner: number;
-
-    @Column()
     website: string;
+
+    @ManyToOne(() => ProspectContact)
+    prospectContact: ProspectContact;
+
+    @ManyToOne(() => Prospect)
+    prospect: Prospect;
 }

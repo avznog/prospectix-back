@@ -13,5 +13,5 @@ export class City extends BaseEntity{
     zipcode: number;
 
     @OneToMany(() => Prospect, prospect => prospect.city, { lazy: true })
-    prospect: Promise<Prospect[]>;
+    prospects: Prospect[];
 }
