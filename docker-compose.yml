@@ -1,9 +1,9 @@
 version: '3.7'
 
 services:
-  pippix:
+  prospectix_api:
     image: $CI_REGISTRY_IMAGE:prod
-    container_name: pippix
+    container_name: prospectix_api
     build: 
       context: .
       target: production
