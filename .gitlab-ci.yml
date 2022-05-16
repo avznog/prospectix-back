@@ -26,7 +26,8 @@ build-staging:
   script: 
     - docker build --tag $CI_REGISTRY_IMAGE:staging
     - docker push $CI_REGISTRY_IMAGE:staging
-  only: staging
+  only: 
+    - staging
 
 
 # deploy-prod:
