@@ -21,7 +21,7 @@ export class Prospect extends BaseEntity{
     companyName: string;
 
     @ManyToOne(() => Activity)
-    activity: string;
+    activity: Activity;
 
     @Column()
     phone: string;

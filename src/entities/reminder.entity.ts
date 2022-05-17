@@ -14,7 +14,7 @@ export class Reminder extends BaseEntity{
     prospect: Prospect;
 
     @Column()
-    descritpion: string;
+    description: string;
 
     @Column()
     priority: number;
