@@ -9,7 +9,7 @@ stages:
 build-prod:
   stage: build
   script:
-    - docker build --tag $CI_REGISTRY_IMAGE:prod
+    - docker build --tag $CI_REGISTRY_IMAGE:prod .
   only:
     - master
 
