@@ -1,9 +1,9 @@
-version: '3.7'
+version: '3.9'
 
 services:
-  prospectix_api:
+  nrpospectix-api:
     image: $CI_REGISTRY_IMAGE:prod
-    container_name: prospectix_api
+    container_name: nprospectix-api
     build: 
       context: .
       target: production
@@ -24,16 +24,16 @@ services:
     command: yarn run start
     restart: unless-stopped
 
-  postgres:
-    image: postgres:alpine
-    container_name: postgres
-    environment:
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-    ports:
-      - 5432:5432
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+  # postgres:
+  #   image: postgres:alpine
+  #   container_name: postgres
+  #   environment:
+  #     - DB_USER=postgres
+  #     - DB_PASSWORD=postgres
+  #   ports:
+  #     - 5432:5432
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
 
     
     

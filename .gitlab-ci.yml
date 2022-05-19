@@ -40,9 +40,9 @@ deploy-prod:
   script:
     - bash -c "ssh-add <(echo \"$SSH_PRIVATE_KEY\")"
     - export COMPOSE_HTTP_TIMEOUT=200
-    - ssh root@$HOST_PROD "docker-compose -f ~/prospectix-api.yml down --remove-orphans"
-    - ssh root@$HOST_PROD "docker-compose -f ~/prospectix-api.yml pull"
-    - ssh root@$HOST_PROD "docker-compose -f ~/prospectix-api.yml up -d"
+    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml down --remove-orphans"
+    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml pull"
+    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml up -d"
   only:
     - master
 
