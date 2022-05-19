@@ -3,8 +3,8 @@ services:
   - docker:19.03-dind
 
 stages: 
-  - build-prod
-  - deploy-prod
+  - build
+  - deploy
 
 build-prod:
   stage: build
