@@ -30,21 +30,21 @@ build-staging:
     - staging
 
 
-# deploy-prod:
-#   stage: deploy
-#   before_script:
-#     - "which ssh-agent || ( apk update && apk add openssh-client bash curl)"
-#     - mkdir -p ~/.ssh
-#     - eval $(ssh-agent -s)
-#     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-#   script:
-#     - bash -c "ssh-add <(echo \"$SSH_PRIVATE_KEY\")"
-#     - export COMPOSE_HTTP_TIMEOUT=200
-#     - ssh root@$HOST_PROD "docker-compose -f ~/prospectix-api.yml down --remove-orphans"
-#     - ssh root@$HOST_PROD "docker-compose -f ~/prospectix-api.yml pull"
-#     - ssh root@$HOST_PROD "docker-compose -f ~/prospectix-api.yml up -d"
-#   only:
-#     - master
+deploy-prod:
+  stage: deploy
+  before_script:
+    - "which ssh-agent || ( apk update && apk add openssh-client bash curl)"
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - bash -c "ssh-add <(echo \"$SSH_PRIVATE_KEY\")"
+    - export COMPOSE_HTTP_TIMEOUT=200
+    - ssh root@$HOST_PROD "docker-compose -f ~/prospectix-api.yml down --remove-orphans"
+    - ssh root@$HOST_PROD "docker-compose -f ~/prospectix-api.yml pull"
+    - ssh root@$HOST_PROD "docker-compose -f ~/prospectix-api.yml up -d"
+  only:
+    - master
 
 # deploy-staging:
 #   stage: deploy
