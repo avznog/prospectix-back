@@ -1,8 +1,10 @@
+import { EmailDto } from './email.dto';
+
 export class CDPDto {
-    id: number;
-    name: string;
-    surname: string;
-    mail: string;
-    pseudo: string;
-    tokenEmail: string;
+  id: number;
+  firstname: string;
+  lastname: string;
+  email: EmailDto;
+  pseudo: string;
+  tokenEmail: string;
 }

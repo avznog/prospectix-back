@@ -1,7 +1,11 @@
-import { EventType } from "puppeteer";
+import { EventType } from 'src/constants/event.type';
+import { CDPDto } from './cdp.dto';
+import { ProspectDto } from './prospect.dto';
 
 export class EventDto {
-    id: number;
-    event: EventType;
-    creationDate: Date;
+  id: number;
+  cdp: CDPDto;
+  prospect: ProspectDto;
+  event: EventType;
+  creationDate: Date;
 }

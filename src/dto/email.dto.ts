@@ -1,4 +1,7 @@
+import { ProspectDto } from './prospect.dto';
+
 export class EmailDto {
-    id: number;
-    email: string;
+  id: number;
+  prospect: ProspectDto;
+  email: string;
 }

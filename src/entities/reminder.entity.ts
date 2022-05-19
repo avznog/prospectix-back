@@ -1,24 +1,30 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { CDP } from "./cdp.entity";
-import { Prospect } from "./prospect.entity";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { CDP } from './cdp.entity';
+import { Prospect } from './prospect.entity';
 
-@Entity({name:"reminder"})
-export class Reminder extends BaseEntity{
-    @PrimaryGeneratedColumn("increment")
-    id: number;
+@Entity({ name: 'reminder' })
+export class Reminder extends BaseEntity {
+  @PrimaryGeneratedColumn('increment')
+  id: number;
 
-    @ManyToOne(() => CDP)
-    cdp: CDP;
+  @ManyToOne(() => CDP)
+  cdp: CDP;
 
-    @ManyToOne(() => Prospect)
-    prospect: Prospect;
+  @ManyToOne(() => Prospect)
+  prospect: Prospect;
 
-    @Column()
-    description: string;
+  @Column()
+  description: string;
 
-    @Column()
-    priority: number;
+  @Column()
+  priority: number;
 
-    @Column()
-    date: Date;
+  @Column()
+  date: Date;
 }

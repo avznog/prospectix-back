@@ -1,24 +1,30 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { CDP } from "./cdp.entity";
-import { Email } from "./email.entity";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { CDP } from './cdp.entity';
+import { Email } from './email.entity';
 
-@Entity({name: "sent_email"})
-export class SentEmail extends BaseEntity{
-    @PrimaryGeneratedColumn("increment")
-    id: number;
+@Entity({ name: 'sent_email' })
+export class SentEmail extends BaseEntity {
+  @PrimaryGeneratedColumn('increment')
+  id: number;
 
-    @ManyToOne(() => CDP)
-    cdp: CDP;
+  @ManyToOne(() => CDP)
+  cdp: CDP;
 
-    @ManyToOne(() => Email)
-    email: Email;
+  @ManyToOne(() => Email)
+  email: Email;
 
-    @Column()
-    object: string;
+  @Column()
+  object: string;
 
-    @Column()
-    message: string;
+  @Column()
+  message: string;
 
-    @Column()
-    sendingDate: Date;
+  @Column()
+  sendingDate: Date;
 }

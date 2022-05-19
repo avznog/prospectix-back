@@ -1,4 +1,7 @@
+import { ProspectDto } from './prospect.dto';
+
 export class PhoneDto {
-    id: number;
-    number: string;
+  id: number;
+  prospect: ProspectDto;
+  number: string;
 }

@@ -1,4 +1,7 @@
 {
   "singleQuote": true,
-  "trailingComma": "all"
+  "trailingComma": "all",
+  "[javascript]": {
+    "editor.formatOnSave": true
+}
 }

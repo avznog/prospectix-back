@@ -1,5 +1,5 @@
-export enum MeetingType{
-    EXT,
-    TEL_VISIO,
-    TABLEOFMEETING
+export enum MeetingType {
+  EXT,
+  TEL_VISIO,
+  MEETING_TABLE,
 }

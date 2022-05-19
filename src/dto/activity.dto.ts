@@ -1,4 +1,4 @@
 export class ActivityDto {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 }
