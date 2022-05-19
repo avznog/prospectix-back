@@ -9,8 +9,7 @@ stages:
 build-prod:
   stage: build
   before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker login -u $DOCKER_LOGIN -p $DOCKER_TOKEN
+    - docker login -u $CI_DEPLOY_USERNAME -p $CI_DEPLOY_TOKEN $CI_REGISTRY
 
   script:
     - docker build --tag $CI_REGISTRY_IMAGE:prod .
