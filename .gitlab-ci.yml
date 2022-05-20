@@ -32,7 +32,6 @@ deploy-prod:
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - /bin/sh -c "ssh-add <(echo \"$SSH_PRIVATE_KEY_PROD\")"
     - export COMPOSE_HTTP_TIMEOUT=200
