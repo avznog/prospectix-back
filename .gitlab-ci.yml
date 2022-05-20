@@ -37,8 +37,8 @@ deploy-prod:
   script:
     - /bin/sh -c "ssh-add <(echo \"$SSH_PRIVATE_KEY_PROD\")"
     - export COMPOSE_HTTP_TIMEOUT=200
-    - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml down --remove-orphans"
-    - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml pull"
-    - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml up -d"
+    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml down --remove-orphans"
+    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml pull"
+    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml up -d"
   only:
     - master
