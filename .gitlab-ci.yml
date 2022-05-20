@@ -4,37 +4,29 @@ services:
 
 stages: 
   - build
+  - release
   - deploy
 
 build-prod:
   stage: build
   before_script:
     - docker login -u $CI_DEPLOY_USERNAME -p $CI_DEPLOY_TOKEN $CI_REGISTRY
-
   script:
     - docker build --tag $CI_REGISTRY_IMAGE:prod .
     - docker push $CI_REGISTRY_IMAGE:prod
   only:
     - master
 
+  release-prod:
+    stage: release
+    before_script:
+      - docker login -u $CI_DEPLOY_USERNAME -p $CI_DEPLOY_TOKEN $CI_REGISTRY
+    script:
+      - docker push $CI_REGISTRY_IMAGE:prod
+    only:
+      - master
 
-deploy-prod:
-  stage: deploy
-  before_script:
-    - "which ssh-agent || ( apk update && apk add openssh-client bash curl)"
-    - mkdir -p ~/.ssh
-    - eval $(ssh-agent -s)
-    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-  script:
-    - bash -c "ssh-add <(echo \"$SSH_PRIVATE_KEY_PROD\")"
-    - export COMPOSE_HTTP_TIMEOUT=200
-    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml down --remove-orphans"
-    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml pull"
-    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml up -d"
-  only:
-    - master
-
-# deploy-staging:
+# deploy-prod:
 #   stage: deploy
 #   before_script:
 #     - "which ssh-agent || ( apk update && apk add openssh-client bash curl)"
@@ -42,10 +34,10 @@ deploy-prod:
 #     - eval $(ssh-agent -s)
 #     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 #   script:
-#     - bash -c "ssh-add <(echo \"$SSH_PRIVATE_KEY\")"
+#     - bash -c "ssh-add <(echo \"$SSH_PRIVATE_KEY_PROD\")"
 #     - export COMPOSE_HTTP_TIMEOUT=200
-#     - ssh root@$HOST_PROD "docker-compose -f ~/prospectix-api.yml down --remove-orphans"
-#     - ssh root@$HOST_PROD "docker-compose -f ~/prospectix-api.yml pull"
-#     - ssh root@$HOST_PROD "docker-compose -f ~/prospectix-api.yml up -d"
+#     - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml down --remove-orphans"
+#     - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml pull"
+#     - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml up -d"
 #   only:
-#     - staging
+#     - master
