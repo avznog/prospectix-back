@@ -7,15 +7,15 @@ stages:
   - release
   - deploy
 
-build-prod:
-  stage: build
-  before_script:
-    - docker login -u $CI_DEPLOY_USERNAME -p $CI_DEPLOY_TOKEN $CI_REGISTRY
-  script:
-    - docker build --tag $CI_REGISTRY_IMAGE:prod .
-    - docker push $CI_REGISTRY_IMAGE:prod
-  only:
-    - master
+  build-prod:
+    stage: build
+    before_script:
+      - docker login -u $CI_DEPLOY_USERNAME -p $CI_DEPLOY_TOKEN $CI_REGISTRY
+    script:
+      - docker build --tag $CI_REGISTRY_IMAGE:prod .
+      - docker push $CI_REGISTRY_IMAGE:prod
+    only:
+      - master
 
   release-prod:
     stage: release
