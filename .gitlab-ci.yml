@@ -39,4 +39,4 @@ deploy-prod:
     - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml pull"
     - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml up -d"
   only:
-    - master
+    - master 
