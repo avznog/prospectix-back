@@ -16,6 +16,15 @@ build-prod:
   only:
     - master 
 
+build-staging:
+  stage: build
+  before_script:
+    - docker login -u $CI_DEPLOY_USERNAME -p $CI_DEPLOY_TOKEN $CI_REGISTRY
+  script:
+    - docker build --tag $CI_REGISTRY_IMAGE:staging .
+  only:
+    - staging
+
 release-prod:
   stage: release
   before_script:
@@ -24,6 +33,15 @@ release-prod:
     - docker push $CI_REGISTRY_IMAGE:prod
   only:
     - master
+
+release-staging:
+  stage: release
+  before_script:
+    - docker login -u $CI_DEPLOY_USERNAME -p $CI_DEPLOY_TOKEN $CI_REGISTRY
+  script:
+    - docker push $CI_REGISTRY_IMAGE:staging
+  only:
+    - staging
      
 deploy-prod:
   stage: deploy
@@ -41,3 +59,20 @@ deploy-prod:
     - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml up -d"
   only:
     - master 
+
+deploy-staging:
+  stage: deploy
+  before_script:
+    - "which ssh-agent || (apk update && apk add openssh-client bash curl)"
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - docker login -u $DOCKER_LOGIN -p $DOCKER_TOKEN $CI_REGISTRY
+  script:
+    - /bin/sh -c "ssh-add <(echo \"$SSH_PRIVATE_KEY_staging\")"
+    - export COMPOSE_HTTP_TIMEOUT=200
+    - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml down --remove-orphans"
+    - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml pull"
+    - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml up -d"
+  only:
+    - staging 
