@@ -7,6 +7,7 @@ stages:
   - release
   - deploy
 
+#BUILD
 build-prod:
   stage: build
   before_script:
@@ -25,6 +26,7 @@ build-staging:
   only:
     - staging
 
+#RELEASE
 release-prod:
   stage: release
   before_script:
@@ -43,6 +45,8 @@ release-staging:
   only:
     - staging
      
+
+#DEPLOY
 deploy-prod:
   stage: deploy
   before_script:
@@ -50,7 +54,6 @@ deploy-prod:
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - docker login -u $DOCKER_LOGIN -p $DOCKER_TOKEN $CI_REGISTRY
   script:
     - /bin/sh -c "ssh-add <(echo \"$SSH_PRIVATE_KEY_PROD\")"
     - export COMPOSE_HTTP_TIMEOUT=200
@@ -67,9 +70,8 @@ deploy-staging:
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - docker login -u $DOCKER_LOGIN -p $DOCKER_TOKEN $CI_REGISTRY
   script:
-    - /bin/sh -c "ssh-add <(echo \"$SSH_PRIVATE_KEY_staging\")"
+    - /bin/sh -c "ssh-add <(echo \"$SSH_PRIVATE_KEY_STAGING\")"
     - export COMPOSE_HTTP_TIMEOUT=200
     - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml down --remove-orphans"
     - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml pull"
