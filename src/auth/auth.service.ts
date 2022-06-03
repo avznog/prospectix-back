@@ -1,17 +1,23 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { RegisterDto } from './dto/register.dto';
+import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
 import * as bcrypt from "bcrypt";
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService){}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService
+    ){}
 
   public async register(registrationData: RegisterDto){
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
     try{
       const createdUser = await this.userService.create({
         ...registrationData,
-        password: hashedPassword
+        password: hashedPassword,
       });
       createdUser.password = undefined;
       return createdUser;
@@ -25,9 +31,9 @@ export class AuthService {
     }
   }
 
-  public async getAuthentication(identifier: string, plainTextPassword: string){
+  public async getAuthentication(username: string, plainTextPassword: string){
     try{
-      const user = await this.userService.getByIdentifier(identifier);
+      const user = await this.userService.getByUsername(username);
       await this.verifyPassword(plainTextPassword, user.password);
       user.password = undefined;
       return user;
@@ -41,5 +47,15 @@ export class AuthService {
     if(!isPasswordMatching){
       throw new HttpException("Wrong credentials provided", HttpStatus.BAD_REQUEST);
     }
+  }
+
+  public getCookieWithJwtToken(userId: number): string{
+    const payload: TokenPayload = { userId };
+    const token = this.jwtService.sign(payload);
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get("JWT_EXPIRATION_TIME")}`;
+  }
+
+  public getCookieForLogOut() {
+    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
   }
 }

@@ -8,22 +8,30 @@ import { User } from './entities/user.entity';
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>
+    private userRepository: Repository<User>
   ){}
 
   async create(user: CreateUserDto) : Promise<User>{
-    const newUser = this.usersRepository.create(user);
-    await this.usersRepository.save(newUser);
+    const newUser = this.userRepository.create(user);
+    await this.userRepository.save(newUser);
     return newUser;
   }
 
-  async getByIdentifier(identifier: string): Promise<User>{
-    const user = this.usersRepository.findOne({where: {identifier}});
+  async getByUsername(username: string): Promise<User>{
+    const user = this.userRepository.findOne({where: {username: username}});
     if(user){
       return user;
     }
 
-    throw new HttpException("User with this identifier does not exists", HttpStatus.NOT_FOUND);
+    throw new HttpException("User with this username does not exists", HttpStatus.NOT_FOUND);
+  }
+
+  async getById(id: number): Promise<User>{
+    const user = await this.userRepository.findOne({ where: {id} });
+    if(user){
+      return user;
+    }
+    throw new HttpException("User with this id does not exist", HttpStatus.NOT_FOUND);
   }
   
 

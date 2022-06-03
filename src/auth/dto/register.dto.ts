@@ -1,4 +1,4 @@
 export class RegisterDto{
-  identifier: string;
+  username: string;
   password: string;
 }
