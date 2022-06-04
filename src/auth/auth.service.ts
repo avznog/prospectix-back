@@ -4,6 +4,7 @@ import { RegisterDto } from './dto/register.dto';
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import * as bcrypt from "bcrypt";
+import { User } from 'src/user/entities/user.entity';
 @Injectable()
 export class AuthService {
   constructor(
@@ -26,8 +27,10 @@ export class AuthService {
       if(error?.code === "23505"){
         throw new HttpException("Un utilisateur existe déjà dans la base de données",HttpStatus.BAD_REQUEST);
       }
+      console.log(error);
+      // throw new HttpException("Une erreur est test", HttpStatus.BAD_REQUEST);
+
       
-      throw new HttpException("Une erreur est survenue", HttpStatus.BAD_REQUEST);
     }
   }
 
