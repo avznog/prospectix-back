@@ -10,26 +10,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from 'src/user/entities/user.entity';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtRefreshTokenStrategy } from './jwt-refresh-token.strategy';
-// @Module({
-//   imports: [
-//     TypeOrmModule.forFeature([User]),
-//     UserModule,
-//     PassportModule,
-//     ConfigModule,
-//     JwtModule.registerAsync({
-//       imports: [ConfigModule],
-//       inject: [ConfigService],
-//       useFactory: async (configService: ConfigService) => ({
-//         secret: configService.get("JWT_ACCESS_TOKEN_SECRET"),
-//         signOptions: {
-//           expiresIn: `${configService.get("JWT_ACCESS_TOKEN_EXPIRATION_TIME")}s`,
-//         },
-//       }),
-//     }),
-//   ],
-//   controllers: [AuthController],
-//   providers: [AuthService, LocalStrategy],
-// })
 
 @Module({
   imports: [

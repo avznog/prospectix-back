@@ -1,16 +1,17 @@
-import { Controller, Post, Body, Req, HttpCode, UseGuards, Res, Get , ClassSerializerInterceptor, UseInterceptors} from '@nestjs/common';
+import { Controller, Post, Body, Req, HttpCode, UseGuards, Get , ClassSerializerInterceptor, UseInterceptors} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LocalAuthGuard } from './localAuth.guard';
 import RequestWithUser from './requestWithUser.interface';
-import { response, Response } from "express";
 import JwtAuthGuard from './jwt-auth.guard';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import JwtRefreshGuard from './jwt-refresh.guard';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 
 @Controller('auth')
+@ApiTags("auth")
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(
@@ -26,6 +27,10 @@ export class AuthController {
   @HttpCode(200)
   @UseGuards(LocalAuthGuard)
   @Post("login")
+  @ApiBody({
+    description: "credentials",
+    type: RegisterDto
+  })
   async logIn(@Req() request: RequestWithUser){
     const { user } = request;
     const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(user.id);
