@@ -13,12 +13,12 @@ export class AuthService {
     private readonly configService: ConfigService
     ){}
 
-  public async register(registrationData: RegisterDto){
+  public async register(registrationData: RegisterDto): Promise<User>{
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
     try{
       const createdUser = await this.userService.create({
         ...registrationData,
-        password: hashedPassword,
+        password: hashedPassword
       });
       createdUser.password = undefined;
       return createdUser;
@@ -34,7 +34,7 @@ export class AuthService {
     }
   }
 
-  public async getAuthentication(username: string, plainTextPassword: string){
+  public async getAuthentication(username: string, plainTextPassword: string): Promise<User>{
     try{
       const user = await this.userService.getByUsername(username);
       await this.verifyPassword(plainTextPassword, user.password);
@@ -58,7 +58,7 @@ export class AuthService {
     return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get("JWT_EXPIRATION_TIME")}`;
   }
 
-  public getCookieForLogOut() {
+  public getCookieForLogOut(): string {
     return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
   }
 }
