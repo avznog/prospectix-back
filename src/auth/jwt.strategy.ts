@@ -13,12 +13,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly userService: UserService
   ){
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([(
-        request: Request) => {
+      jwtFromRequest: ExtractJwt.fromExtractors([(request: Request) => {
         return request?.cookies?.Authentication;
-        },
-      ]),
-      secretOrKey: configService.get("JWT_SECRET"),
+      }]),
+      secretOrKey: configService.get("JWT_SECRET")
     });
   }
 

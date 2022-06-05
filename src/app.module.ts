@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
      type: 'postgres',
      host: 'localhost',
@@ -21,10 +22,10 @@ import { User } from './user/entities/user.entity';
     }),
     ConfigModule.forRoot({
       validationSchema: Joi.object({
-        JWT_SECRET: Joi.string(),
-        JWT_EXPIRATION_TIME: Joi.string(),
-        // JWT_SECRET: Joi.string().required(),
-        // JWT_EXPIRATION_TIME: Joi.string().required(),
+        // JWT_SECRET: Joi.string(),
+        // JWT_EXPIRATION_TIME: Joi.string(),
+        JWT_SECRET: process.env.JWT_SECRET,
+        JWT_EXPIRATION_TIME: process.env.JWT_EXPIRATION_TIME,
       }),
     }),
     AuthModule, UserModule],

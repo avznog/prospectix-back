@@ -6,6 +6,7 @@ import { ConfigService } from "@nestjs/config";
 import * as bcrypt from "bcrypt";
 import { User } from 'src/user/entities/user.entity';
 import TokenPayload from './tokenPayload.interface';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -29,19 +30,19 @@ export class AuthService {
         throw new HttpException("Un utilisateur existe déjà dans la base de données",HttpStatus.BAD_REQUEST);
       }
       console.log(error);
-      // throw new HttpException("Une erreur est test", HttpStatus.BAD_REQUEST);
+      throw new HttpException("Une erreur est survenue", HttpStatus.INTERNAL_SERVER_ERROR);
 
       
     }
   }
 
-  public async getAuthentication(username: string, plainTextPassword: string): Promise<User>{
+  public async getAuthenticatedUser(username: string, plainTextPassword: string): Promise<User>{
     try{
       const user = await this.userService.getByUsername(username);
       await this.verifyPassword(plainTextPassword, user.password);
       user.password = undefined;
       return user;
-    }catch{
+    }catch (error) {
       throw new HttpException("Wrong credentials provided", HttpStatus.BAD_REQUEST);
     }
   }
