@@ -21,10 +21,10 @@ import { User } from './user/entities/user.entity';
     }),
     ConfigModule.forRoot({
       validationSchema: Joi.object({
-        // JWT_SECRET: Joi.string(),
-        // JWT_EXPIRATION_TIME: Joi.string(),
-        JWT_SECRET: Joi.string().required(),
-        JWT_EXPIRATION_TIME: Joi.string().required(),
+        JWT_SECRET: Joi.string(),
+        JWT_EXPIRATION_TIME: Joi.string(),
+        // JWT_SECRET: Joi.string().required(),
+        // JWT_EXPIRATION_TIME: Joi.string().required(),
       }),
     }),
     AuthModule, UserModule],
