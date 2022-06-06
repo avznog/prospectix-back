@@ -1,12 +1,12 @@
 import { Controller, Post, Body, Req, HttpCode, UseGuards, Get , ClassSerializerInterceptor, UseInterceptors} from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from './services/auth.service';
 import { RegisterDto } from './dto/register.dto';
-import { LocalAuthGuard } from './localAuth.guard';
-import RequestWithUser from './requestWithUser.interface';
-import JwtAuthGuard from './jwt-auth.guard';
+import { LocalAuthGuard } from './guards/localAuth.guard';
+import RequestWithUser from './interfaces/requestWithUser.interface';
+import JwtAuthGuard from './guards/jwt-auth.guard';
 import { User } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/user.service';
-import JwtRefreshGuard from './jwt-refresh.guard';
+import { UserService } from 'src/user/services/user.service';
+import JwtRefreshGuard from './guards/jwt-refresh.guard';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 
