@@ -10,14 +10,14 @@ import { User } from './user/entities/user.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-     type: 'postgres',
-     host: 'localhost',
-     port: 5432,
-     username: 'benjamingonzva',
-     password: 'postgres',
-     database: 'test-auth-prospectix',
-     synchronize: true,
-     entities: [User, __dirname + '/**/*.entity{.ts,.js}'],
+      type: 'postgres',
+      host: process.env.POSTGRES_HOST || 'localhost',
+      port: +process.env.POSTGRES_PORT || 5432,
+      username: process.env.POSTGRES_USER || 'benjamingonzva',
+      password: process.env.POSTGRES_PASSWORD || 'postgres',
+      database: process.env.POSTGRES_DB || 'test-auth-prospectix',
+      synchronize: true,
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
     }),
     ConfigModule.forRoot({
       validationSchema: Joi.object({

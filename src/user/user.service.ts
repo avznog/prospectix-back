@@ -12,12 +12,6 @@ export class UserService {
     private userRepository: Repository<User>,
   ){}
 
-  async create(userData: CreateUserDto) : Promise<User>{
-    const newUser = await this.userRepository.create(userData);
-    await this.userRepository.save(newUser);
-    return newUser;
-  }
-
   async getByUsername(username: string): Promise<User>{
     const user = await this.userRepository.findOne({where: {username: username}});
     if(user){

@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
-import { RegisterDto } from './dto/register.dto';
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import * as bcrypt from "bcrypt";
@@ -14,27 +13,6 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService
     ){}
-
-  public async register(registrationData: RegisterDto): Promise<User>{
-    const hashedPassword = await bcrypt.hash(registrationData.password, 10);
-    try{
-      const createdUser = await this.userService.create({
-        ...registrationData,
-        password: hashedPassword
-      });
-      createdUser.password = undefined;
-      return createdUser;
-    }catch (error){
-
-      if(error?.code === "23505"){
-        throw new HttpException("Un utilisateur existe déjà dans la base de données",HttpStatus.BAD_REQUEST);
-      }
-      console.log(error);
-      throw new HttpException("Une erreur est survenue", HttpStatus.INTERNAL_SERVER_ERROR);
-
-      
-    }
-  }
 
   public async getAuthenticatedUser(username: string, plainTextPassword: string): Promise<User>{
     try{

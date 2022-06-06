@@ -19,11 +19,6 @@ export class AuthController {
     private readonly userService: UserService
     ) {}
 
-  @Post("register")
-  async register(@Body() registrationData: RegisterDto){
-    return this.authService.register(registrationData);
-  }
-
   @HttpCode(200)
   @UseGuards(LocalAuthGuard)
   @Post("login")
