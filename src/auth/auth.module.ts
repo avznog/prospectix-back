@@ -12,15 +12,16 @@ import { LdapService } from './services/ldap.service';
 import { AuthService } from './services/auth.service';
 import { CdpModule } from 'src/cdp/cdp.module';
 import { CdpService } from 'src/cdp/cdp.service';
-import { CdpRepository } from 'src/cdp/repositories/cdp.repository';
+import { Cdp } from 'src/cdp/entities/cdp.entity';
+
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CdpRepository]),
     CdpModule,
     UserModule,
     PassportModule,
     ConfigModule,
+    TypeOrmModule.forFeature([Cdp]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

@@ -2,14 +2,17 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
 import { ConfigModule } from "@nestjs/config";
 import * as Joi from "@hapi/joi";
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user/entities/user.entity';
+import { UserModule } from './user/user.module';
 import { CdpModule } from './cdp/cdp.module';
+import { Cdp } from './cdp/entities/cdp.entity';
+import { TestModule } from './test/test.module';
+
 @Module({
   imports: [
+    CdpModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST || 'localhost',
@@ -28,7 +31,7 @@ import { CdpModule } from './cdp/cdp.module';
         JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
       }),
     }),
-    AuthModule, UserModule, CdpModule],
+    AuthModule, UserModule, TestModule],
   controllers: [AppController],
   providers: [AppService],
 })

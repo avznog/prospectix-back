@@ -11,7 +11,7 @@ import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { LoginCdpDto } from './dto/login-cdp.dto';
 
 
-@Controller('auth')
+@Controller('tset')
 @ApiTags("auth")
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {

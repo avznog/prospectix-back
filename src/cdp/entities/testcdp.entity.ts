@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Cdp {
+export class TestCdp {
   @PrimaryGeneratedColumn()
   id: number;
 
