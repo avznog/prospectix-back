@@ -1,4 +1,3 @@
-import { MeetingType } from 'src/constants/meeting.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
 import {
@@ -9,20 +8,23 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'meeting' })
-export class Meeting extends BaseEntity {
+@Entity({ name: 'reminder' })
+export class Reminder extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
-
-  @Column()
-  type: MeetingType = MeetingType.TEL_VISIO;
-
-  @Column()
-  date: Date;
 
   @ManyToOne(() => ProjectManager)
   projectManager: ProjectManager;
 
   @ManyToOne(() => Prospect)
   prospect: Prospect;
+
+  @Column()
+  description: string;
+
+  @Column()
+  priority: number;
+
+  @Column()
+  date: Date;
 }
