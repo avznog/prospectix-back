@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
 import * as bcrypt from "bcrypt";
+import { CreateUserDto } from '../dto/create-user.dto';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -11,6 +11,17 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ){}
+
+
+  async find(){
+    console.log("hjrzejzepojezpo$kfz")
+    const test = await this.userRepository.findOne({
+      where: {
+        username: "test"
+      }
+    });
+    return test
+  }
 
   async getByUsername(username: string): Promise<User>{
     const user = await this.userRepository.findOne({where: {username: username}});

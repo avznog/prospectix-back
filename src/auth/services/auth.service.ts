@@ -5,13 +5,17 @@ import { ConfigService } from "@nestjs/config";
 import * as bcrypt from "bcrypt";
 import { User } from 'src/user/entities/user.entity';
 import TokenPayload from '../interfaces/tokenPayload.interface';
+import { LoginCdpDto } from '../dto/login-cdp.dto';
+import { LdapService } from './ldap.service';
+import { Cdp } from 'src/cdp/entities/cdp.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly ldapService: LdapService
     ){}
 
   public async getAuthenticatedUser(username: string, plainTextPassword: string): Promise<User>{
@@ -23,6 +27,14 @@ export class AuthService {
     }catch (error) {
       throw new HttpException("Wrong credentials provided", HttpStatus.BAD_REQUEST);
     }
+  }
+
+  public async login(loginCdpDto: LoginCdpDto) : Promise<string> {
+    const cdp = await this.ldapService.authLdap(loginCdpDto);
+    if(!cdp){
+      throw new HttpException("Invalid credentials", HttpStatus.UNAUTHORIZED);
+    }
+    return "connectedd";
   }
 
   private async verifyPassword(plainTextPassword: string, hashedPassword: string){

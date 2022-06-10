@@ -7,6 +7,7 @@ import { ConfigModule } from "@nestjs/config";
 import * as Joi from "@hapi/joi";
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
+import { CdpModule } from './cdp/cdp.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -27,7 +28,7 @@ import { User } from './user/entities/user.entity';
         JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
       }),
     }),
-    AuthModule, UserModule],
+    AuthModule, UserModule, CdpModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from 'src/user/user.module';
@@ -7,13 +6,18 @@ import { LocalStrategy } from './local.strategy';
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from 'src/user/entities/user.entity';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtRefreshTokenStrategy } from './jwt-refresh-token.strategy';
+import { LdapService } from './services/ldap.service';
+import { AuthService } from './services/auth.service';
+import { CdpModule } from 'src/cdp/cdp.module';
+import { CdpService } from 'src/cdp/cdp.service';
+import { CdpRepository } from 'src/cdp/repositories/cdp.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([CdpRepository]),
+    CdpModule,
     UserModule,
     PassportModule,
     ConfigModule,
@@ -28,7 +32,14 @@ import { JwtRefreshTokenStrategy } from './jwt-refresh-token.strategy';
       }),
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, JwtRefreshTokenStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    JwtRefreshTokenStrategy,
+    LdapService,
+    CdpService
+  ],
   controllers: [AuthController]
 })
 export class AuthModule {}

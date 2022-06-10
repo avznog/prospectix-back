@@ -8,6 +8,7 @@ import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/services/user.service';
 import JwtRefreshGuard from './guards/jwt-refresh.guard';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { LoginCdpDto } from './dto/login-cdp.dto';
 
 
 @Controller('auth')
@@ -36,6 +37,11 @@ export class AuthController {
     request.res?.setHeader("Set-Cookie", [accessTokenCookie, refreshTokenCookie]);
     return user;
     
+  }
+
+  @Post("loginldap")
+  async loginldap(@Body() loginCdpDto: LoginCdpDto){
+    return this.authService.login(loginCdpDto);
   }
 
   @UseGuards(JwtAuthGuard)
