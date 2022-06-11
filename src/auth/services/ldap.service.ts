@@ -33,7 +33,16 @@ export class LdapService {
         "cn=admins,cn=groups,cn=accounts,dc=ipa,dc=juniorisep,dc=com",
       );
       
-      
+      const oldCdp = await CdpRepository.findOneBy({
+        pseudo: loginCdpDto.username
+      })
+
+      if(!oldCdp){
+        return false;
+      }
+      else{
+        return true;
+      }
     } catch (error) {
       console.log(error);
       return false
