@@ -1,4 +1,6 @@
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
+import { Event } from 'src/events/entities/event.entity';
+import { Goal } from 'src/goals/entities/goal.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { SentEmail } from 'src/sent-emails/entities/sent-email.entity';
@@ -51,6 +53,6 @@ export class ProjectManager extends BaseEntity {
   })
   bookmarks: Bookmark[];
 
-  @OneToMany(() => Event, (event) => event., { lazy: true })
+  @OneToMany(() => Event, (event) => event.prospect, { lazy: true })
   events: Event[];
 }

@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 @Entity({ name: 'reminder' })
-export class Reminder extends BaseEntity {
+export class CreateReminderDto extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
