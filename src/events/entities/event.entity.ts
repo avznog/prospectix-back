@@ -1,4 +1,6 @@
 import { EventType } from 'src/constants/event.type';
+import { Prospect } from 'src/entities/prospect.entity';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import {
   BaseEntity,
   Column,
@@ -6,16 +8,14 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CDP } from './cdp.entity';
-import { Prospect } from './prospect.entity';
 
 @Entity({ name: 'event' })
 export class Event extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @ManyToOne(() => CDP)
-  cdp: CDP;
+  @ManyToOne(() => ProjectManager)
+  projectManager: ProjectManager;
 
   @ManyToOne(() => Prospect)
   prospect: Prospect;

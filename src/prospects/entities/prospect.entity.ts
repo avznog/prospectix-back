@@ -1,7 +1,9 @@
 import { Activity } from 'src/activities/entities/activity.entity';
+import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { City } from 'src/cities/entities/city.entity';
 import { Country } from 'src/countries/entities/country.entity';
 import { Email } from 'src/emails/entities/email.entity';
+import { Event } from 'src/events/entities/event.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { Phone } from 'src/phones/entities/phone.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
@@ -49,13 +51,6 @@ export class Prospect extends BaseEntity {
 
   @Column()
   nbNo: number;
-
-  @OneToMany(
-    () => ProspectContact,
-    (prospectContact) => prospectContact.prospect,
-    { lazy: true },
-  )
-  prospectContacts: ProspectContact[];
 
   @OneToMany(() => Meeting, (meeting) => meeting.prospect, { lazy: true })
   meetings: Meeting[];

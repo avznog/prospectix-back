@@ -1,4 +1,5 @@
 import { Email } from 'src/emails/entities/email.entity';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import {
   BaseEntity,
   Column,
@@ -12,8 +13,8 @@ export class SentEmail extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @ManyToOne(() => CDP)
-  cdp: CDP;
+  @ManyToOne(() => ProjectManager)
+  projectManager: ProjectManager;
 
   @ManyToOne(() => Email)
   email: Email;

@@ -1,3 +1,5 @@
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { Prospect } from 'src/prospects/entities/prospect.entity';
 import {
   BaseEntity,
   Column,
@@ -5,16 +7,14 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CDP } from './cdp.entity';
-import { Prospect } from './prospect.entity';
 
 @Entity({ name: 'bookmark' })
 export class Bookmark extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @ManyToOne(() => CDP)
-  cdp: CDP;
+  @ManyToOne(() => ProjectManager)
+  projectManager: ProjectManager;
 
   @ManyToOne(() => Prospect)
   prospect: Prospect;

@@ -1,3 +1,4 @@
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import {
   BaseEntity,
   Column,
@@ -5,7 +6,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CDP } from './cdp.entity';
 
 @Entity({ name: 'goal' })
 export class Goal extends BaseEntity {
@@ -30,6 +30,6 @@ export class Goal extends BaseEntity {
   @Column()
   currentAchievement: number;
 
-  @ManyToOne(() => CDP)
-  cdp: CDP;
+  @ManyToOne(() => ProjectManager)
+  projectManager: ProjectManager;
 }
