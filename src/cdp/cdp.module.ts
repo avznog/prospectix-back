@@ -6,9 +6,8 @@ import { Cdp } from './entities/cdp.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [],
+  imports: [TypeOrmModule.forFeature([Cdp])],
   controllers: [CdpController],
   providers: [CdpService],
-  exports: [CdpService]
 })
 export class CdpModule {}

@@ -30,7 +30,7 @@ export class AuthController {
     ) {}
 
   @HttpCode(200)
-  @UseGuards(LocalAuthGuard)
+  // @UseGuards(LocalAuthGuard)
   @Post("loginldap")
   async loginldap(@Body() loginCdpDto: LoginCdpDto, @Req() request: RequestWithCdp){
     return this.authService.login(loginCdpDto, request);

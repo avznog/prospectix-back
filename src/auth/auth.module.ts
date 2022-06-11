@@ -19,7 +19,7 @@ import { Cdp } from 'src/cdp/entities/cdp.entity';
     TypeOrmModule.forFeature([Cdp]),
     PassportModule,
     ConfigModule,
-    UserModule,
+    
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
