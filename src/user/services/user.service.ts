@@ -13,59 +13,51 @@ export class UserService {
   ){}
 
 
-  async find(){
-    console.log("hjrzejzepojezpo$kfz")
-    const test = await this.userRepository.findOne({
-      where: {
-        username: "test"
-      }
-    });
-    return test
-  }
+  // async find(){
+  //   console.log("hjrzejzepojezpo$kfz")
+  //   const test = await this.userRepository.findOne({
+  //     where: {
+  //       username: "test"
+  //     }
+  //   });
+  //   return test
+  // }
 
-  async getByUsername(username: string): Promise<User>{
-    const user = await this.userRepository.findOne({where: {username: username}});
-    if(user){
-      return user;
-    }
+  // async getByUsername(username: string): Promise<User>{
+  //   const user = await this.userRepository.findOne({where: {username: username}});
+  //   if(user){
+  //     return user;
+  //   }
 
-    throw new HttpException("User with this username does not exists", HttpStatus.NOT_FOUND);
-  }
+  //   throw new HttpException("User with this username does not exists", HttpStatus.NOT_FOUND);
+  // }
 
-  async getById(id: number): Promise<User>{
-    const user = await this.userRepository.findOne({ where: {id} });
-    if(user){
-      return user;
-    }
-    throw new HttpException("User with this id does not exist", HttpStatus.NOT_FOUND);
-  }
+  // async getById(id: number): Promise<User>{
+  //   const user = await this.userRepository.findOne({ where: {id} });
+  //   if(user){
+  //     return user;
+  //   }
+  //   throw new HttpException("User with this id does not exist", HttpStatus.NOT_FOUND);
+  // }
   
-  async setCurrentRefreshToken(refreshToken: string, userId: number) {
-  const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-  
-  await this.userRepository.update(userId,{
-       currentHashedRefreshToken,
-      });
-      
-  }
 
-  async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) : Promise<User>{
-    const user = await this.getById(userId);
+  // async getUserIfRefreshTokenMatches(refreshToken: string, username: string) : Promise<User>{
+  //   const user = await this.getByUsername(username);
 
-    const isRefreshtokenMatching = await bcrypt.compare(
-      refreshToken,
-      user.currentHashedRefreshToken
-    );
+  //   const isRefreshtokenMatching = await bcrypt.compare(
+  //     refreshToken,
+  //     user.currentHashedRefreshToken
+  //   );
 
-    if(isRefreshtokenMatching) {
-      return user;
-    }
-  }
+  //   if(isRefreshtokenMatching) {
+  //     return user;
+  //   }
+  // }
 
-  async removeRefreshToken(userId: number) : Promise<UpdateResult> {
-    return this.userRepository.update(userId, {
-      currentHashedRefreshToken: null
-    });
-  }
+  // async removeRefreshToken(username: string) : Promise<UpdateResult> {
+  //   return this.userRepository.update(username, {
+  //     currentHashedRefreshToken: null
+  //   });
+  // }
 
 }

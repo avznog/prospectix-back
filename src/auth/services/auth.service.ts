@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Req } from '@nestjs/common';
 import { UserService } from 'src/user/services/user.service';
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
@@ -8,40 +8,40 @@ import TokenPayload from '../interfaces/tokenPayload.interface';
 import { LoginCdpDto } from '../dto/login-cdp.dto';
 import { LdapService } from './ldap.service';
 import { Cdp } from 'src/cdp/entities/cdp.entity';
+import { CdpDto } from 'src/cdp/dto/cdp.dto';
+import RequestWithUser from '../interfaces/requestWithCdp.interface';
+import { CdpService } from 'src/cdp/cdp.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly ldapService: LdapService
+    private readonly ldapService: LdapService,
+    private readonly cdpService: CdpService
     ){}
 
-  public async getAuthenticatedUser(username: string, plainTextPassword: string): Promise<User>{
-    try{
-      const user = await this.userService.getByUsername(username);
-      await this.verifyPassword(plainTextPassword, user.password);
-      user.password = undefined;
-      return user;
-    }catch (error) {
-      throw new HttpException("Wrong credentials provided", HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  public async login(loginCdpDto: LoginCdpDto) : Promise<string> {
+  public async login(loginCdpDto: LoginCdpDto, @Req() request: RequestWithUser) : Promise<string> {
     const cdp = await this.ldapService.authLdap(loginCdpDto);
     if(!cdp){
       throw new HttpException("Invalid credentials", HttpStatus.UNAUTHORIZED);
     }
+
+    const user = new CdpDto()
+    user.username = loginCdpDto.username;
+    const accessTokenCookie = this.getCookieWithJwtAccessToken(user.username);
+    const {cookie: refreshTokenCookie,token: refreshToken} = this.getCookieWithJwtRefreshToken(user.username);
+    await this.cdpService.setCurrentRefreshToken(refreshToken, user.username);
+    request.res?.setHeader("Set-Cookie", [accessTokenCookie, refreshTokenCookie]);
     return "connectedd";
   }
 
-  private async verifyPassword(plainTextPassword: string, hashedPassword: string){
-    const isPasswordMatching = await bcrypt.compare(plainTextPassword, hashedPassword);
-    if(!isPasswordMatching){
-      throw new HttpException("Wrong credentials provided", HttpStatus.BAD_REQUEST);
-    }
+
+  async validateCdp(payload: TokenPayload): Promise<Cdp> {
+    const cdp = await this.cdpService.findByPayload(payload);
+    if (!cdp) throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+
+    return cdp;
   }
 
   public getCookieForLogOut(): string {
@@ -55,14 +55,14 @@ export class AuthService {
     ];
   }
 
-  public getCookieWithJwtAccessToken(userId: number): string{
-    const payload: TokenPayload = { userId };
+  public getCookieWithJwtAccessToken(username: string): string{
+    const payload: TokenPayload = { username };
     const token = this.jwtService.sign(payload);
     return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get("JWT_ACCESS_TOKEN_EXPIRATION_TIME")}`;
   }
 
-  public getCookieWithJwtRefreshToken(userId: number){
-    const payload: TokenPayload = { userId };
+  public getCookieWithJwtRefreshToken(username: string){
+    const payload: TokenPayload = { username };
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get("JWT_REFRESH_TOKEN_SECRET"),
       expiresIn: `${this.configService.get("JWT_REFRESH_TOKEN_EXPIRATION_TIME")}s`

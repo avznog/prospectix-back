@@ -1,71 +1,63 @@
-import { Controller, Post, Body, Req, HttpCode, UseGuards, Get , ClassSerializerInterceptor, UseInterceptors} from '@nestjs/common';
+import { 
+  Controller, 
+  Post,
+  Body,
+  Req,
+  HttpCode,
+  UseGuards,
+  Get,
+  ClassSerializerInterceptor,
+  UseInterceptors
+} from '@nestjs/common';
 import { AuthService } from './services/auth.service';
-import { RegisterDto } from './dto/register.dto';
 import { LocalAuthGuard } from './guards/localAuth.guard';
-import RequestWithUser from './interfaces/requestWithUser.interface';
 import JwtAuthGuard from './guards/jwt-auth.guard';
-import { User } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/services/user.service';
 import JwtRefreshGuard from './guards/jwt-refresh.guard';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { LoginCdpDto } from './dto/login-cdp.dto';
+import { Cdp } from 'src/cdp/entities/cdp.entity';
+import RequestWithCdp from './interfaces/requestWithCdp.interface';
+import { CdpService } from 'src/cdp/cdp.service';
 
 
-@Controller('tset')
+@Controller('auth')
 @ApiTags("auth")
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly userService: UserService
+    private readonly cdpService: CdpService
     ) {}
 
   @HttpCode(200)
   @UseGuards(LocalAuthGuard)
-  @Post("login")
-  @ApiBody({
-    description: "credentials",
-    type: RegisterDto
-  })
-  async logIn(@Req() request: RequestWithUser){
-    const { user } = request;
-    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(user.id);
-    const {cookie: refreshTokenCookie,token: refreshToken} = this.authService.getCookieWithJwtRefreshToken(user.id);
-    
-    await this.userService.setCurrentRefreshToken(refreshToken, user.id);
-    
-    request.res?.setHeader("Set-Cookie", [accessTokenCookie, refreshTokenCookie]);
-    return user;
-    
-  }
-
   @Post("loginldap")
-  async loginldap(@Body() loginCdpDto: LoginCdpDto){
-    return this.authService.login(loginCdpDto);
+  async loginldap(@Body() loginCdpDto: LoginCdpDto, @Req() request: RequestWithCdp){
+    return this.authService.login(loginCdpDto, request);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post("logout")
   @HttpCode(200)
-  async logOut(@Req() request: RequestWithUser) {
-    await this.userService.removeRefreshToken(request.user.id);
+  async logOut(@Req() request: RequestWithCdp) : Promise<Cdp>{
+    await this.cdpService.removeRefreshToken(request.cdp.pseudo);
     request.res.setHeader('Set-Cookie', this.authService.getCookiesForLogOut());
-    return request.user
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  authenticate(@Req() request: RequestWithUser) {
-    const user = request.user;
-    user.password = undefined;
-    return user;
+    return request.cdp;
   }
 
   @UseGuards(JwtRefreshGuard)
   @Get("refresh")
-  refresh(@Req() request: RequestWithUser) : User{
-    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(request.user.id);
+  refresh(@Req() request: RequestWithCdp) : Cdp{
+    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(request.cdp.pseudo);
     request.res.setHeader("Set-Cookie",accessTokenCookie);
-    return request.user;
+    return request.cdp;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  authenticate(@Req() request: RequestWithCdp) {
+      const user = request.cdp;
+      user.pseudo = undefined;
+      return user;
   }
 }

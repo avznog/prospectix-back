@@ -7,8 +7,8 @@ import { UserService } from './services/user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get("tess")
-  async login() {
-    await this.userService.find();
-  }
+  // @Get("tess")
+  // async login() {
+  //   await this.userService.find();
+  // }
 }
