@@ -4,14 +4,12 @@ import { AppService } from './app.service';
 import { ReminderModule } from './reminder/reminder.module';
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Reminder } from './reminder/entities/reminder.entity';
-import { CdpModule } from './cdp/cdp.module';
-import { Cdp } from './cdp/entities/cdp.entity';
-import { MeetingModule } from './meeting/meeting.module';
-import { Meeting } from './meeting/entities/meeting.entity';
+import { ProjectManagerModule } from './project-manager/project-manager.module';
+import { ProjectManager } from './project-manager/entities/project-manager.entity';
+import { ProjectManagerService } from './project-manager/project-manager.service';
 
 @Module({
   imports: [ReminderModule,
-    CdpModule,
     TypeOrmModule.forRoot({
       type: "postgres",
       host: "localhost",
@@ -20,11 +18,12 @@ import { Meeting } from './meeting/entities/meeting.entity';
       password: "postgres",
       database: "testAuthProspectix",
       synchronize: true,
-      entities: [Reminder, Cdp, Meeting]
+      entities: [Reminder, ProjectManager]
     }),
-    MeetingModule
+    ProjectManagerModule
     ],
   controllers: [AppController],
   providers: [AppService],
+
 })
 export class AppModule {}

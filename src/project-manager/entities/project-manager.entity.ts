@@ -1,0 +1,21 @@
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Exclude } from "class-transformer";
+import { Reminder } from "src/reminder/entities/reminder.entity";
+@Entity()
+export class ProjectManager {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  pseudo: string;
+
+  @Column()
+  amdin: boolean;
+
+  @Column({nullable: true})
+  @Exclude()
+  currentHashedRefreshToken?: string;
+
+  @OneToMany(() => Reminder, (reminder) => reminder.pm, {lazy: true})
+  reminders: Promise<Reminder[]>;
+}

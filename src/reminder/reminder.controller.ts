@@ -2,19 +2,26 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ReminderService } from './reminder.service';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
+import { ProjectManagerService } from 'src/project-manager/project-manager.service';
 
 @Controller('reminder')
 export class ReminderController {
-  constructor(private readonly reminderService: ReminderService) {}
+  constructor(
+    private readonly reminderService: ReminderService,
+    private readonly pmService: ProjectManagerService
+    ) {}
 
   @Post()
-  create(@Body() createReminderDto: CreateReminderDto) {
-    return this.reminderService.create(createReminderDto);
+  async create(@Body() createReminderDto: CreateReminderDto) {
+
+    const pm = await this.pmService.findByPayload()
+    return await this.reminderService.create(pm.id, createReminderDto);
   }
 
   @Get()
-  findAll() {
-    return this.reminderService.findAll();
+  async findAll() {
+    const pm = await this.pmService.findByPayload();
+    return await this.reminderService.findAll(pm.id);
   }
 
   @Get(':id')
