@@ -4,16 +4,10 @@ import { Goal } from 'src/goals/entities/goal.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { SentEmail } from 'src/sent-emails/entities/sent-email.entity';
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'cdp' })
-export class ProjectManager extends BaseEntity {
+export class ProjectManager {
   @PrimaryGeneratedColumn('increment')
   id: number;
 

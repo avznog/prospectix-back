@@ -1,7 +1,7 @@
-import { BaseEntity, Column, Entity } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 @Entity({ name: 'agenda_link_entity' })
-export class MeetingTableEntity extends BaseEntity {
+export class AgendaLink {
   @Column()
   link: string;
 }

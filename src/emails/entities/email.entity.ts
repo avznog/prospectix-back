@@ -1,7 +1,6 @@
 import { Prospect } from 'src/prospects/entities/prospect.entity';
 import { SentEmail } from 'src/sent-emails/entities/sent-email.entity';
 import {
-  BaseEntity,
   Column,
   Entity,
   ManyToOne,
@@ -10,7 +9,7 @@ import {
 } from 'typeorm';
 
 @Entity({ name: 'email' })
-export class Email extends BaseEntity {
+export class Email {
   @PrimaryGeneratedColumn('increment')
   id: number;
 

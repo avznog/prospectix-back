@@ -9,7 +9,6 @@ import { Phone } from 'src/phones/entities/phone.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { Website } from 'src/websites/entities/website.entity';
 import {
-  BaseEntity,
   Column,
   Entity,
   ManyToOne,
@@ -18,7 +17,7 @@ import {
 } from 'typeorm';
 
 @Entity({ name: 'prospects' })
-export class Prospect extends BaseEntity {
+export class Prospect {
   @PrimaryGeneratedColumn('increment')
   id: number;
 

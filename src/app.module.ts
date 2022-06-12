@@ -15,9 +15,8 @@ import { GoalsModule } from './goals/goals.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { ProjectManagersModule } from './project-managers/project-managers.module';
 import { RemindersModule } from './reminders/reminders.module';
-
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProjectManager } from './project-managers/entities/project-manager.entity';
+import { ProspectsModule } from './prospects/prospects.module';
 
 @Module({
   imports: [
@@ -31,10 +30,21 @@ import { ProjectManager } from './project-managers/entities/project-manager.enti
     SentEmailsModule,
     RemindersModule,
     ProjectManagersModule,
+    ProspectsModule,
     BookmarksModule,
     GoalsModule,
     EventsModule,
     AgendaLinksModule,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'thomas',
+      password: 'password',
+      database: 'prospectix',
+      entities: [__dirname + 'entities/**/*.entity.ts'],
+      synchronize: true,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

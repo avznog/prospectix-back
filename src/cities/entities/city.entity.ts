@@ -1,14 +1,8 @@
 import { Prospect } from 'src/prospects/entities/prospect.entity';
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'city' })
-export class City extends BaseEntity {
+export class City {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
