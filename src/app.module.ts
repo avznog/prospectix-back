@@ -1,16 +1,18 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ReminderModule } from './reminder/reminder.module';
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Reminder } from './reminder/entities/reminder.entity';
-import { ProjectManagerModule } from './project-manager/project-manager.module';
-import { ProjectManager } from './project-manager/entities/project-manager.entity';
-import { ProjectManagerService } from './project-manager/project-manager.service';
+import { Reminder } from './reminders/entities/reminder.entity';
+import { ProjectManager } from './project-managers/entities/project-manager.entity';
+import { RemindersModule } from './reminders/reminders.module';
+import { ProjectManagersModule } from './project-managers/project-managers.module';
 import { ProspectsModule } from './prospects/prospects.module';
+import { Prospect } from './prospects/entities/prospect.entity';
+
+
 
 @Module({
-  imports: [ReminderModule,
+  imports: [
     TypeOrmModule.forRoot({
       type: "postgres",
       host: "localhost",
@@ -19,9 +21,10 @@ import { ProspectsModule } from './prospects/prospects.module';
       password: "postgres",
       database: "testAuthProspectix",
       synchronize: true,
-      entities: [Reminder, ProjectManager, ProspectsModule]
+      entities: [Reminder, ProjectManager, Prospect]
     }),
-    ProjectManagerModule,
+    ProjectManagersModule,
+    RemindersModule,
     ProspectsModule
     ],
   controllers: [AppController],

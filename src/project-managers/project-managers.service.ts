@@ -6,7 +6,7 @@ import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
 import { ProjectManager } from './entities/project-manager.entity';
 
 @Injectable()
-export class ProjectManagerService {
+export class ProjectManagersService {
   constructor(
     @InjectRepository(ProjectManager)
     private readonly pmRepository: Repository<ProjectManager>

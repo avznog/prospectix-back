@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Exclude } from "class-transformer";
-import { Reminder } from "src/reminder/entities/reminder.entity";
+import { Reminder } from "src/reminders/entities/reminder.entity";
 @Entity()
 export class ProjectManager {
   @PrimaryGeneratedColumn()
