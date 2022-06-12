@@ -7,11 +7,6 @@ import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
 export class ProjectManagersController {
   constructor(private readonly projectManagersService: ProjectManagersService) {}
 
-  @Post()
-  create(@Body() createProjectManagerDto: CreateProjectManagerDto) {
-    return this.projectManagersService.create(createProjectManagerDto);
-  }
-
   @Get()
   findAll() {
     return this.projectManagersService.findAll();

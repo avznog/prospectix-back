@@ -19,20 +19,28 @@ export class ProjectManagersService {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     const pmDto = new ProjectManagerDto();
     pmDto.pseudo = username;
+    const pm = await this.pmRepository.findOne({
+      where: {
+        pseudo: pmDto.pseudo
+      }
+    })
+
     return await this.pmRepository.update(
-      username, {
-        pseudo: currentHashedRefreshToken
+      pm.id, {
+        currentHashedRefreshToken: currentHashedRefreshToken
       }
       
     );
   }
 
   async findByPayload(payload: TokenPayload): Promise<ProjectManager>{
-    return this.pmRepository.findOne({
+    // console.log(payload.username)
+    // console.log("here")
+    return await this.pmRepository.findOne({
       where: {
         pseudo: payload.username
       }
-    })
+    });
   }
 
   async getPmIfRefreshTokenMatches(refreshToken: string, username: string) : Promise<ProjectManager>{
@@ -56,15 +64,16 @@ export class ProjectManagersService {
   }
 
   async removeRefreshToken(username: string) : Promise<UpdateResult> {
+    const pm = await this.pmRepository.findOne({
+      where: {
+        pseudo: username
+      }
+    });
     return await this.pmRepository.update(
-      username, {
+      pm.id, {
         pseudo: username
       }
     )
-  }
-
-  create(createProjectManagerDto: CreateProjectManagerDto) {
-    return 'This action adds a new projectManager';
   }
 
   findAll() {

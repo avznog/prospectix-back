@@ -3,10 +3,11 @@ import { AuthService } from './services/auth.service';
 import JwtAuthGuard from './guards/jwt-auth.guard';
 import JwtRefreshGuard from './guards/jwt-refresh.guard';
 import { ApiTags } from '@nestjs/swagger';
-import { LoginPmDto } from './dto/login-pm.dto';
+import { LoginPmDto } from './dto/login-project-manager.dto';
 import { ProjectManagersService } from 'src/project-managers/project-managers.service';
 import RequestWithPm from './interfaces/requestWithPm.interface';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import TokenPayload from './interfaces/tokenPayload.interface';
 
 
 @Controller('auth')
@@ -19,7 +20,7 @@ export class AuthController {
     ) {}
 
   @HttpCode(200)
-  @Post("loginldap")
+  @Post("login")
   async loginldap(@Body() loginPmDto: LoginPmDto, @Req() request: RequestWithPm){
     return this.authService.login(loginPmDto, request);
   }
@@ -28,6 +29,7 @@ export class AuthController {
   @Post("logout")
   @HttpCode(200)
   async logOut(@Req() request: RequestWithPm) : Promise<ProjectManager>{
+    request.pm = request.user as ProjectManager;
     await this.pmService.removeRefreshToken(request.pm.pseudo);
     request.res.setHeader('Set-Cookie', this.authService.getCookiesForLogOut());
     return request.pm;
@@ -36,7 +38,7 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Get("refresh")
   refresh(@Req() request: RequestWithPm) : ProjectManager{
-    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(request.pm.pseudo);
+    const accessTokenCookie = request.cookies["Authentication"];
     request.res.setHeader("Set-Cookie",accessTokenCookie);
     return request.pm;
   }
@@ -45,7 +47,6 @@ export class AuthController {
   @Get()
   authenticate(@Req() request: RequestWithPm) {
       const user = request.pm;
-      user.pseudo = undefined;
       return user;
   }
 }

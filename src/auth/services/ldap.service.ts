@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Repository } from 'typeorm';
-import { LoginPmDto } from '../dto/login-pm.dto';
+import { LoginPmDto } from '../dto/login-project-manager.dto';
 const { authenticate } = require('ldap-authentication');
 
 @Injectable()
@@ -10,9 +10,7 @@ export class LdapService {
   constructor(
     @InjectRepository(ProjectManager)
     private readonly pmRepository: Repository<ProjectManager>
-  ){
-
-  }
+  ){}
 
   async authLdap(loginPmDto: LoginPmDto): Promise<boolean> {
     const options = {
@@ -39,8 +37,8 @@ export class LdapService {
         where: {
           pseudo: loginPmDto.username
         }
-      })
-
+      });
+      
       if(!oldPm){
         return false;
       }
@@ -48,9 +46,8 @@ export class LdapService {
         return true;
       }
     } catch (error) {
-      
       console.log(error);
-      return false
+      throw new HttpException("Impossible de se connecter au serveur LDAP : invalid credentials", HttpStatus.FORBIDDEN)
     }
   }
 }

@@ -10,7 +10,6 @@ import { ProjectManagersService } from "src/project-managers/project-managers.se
 export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, "jwt-refresh-token") {
   constructor (
     private readonly configService: ConfigService,
-    private readonly authService: AuthService,
     private readonly pmService: ProjectManagersService
 
   ) {

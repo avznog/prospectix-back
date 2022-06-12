@@ -11,7 +11,6 @@ import { ProjectManager } from './project-managers/entities/project-manager.enti
 
 @Module({
   imports: [
-    ProjectManagersModule,
     AuthModule,
     ProjectManagersModule,
     TypeOrmModule.forRoot({
@@ -20,7 +19,7 @@ import { ProjectManager } from './project-managers/entities/project-manager.enti
       port: +process.env.POSTGRES_PORT || 5432,
       username: process.env.POSTGRES_USER || 'benjamingonzva',
       password: process.env.POSTGRES_PASSWORD || 'postgres',
-      database: process.env.POSTGRES_DB || 'prospectix_auth',
+      database: process.env.POSTGRES_DB || 'testAuthProspectix',
       synchronize: true,
       entities: [Auth, ProjectManager],
     }),
@@ -31,8 +30,8 @@ import { ProjectManager } from './project-managers/entities/project-manager.enti
         JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
         JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
       }),
-    }),
-    ProjectManagersModule],
+    })
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

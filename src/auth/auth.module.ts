@@ -10,12 +10,13 @@ import { LdapService } from './services/ldap.service';
 import { AuthService } from './services/auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { Auth } from './entities/auth.entity';
 import { ProjectManagersService } from 'src/project-managers/project-managers.service';
 
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ProjectManager]),
+    TypeOrmModule.forFeature([ProjectManager, Auth]),
     PassportModule,
     ConfigModule,
     JwtModule.registerAsync({
