@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
-import { UserModule } from 'src/user/user.module';
 import { LocalStrategy } from './local.strategy';
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
@@ -9,17 +8,16 @@ import { JwtStrategy } from './jwt.strategy';
 import { JwtRefreshTokenStrategy } from './jwt-refresh-token.strategy';
 import { LdapService } from './services/ldap.service';
 import { AuthService } from './services/auth.service';
-import { CdpService } from 'src/cdp/cdp.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Cdp } from 'src/cdp/entities/cdp.entity';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { ProjectManagersService } from 'src/project-managers/project-managers.service';
 
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Cdp]),
+    TypeOrmModule.forFeature([ProjectManager]),
     PassportModule,
     ConfigModule,
-    
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -37,7 +35,7 @@ import { Cdp } from 'src/cdp/entities/cdp.entity';
     JwtStrategy,
     JwtRefreshTokenStrategy,
     LdapService,
-    CdpService
+    ProjectManagersService
   ],
   controllers: [AuthController]
 })

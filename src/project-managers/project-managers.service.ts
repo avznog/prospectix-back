@@ -1,0 +1,85 @@
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, UpdateResult } from 'typeorm';
+import { CreateProjectManagerDto } from './dto/create-project-manager.dto';
+import { ProjectManagerDto } from './dto/project-manager.dto';
+import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
+import { ProjectManager } from './entities/project-manager.entity';
+import * as bcrypt from "bcrypt";
+import TokenPayload from 'src/auth/interfaces/tokenPayload.interface';
+
+@Injectable()
+export class ProjectManagersService {
+  constructor(
+    @InjectRepository(ProjectManager)
+    private readonly pmRepository: Repository<ProjectManager>
+  ){}
+
+  async setCurrentRefreshToken(refreshToken: string, username: string) {
+    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    const pmDto = new ProjectManagerDto();
+    pmDto.pseudo = username;
+    return await this.pmRepository.update(
+      username, {
+        pseudo: currentHashedRefreshToken
+      }
+      
+    );
+  }
+
+  async findByPayload(payload: TokenPayload): Promise<ProjectManager>{
+    return this.pmRepository.findOne({
+      where: {
+        pseudo: payload.username
+      }
+    })
+  }
+
+  async getPmIfRefreshTokenMatches(refreshToken: string, username: string) : Promise<ProjectManager>{
+    const pm = await this.pmRepository.findOne({
+      where: {
+        pseudo: username
+      }
+    });
+
+    if(!pm)
+      throw new HttpException("Aucun cdp n'existe avec ce nom d'utilisateur", HttpStatus.NOT_FOUND)
+
+    const isRefreshtokenMatching = await bcrypt.compare(
+      refreshToken,
+      pm.currentHashedRefreshToken
+    );
+
+    if(isRefreshtokenMatching){
+      return pm;
+    }
+  }
+
+  async removeRefreshToken(username: string) : Promise<UpdateResult> {
+    return await this.pmRepository.update(
+      username, {
+        pseudo: username
+      }
+    )
+  }
+
+  create(createProjectManagerDto: CreateProjectManagerDto) {
+    return 'This action adds a new projectManager';
+  }
+
+  findAll() {
+    return `This action returns all projectManagers`;
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} projectManager`;
+  }
+
+  update(id: number, updateProjectManagerDto: UpdateProjectManagerDto) {
+    return `This action updates a #${id} projectManager`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} projectManager`;
+  }
+}

@@ -1,4 +1,4 @@
-export class LoginCdpDto {
+export class LoginPmDto {
   username: string;
   password: string;
 }

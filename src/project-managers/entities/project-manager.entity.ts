@@ -1,11 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { Exclude } from "class-transformer";
-import { InjectEntityManager } from "@nestjs/typeorm";
-import AppDataSource from "src/app-data-source";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-// @InjectEntityManager(AppDataSource)
 @Entity()
-export class Cdp {
+export class ProjectManager {
   @PrimaryGeneratedColumn()
   id: number;
 

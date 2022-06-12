@@ -5,18 +5,15 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from "@nestjs/config";
 import * as Joi from "@hapi/joi";
 import { TypeOrmModule } from '@nestjs/typeorm';
-import AppDataSource from './app-data-source';
-import { Cdp } from './cdp/entities/cdp.entity';
 import { Auth } from './auth/entities/auth.entity';
-import { User } from './user/entities/user.entity';
-import { CdpModule } from './cdp/cdp.module';
-import { UserModule } from './user/user.module';
+import { ProjectManagersModule } from './project-managers/project-managers.module';
+import { ProjectManager } from './project-managers/entities/project-manager.entity';
 
 @Module({
   imports: [
-    CdpModule,
-    UserModule,
+    ProjectManagersModule,
     AuthModule,
+    ProjectManagersModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST || 'localhost',
@@ -25,7 +22,7 @@ import { UserModule } from './user/user.module';
       password: process.env.POSTGRES_PASSWORD || 'postgres',
       database: process.env.POSTGRES_DB || 'prospectix_auth',
       synchronize: true,
-      entities: [Auth, Cdp, User],
+      entities: [Auth, ProjectManager],
     }),
     ConfigModule.forRoot({
       validationSchema: Joi.object({
@@ -34,7 +31,8 @@ import { UserModule } from './user/user.module';
         JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
         JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
       }),
-    })],
+    }),
+    ProjectManagersModule],
   controllers: [AppController],
   providers: [AppService],
 })

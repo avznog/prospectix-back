@@ -1,16 +1,12 @@
 import { HttpException, HttpStatus, Injectable, Req } from '@nestjs/common';
-import { UserService } from 'src/user/services/user.service';
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
-import * as bcrypt from "bcrypt";
-import { User } from 'src/user/entities/user.entity';
 import TokenPayload from '../interfaces/tokenPayload.interface';
-import { LoginCdpDto } from '../dto/login-cdp.dto';
+import { LoginPmDto } from '../dto/login-pm.dto';
 import { LdapService } from './ldap.service';
-import { Cdp } from 'src/cdp/entities/cdp.entity';
-import { CdpDto } from 'src/cdp/dto/cdp.dto';
-import RequestWithUser from '../interfaces/requestWithCdp.interface';
-import { CdpService } from 'src/cdp/cdp.service';
+import { ProjectManagersService } from 'src/project-managers/project-managers.service';
+import { ProjectManagerDto } from 'src/project-managers/dto/project-manager.dto';
+import RequestWithPm from '../interfaces/requestWithPm.interface';
 
 @Injectable()
 export class AuthService {
@@ -18,30 +14,30 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly ldapService: LdapService,
-    private readonly cdpService: CdpService
+    private readonly pmService: ProjectManagersService
     ){}
 
-  public async login(loginCdpDto: LoginCdpDto, @Req() request: RequestWithUser) : Promise<string> {
-    const cdp = await this.ldapService.authLdap(loginCdpDto);
-    if(!cdp){
+  public async login(loginPmDto: LoginPmDto, @Req() request: RequestWithPm) : Promise<string> {
+    const pm = await this.ldapService.authLdap(loginPmDto);
+    if(!pm){
       throw new HttpException("Invalid credentials", HttpStatus.UNAUTHORIZED);
     }
 
-    const user = new CdpDto()
-    user.username = loginCdpDto.username;
-    const accessTokenCookie = this.getCookieWithJwtAccessToken(user.username);
-    const {cookie: refreshTokenCookie,token: refreshToken} = this.getCookieWithJwtRefreshToken(user.username);
-    await this.cdpService.setCurrentRefreshToken(refreshToken, user.username);
+    const user = new ProjectManagerDto()
+    user.pseudo = loginPmDto.username;
+    const accessTokenCookie = this.getCookieWithJwtAccessToken(user.pseudo);
+    const {cookie: refreshTokenCookie,token: refreshToken} = this.getCookieWithJwtRefreshToken(user.pseudo);
+    await this.pmService.setCurrentRefreshToken(refreshToken, user.pseudo);
     request.res?.setHeader("Set-Cookie", [accessTokenCookie, refreshTokenCookie]);
-    return "connectedd";
+    return "connected";
   }
 
 
-  async validateCdp(payload: TokenPayload): Promise<Cdp> {
-    const cdp = await this.cdpService.findByPayload(payload);
-    if (!cdp) throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+  async validatePm(payload: TokenPayload): Promise<ProjectManagerDto> {
+    const pm = await this.pmService.findByPayload(payload);
+    if (!pm) throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
 
-    return cdp;
+    return pm;
   }
 
   public getCookieForLogOut(): string {

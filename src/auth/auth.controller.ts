@@ -1,23 +1,12 @@
-import { 
-  Controller, 
-  Post,
-  Body,
-  Req,
-  HttpCode,
-  UseGuards,
-  Get,
-  ClassSerializerInterceptor,
-  UseInterceptors
-} from '@nestjs/common';
+import {Controller,Post,Body,Req,HttpCode,UseGuards,Get,ClassSerializerInterceptor,UseInterceptors} from '@nestjs/common';
 import { AuthService } from './services/auth.service';
-import { LocalAuthGuard } from './guards/localAuth.guard';
 import JwtAuthGuard from './guards/jwt-auth.guard';
 import JwtRefreshGuard from './guards/jwt-refresh.guard';
 import { ApiTags } from '@nestjs/swagger';
-import { LoginCdpDto } from './dto/login-cdp.dto';
-import { Cdp } from 'src/cdp/entities/cdp.entity';
-import RequestWithCdp from './interfaces/requestWithCdp.interface';
-import { CdpService } from 'src/cdp/cdp.service';
+import { LoginPmDto } from './dto/login-pm.dto';
+import { ProjectManagersService } from 'src/project-managers/project-managers.service';
+import RequestWithPm from './interfaces/requestWithPm.interface';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 
 
 @Controller('auth')
@@ -26,37 +15,36 @@ import { CdpService } from 'src/cdp/cdp.service';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly cdpService: CdpService
+    private readonly pmService: ProjectManagersService
     ) {}
 
   @HttpCode(200)
-  // @UseGuards(LocalAuthGuard)
   @Post("loginldap")
-  async loginldap(@Body() loginCdpDto: LoginCdpDto, @Req() request: RequestWithCdp){
-    return this.authService.login(loginCdpDto, request);
+  async loginldap(@Body() loginPmDto: LoginPmDto, @Req() request: RequestWithPm){
+    return this.authService.login(loginPmDto, request);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post("logout")
   @HttpCode(200)
-  async logOut(@Req() request: RequestWithCdp) : Promise<Cdp>{
-    await this.cdpService.removeRefreshToken(request.cdp.pseudo);
+  async logOut(@Req() request: RequestWithPm) : Promise<ProjectManager>{
+    await this.pmService.removeRefreshToken(request.pm.pseudo);
     request.res.setHeader('Set-Cookie', this.authService.getCookiesForLogOut());
-    return request.cdp;
+    return request.pm;
   }
 
   @UseGuards(JwtRefreshGuard)
   @Get("refresh")
-  refresh(@Req() request: RequestWithCdp) : Cdp{
-    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(request.cdp.pseudo);
+  refresh(@Req() request: RequestWithPm) : ProjectManager{
+    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(request.pm.pseudo);
     request.res.setHeader("Set-Cookie",accessTokenCookie);
-    return request.cdp;
+    return request.pm;
   }
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  authenticate(@Req() request: RequestWithCdp) {
-      const user = request.cdp;
+  authenticate(@Req() request: RequestWithPm) {
+      const user = request.pm;
       user.pseudo = undefined;
       return user;
   }
