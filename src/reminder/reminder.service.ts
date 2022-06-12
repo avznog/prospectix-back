@@ -23,11 +23,7 @@ export class ReminderService {
         id: idPm
       }
     });
-    const alternativePm = new ProjectManager();
-    alternativePm.pseudo = "bgonzva";
-    alternativePm.amdin = false;
-    // createReminderDto.pm = pm;
-    // createReminderDto.pm = alternativePm;
+    createReminderDto.pm = pm;
     return await this.reminderRepository.save(createReminderDto);
       
     } catch (error) {
@@ -35,22 +31,26 @@ export class ReminderService {
     } 
   }
 
-  async findAll(idPm: number) {
-    const pm = await this.pmRepository.findOne({
-      where: {
-        id: idPm
-      }
-    });
-
-    return await this.reminderRepository.find({
-      relations: ["pm"],
-      where: {
-        pm: {
-          pseudo: pm.pseudo,
-          amdin: pm.amdin
+  async findAllFromPm(idPm: number) : Promise<Reminder[]>{
+    try{
+      const pm = await this.pmRepository.findOne({
+        where: {
+          id: idPm
         }
-      }
-    });
+      });
+
+      return await this.reminderRepository.find({
+        relations: ["pm"],
+        where: {
+          pm: {
+            id: pm.id
+          }
+        }
+      });
+    } catch (error){
+      throw new HttpException("Le Cdp n'existe pas dans la base de données", HttpStatus.BAD_REQUEST)
+    }
+    
   }
 
   findOne(id: number) {

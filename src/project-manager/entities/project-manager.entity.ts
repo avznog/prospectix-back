@@ -10,7 +10,7 @@ export class ProjectManager {
   pseudo: string;
 
   @Column()
-  amdin: boolean;
+  admin: boolean;
 
   @Column({nullable: true})
   @Exclude()

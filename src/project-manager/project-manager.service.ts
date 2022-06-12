@@ -9,15 +9,15 @@ import { ProjectManager } from './entities/project-manager.entity';
 export class ProjectManagerService {
   constructor(
     @InjectRepository(ProjectManager)
-    private readonly projectManagerRepository: Repository<ProjectManager>
+    private readonly pmRepository: Repository<ProjectManager>
   ){}
 
   create(createProjectManagerDto: CreateProjectManagerDto) {
-    return 'This action adds a new projectManager';
+    return this.pmRepository.save(createProjectManagerDto);
   }
 
-  findAll() {
-    return `This action returns all projectManager`;
+  async findAll() : Promise<ProjectManager[]>{
+    return await this.pmRepository.find()
   }
 
   findOne(id: number) {
@@ -45,8 +45,8 @@ export class ProjectManagerService {
   async findByPayload() : Promise<ProjectManager>{
     const pm = new ProjectManager();
     pm.pseudo = "bgonzva";
-    pm.amdin = false;
-    pm.id = 12;
+    pm.admin = false;
+    pm.id = 3;
     return await pm;
 
   }

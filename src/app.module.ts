@@ -7,6 +7,7 @@ import { Reminder } from './reminder/entities/reminder.entity';
 import { ProjectManagerModule } from './project-manager/project-manager.module';
 import { ProjectManager } from './project-manager/entities/project-manager.entity';
 import { ProjectManagerService } from './project-manager/project-manager.service';
+import { ProspectsModule } from './prospects/prospects.module';
 
 @Module({
   imports: [ReminderModule,
@@ -18,9 +19,10 @@ import { ProjectManagerService } from './project-manager/project-manager.service
       password: "postgres",
       database: "testAuthProspectix",
       synchronize: true,
-      entities: [Reminder, ProjectManager]
+      entities: [Reminder, ProjectManager, ProspectsModule]
     }),
-    ProjectManagerModule
+    ProjectManagerModule,
+    ProspectsModule
     ],
   controllers: [AppController],
   providers: [AppService],

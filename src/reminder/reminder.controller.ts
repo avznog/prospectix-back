@@ -3,6 +3,7 @@ import { ReminderService } from './reminder.service';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
 import { ProjectManagerService } from 'src/project-manager/project-manager.service';
+import { Reminder } from './entities/reminder.entity';
 
 @Controller('reminder')
 export class ReminderController {
@@ -12,16 +13,15 @@ export class ReminderController {
     ) {}
 
   @Post()
-  async create(@Body() createReminderDto: CreateReminderDto) {
-
+  async create(@Body() createReminderDto: CreateReminderDto) : Promise<Reminder>{
     const pm = await this.pmService.findByPayload()
     return await this.reminderService.create(pm.id, createReminderDto);
   }
 
   @Get()
-  async findAll() {
+  async findAllFromPm() : Promise<Reminder[]>{
     const pm = await this.pmService.findByPayload();
-    return await this.reminderService.findAll(pm.id);
+    return await this.reminderService.findAllFromPm(pm.id);
   }
 
   @Get(':id')
