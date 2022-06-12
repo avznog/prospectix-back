@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ProjectManagersService } from './project-managers.service';
 import { CreateProjectManagerDto } from './dto/create-project-manager.dto';
 import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('project-managers')
+@ApiTags("project-managers")
 export class ProjectManagersController {
   constructor(private readonly projectManagerService: ProjectManagersService) {}
 

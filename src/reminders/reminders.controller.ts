@@ -5,8 +5,10 @@ import { UpdateReminderDto } from './dto/update-reminder.dto';
 import { ProjectManagersService } from 'src/project-managers/project-managers.service';
 import { Reminder } from './entities/reminder.entity';
 import { ProspectsService } from 'src/prospects/prospects.service';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('reminders')
+@ApiTags("reminders")
 export class RemindersController {
   constructor(
     private readonly reminderService: RemindersService,
@@ -37,8 +39,8 @@ export class RemindersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReminderDto: UpdateReminderDto) {
-    return this.reminderService.update(+id, updateReminderDto);
+  async update(@Param('id') id: string, @Body() updateReminderDto: UpdateReminderDto ){
+    
   }
 
   @Delete(':id')

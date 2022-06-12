@@ -92,8 +92,8 @@ export class RemindersService {
     return `This action returns a #${id} reminder`;
   }
 
-  update(id: number, updateReminderDto: UpdateReminderDto) {
-    return `This action updates a #${id} reminder`;
+  async update(id: number, updateReminderDto: UpdateReminderDto) {
+    
   }
 
   remove(id: number) {
