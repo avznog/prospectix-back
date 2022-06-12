@@ -26,8 +26,6 @@ export class ReminderService {
     const alternativePm = new ProjectManager();
     alternativePm.pseudo = "bgonzva";
     alternativePm.amdin = false;
-    // alternativePm.id = 3;
-    console.log(idPm)
     // createReminderDto.pm = pm;
     // createReminderDto.pm = alternativePm;
     return await this.reminderRepository.save(createReminderDto);
