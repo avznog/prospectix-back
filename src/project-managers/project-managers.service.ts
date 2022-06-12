@@ -9,15 +9,15 @@ import { ProjectManager } from './entities/project-manager.entity';
 export class ProjectManagersService {
   constructor(
     @InjectRepository(ProjectManager)
-    private readonly pmRepository: Repository<ProjectManager>
-  ){}
+    private readonly pmRepository: Repository<ProjectManager>,
+  ) {}
 
   create(createProjectManagerDto: CreateProjectManagerDto) {
     return this.pmRepository.save(createProjectManagerDto);
   }
 
-  async findAll() : Promise<ProjectManager[]>{
-    return await this.pmRepository.find()
+  async findAll(): Promise<ProjectManager[]> {
+    return await this.pmRepository.find();
   }
 
   findOne(id: number) {
@@ -42,12 +42,11 @@ export class ProjectManagersService {
   //     }
   //   )
   // )
-  async findByPayload() : Promise<ProjectManager>{
+  async findByPayload(): Promise<ProjectManager> {
     const pm = new ProjectManager();
-    pm.pseudo = "bgonzva";
+    pm.pseudo = 'bgonzva';
     pm.admin = false;
     pm.id = 3;
     return await pm;
-
   }
 }
