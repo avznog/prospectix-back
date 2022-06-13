@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
+=======
+import { Exclude } from "class-transformer";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+
+>>>>>>> features/auth
 @Entity()
 export class ProjectManager {
   @PrimaryGeneratedColumn()
@@ -11,6 +17,7 @@ export class ProjectManager {
 
   @Column()
   admin: boolean;
+<<<<<<< HEAD
 
   @Column({ nullable: true })
   @Exclude()
@@ -18,4 +25,10 @@ export class ProjectManager {
 
   @OneToMany(() => Reminder, (reminder) => reminder.pm, { lazy: true })
   reminders: Promise<Reminder[]>;
+=======
+  
+  @Column({nullable: true})
+  @Exclude()
+  currentHashedRefreshToken?: string;
+>>>>>>> features/auth
 }
