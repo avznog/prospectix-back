@@ -1,5 +1,5 @@
 export enum MeetingType {
-  EXT,
-  TEL_VISIO,
-  MEETING_TABLE,
+  EXT = "ext",
+  TEL_VISIO = "tel_visio",
+  MEETING_TABLE = "meeting_table",
 }

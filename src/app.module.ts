@@ -21,7 +21,7 @@ import { Meeting } from './meetings/entities/meeting.entity';
       port: 5432,
       username: "benjamingonzva",
       password: "postgres",
-      database: "testAuthProspectix",
+      database: "testMeetingsProspectix",
       synchronize: true,
       entities: [Reminder, ProjectManager, Prospect, Meeting]
     }),
