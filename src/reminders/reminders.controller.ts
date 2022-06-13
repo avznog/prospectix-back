@@ -6,26 +6,28 @@ import { ProjectManagersService } from 'src/project-managers/project-managers.se
 import { Reminder } from './entities/reminder.entity';
 import { ProspectsService } from 'src/prospects/prospects.service';
 import { ApiTags } from '@nestjs/swagger';
+import { AuthService } from 'src/auth/services/auth.service';
 
 @Controller('reminders')
 @ApiTags("reminders")
 export class RemindersController {
   constructor(
     private readonly reminderService: RemindersService,
-    private readonly pmService: ProjectManagersService,
-    private readonly prospectService: ProspectsService
     ) {}
 
   @Post(":idProspect")
   async create(@Body() createReminderDto: CreateReminderDto, @Param("idProspect") idProspect: number) : Promise<Reminder>{
-    const pm = await this.pmService.findByPayload()
-    return await this.reminderService.create(pm.id, createReminderDto, idProspect);
+    // const pm = await this.pmService.findByPayload()
+    // return await this.reminderService.create(pm.id, createReminderDto, idProspect);
+    return await this.reminderService.create(0, createReminderDto, idProspect);
+
   }
 
   @Get("by-pm")
   async findAllByPm() : Promise<Reminder[]>{
-    const pm = await this.pmService.findByPayload();
-    return await this.reminderService.findAllByPm(pm.id);
+    // const pm = await this.authService.validatePm()
+    // return await this.reminderService.findAllByPm(pm.id);
+    return await this.reminderService.findAllByPm(0);
   }
 
   @Get("by-prospect/:idProspect")

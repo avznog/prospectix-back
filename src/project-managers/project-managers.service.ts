@@ -15,6 +15,10 @@ export class ProjectManagersService {
     private readonly pmRepository: Repository<ProjectManager>
   ){}
 
+  async create(createProjectManagerDto: CreateProjectManagerDto){
+    return await this.pmRepository.save(createProjectManagerDto)
+  }
+  
   async setCurrentRefreshToken(refreshToken: string, username: string) {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     const pmDto = new ProjectManagerDto();

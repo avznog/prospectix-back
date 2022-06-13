@@ -8,20 +8,26 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Auth } from './auth/entities/auth.entity';
 import { ProjectManagersModule } from './project-managers/project-managers.module';
 import { ProjectManager } from './project-managers/entities/project-manager.entity';
+import { Prospect } from './prospects/entities/prospect.entity';
+import { Reminder } from './reminders/entities/reminder.entity';
+import { ProspectsModule } from './prospects/prospects.module';
+import { RemindersModule } from './reminders/reminders.module';
 
 @Module({
   imports: [
     AuthModule,
     ProjectManagersModule,
+    ProspectsModule,
+    RemindersModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST || 'localhost',
       port: +process.env.POSTGRES_PORT || 5432,
       username: process.env.POSTGRES_USER || 'benjamingonzva',
       password: process.env.POSTGRES_PASSWORD || 'postgres',
-      database: process.env.POSTGRES_DB || 'testAuthProspectix',
+      database: process.env.POSTGRES_DB || 'testnew',
       synchronize: true,
-      entities: [Auth, ProjectManager],
+      entities: [Auth, ProjectManager, Prospect, Reminder],
     }),
     ConfigModule.forRoot({
       validationSchema: Joi.object({
