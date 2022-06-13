@@ -8,6 +8,8 @@ import { RemindersModule } from './reminders/reminders.module';
 import { ProjectManagersModule } from './project-managers/project-managers.module';
 import { ProspectsModule } from './prospects/prospects.module';
 import { Prospect } from './prospects/entities/prospect.entity';
+import { MeetingsModule } from './meetings/meetings.module';
+import { Meeting } from './meetings/entities/meeting.entity';
 
 
 
@@ -21,11 +23,12 @@ import { Prospect } from './prospects/entities/prospect.entity';
       password: "postgres",
       database: "testAuthProspectix",
       synchronize: true,
-      entities: [Reminder, ProjectManager, Prospect]
+      entities: [Reminder, ProjectManager, Prospect, Meeting]
     }),
     ProjectManagersModule,
     RemindersModule,
-    ProspectsModule
+    ProspectsModule,
+    MeetingsModule
     ],
   controllers: [AppController],
   providers: [AppService],
