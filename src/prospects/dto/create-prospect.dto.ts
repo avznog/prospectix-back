@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CreateActivityDto } from 'src/activities/dto/create-activity.dto';
-import { CreateCityDto } from 'src/cities/dto/create-city.dto';
-import { CreateCountryDto } from 'src/countries/dto/create-country.dto';
-import { CreateEmailDto } from 'src/emails/dto/create-email.dto';
-import { CreatePhoneDto } from 'src/phones/dto/create-phone.dto';
-import { CreateWebsiteDto } from 'src/websites/dto/create-website.dto';
+import { Activity } from 'src/activities/entities/activity.entity';
+import { City } from 'src/cities/entities/city.entity';
+import { Country } from 'src/countries/entities/country.entity';
+import { Phone } from 'src/phones/entities/phone.entity';
+import { Website } from 'src/websites/entities/website.entity';
 
 export class CreateProspectDto {
   @ApiProperty({
@@ -23,7 +22,7 @@ export class CreateProspectDto {
     description: "Domaine d'activité de l'entreprise",
     required: true,
   })
-  activity: CreateActivityDto;
+  activity: Activity[];
 
   @ApiProperty({
     description: 'Adresse postale',
@@ -35,28 +34,23 @@ export class CreateProspectDto {
     description: 'Ville',
     required: true,
   })
-  city: CreateCityDto;
+  city: City;
 
   @ApiProperty({
     description: 'Pays',
     required: true,
   })
-  country: CreateCountryDto;
-
-  @ApiProperty({
-    description: 'Email',
-  })
-  email: CreateEmailDto[];
+  country: Country;
 
   @ApiProperty({
     description: 'Numéro de téléphone',
   })
-  phone: CreatePhoneDto[];
+  phone: Phone;
 
   @ApiProperty({
     description: "Lien du site web de l'entreprise",
   })
-  website: CreateWebsiteDto[];
+  website: Website;
 
   @ApiProperty({
     description: 'Commentaire de prospection',

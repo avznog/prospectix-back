@@ -6,9 +6,9 @@ export class Website {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column()
-  website: string;
-
   @ManyToOne(() => Prospect)
   prospect: Prospect;
+
+  @Column()
+  website: string;
 }

@@ -1,7 +1,7 @@
-import { CreateProspectDto } from 'src/prospects/dto/create-prospect.dto';
+import { Prospect } from 'src/prospects/entities/prospect.entity';
 
 export class CreateEmailDto {
   id: number;
-  prospect: CreateProspectDto;
+  prospect: Prospect;
   email: string;
 }

@@ -32,7 +32,7 @@ export class ProjectManager {
   @OneToMany(() => Meeting, (meeting) => meeting.projectManager, { lazy: true })
   meetings: Meeting[];
 
-  @OneToMany(() => Reminder, (reminder) => reminder.projectManager, {
+  @OneToMany(() => Reminder, (reminder) => reminder.pm, {
     lazy: true,
   })
   reminders: Reminder[];

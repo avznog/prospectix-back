@@ -27,8 +27,8 @@ export class Prospect {
   @ManyToOne(() => Activity)
   activity: Activity;
 
-  @Column()
-  phone: string;
+  @OneToMany(() => Phone, (phone) => phone.prospect, { lazy: true })
+  phone: Phone[];
 
   @Column()
   streetAddress: string;

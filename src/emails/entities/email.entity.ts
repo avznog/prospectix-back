@@ -1,10 +1,11 @@
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
 import { SentEmail } from 'src/sent-emails/entities/sent-email.entity';
 import {
   Column,
   Entity,
-  ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -16,8 +17,11 @@ export class Email {
   @Column()
   email: string;
 
-  @ManyToOne(() => Prospect)
+  @OneToOne(() => Prospect)
   prospect: Prospect;
+
+  @OneToOne(() => ProjectManager)
+  projectManager: ProjectManager;
 
   @OneToMany(() => SentEmail, (sentEmail) => sentEmail.email, { lazy: true })
   sentEmails: SentEmail[];
