@@ -12,6 +12,7 @@ import { Prospect } from './prospects/entities/prospect.entity';
 import { Reminder } from './reminders/entities/reminder.entity';
 import { ProspectsModule } from './prospects/prospects.module';
 import { RemindersModule } from './reminders/reminders.module';
+import { Meeting } from './meetings/entities/meeting.entity';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { RemindersModule } from './reminders/reminders.module';
     ProjectManagersModule,
     ProspectsModule,
     RemindersModule,
+    Meeting,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST || 'localhost',
@@ -27,7 +29,7 @@ import { RemindersModule } from './reminders/reminders.module';
       password: process.env.POSTGRES_PASSWORD || 'postgres',
       database: process.env.POSTGRES_DB || 'testnew',
       synchronize: true,
-      entities: [Auth, ProjectManager, Prospect, Reminder],
+      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting],
     }),
     ConfigModule.forRoot({
       validationSchema: Joi.object({
