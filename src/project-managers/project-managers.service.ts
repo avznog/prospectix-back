@@ -32,21 +32,12 @@ export class ProjectManagersService {
     return `This action removes a #${id} projectManager`;
   }
 
-  //TODO - with auth -> returns the user
-  // async findByPayload(payload: TokenPayLoad)(
-  //   return this.projectManagerRepository.findOne(
-  //     {
-  //       where: {
-  //         pseudo: payload.username
-  //       }
-  //     }
-  //   )
-  // )
-  async findByPayload(): Promise<ProjectManager> {
-    const pm = new ProjectManager();
-    pm.pseudo = 'bgonzva';
-    pm.admin = false;
-    pm.id = 3;
-    return await pm;
+  async findByPayload(payload: TokenPayload): Promise<ProjectManager>{
+    return await this.pmRepository.findOne({
+      where: {
+        pseudo: payload.username
+      }
+    });
   }
+
 }

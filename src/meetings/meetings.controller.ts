@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { MeetingsService } from './meetings.service';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { UpdateMeetingDto } from './dto/update-meeting.dto';
 import { Meeting } from './entities/meeting.entity';
 import { ProjectManagersService } from 'src/project-managers/project-managers.service';
 import { UpdateResult } from 'typeorm';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import RequestWithPm from 'src/auth/interfaces/requestWithPm.interface';
 
 @Controller('meetings')
 export class MeetingsController {
@@ -14,15 +16,15 @@ export class MeetingsController {
     ) {}
 
   @Post(":idProspect")
-  async create(@Body() createMeetingDto: CreateMeetingDto, @Param("idProspect") idProspect: number) : Promise<Meeting> {
-    const pm = await this.pmService.findByPayload()
-    return await this.meetingsService.create(createMeetingDto, pm.id, idProspect);
+  async create(@Body() createMeetingDto: CreateMeetingDto, @Param("idProspect") idProspect: number, @Req() request: RequestWithPm) : Promise<Meeting> {
+    request.pm = request.user as ProjectManager;
+    return await this.meetingsService.create(createMeetingDto, request.pm.id, idProspect);
   }
 
   @Get("by-pm")
-  async findAllByPm() : Promise<Meeting[]>{
-    const pm = await this.pmService.findByPayload();
-    return await this.meetingsService.findAllByPm(pm.id);
+  async findAllByPm(@Req() request: RequestWithPm) : Promise<Meeting[]>{
+    request.pm = request.user as ProjectManager;
+    return await this.meetingsService.findAllByPm(request.pm.id);
   }
 
   @Get("by-prospect/:idProspect")
