@@ -21,8 +21,6 @@ export class RemindersController {
   @UseGuards(JwtAuthGuard)
   @Post(":idProspect")
   async create(@Body() createReminderDto: CreateReminderDto, @Param("idProspect") idProspect: number, @Req() request: RequestWithPm) : Promise<Reminder>{
-    // const pm = await this.pmService.findByPayload()
-    // return await this.reminderService.create(pm.id, createReminderDto, idProspect);
     request.pm = request.user as ProjectManager;
     return await this.reminderService.create(request.pm.id, createReminderDto, idProspect);
 
