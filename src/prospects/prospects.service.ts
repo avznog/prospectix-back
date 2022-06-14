@@ -16,8 +16,15 @@ import { Activity } from 'src/activities/entities/activity.entity';
 
 @Injectable()
 export class ProspectsService {
+  constructor(
+    @InjectRepository(Prospect)
+    private readonly prospectRepository: Repository<Prospect>,
+
+    @InjectRepository(Activity)
+    private readonly activityRepository: Repository<Activity>,
+  ) {}
   async create(createProspectDto: CreateProspectDto) {
-    const prospect = await Prospect.findOne({
+    const prospect = await this.prospectRepository.findOne({
       where: {
         companyName: createProspectDto.companyName,
       },
@@ -27,7 +34,7 @@ export class ProspectsService {
         'Prospect does not exist yet.',
         HttpStatus.NOT_FOUND,
       );
-    return await Prospect.save(createProspectDto);
+    return await this.prospectRepository.save(createProspectDto);
   }
 
   async findAll() {
@@ -40,15 +47,18 @@ export class ProspectsService {
 
   async findAllByActivity(activityName: string) {
     try {
-      const activity = await Activity.findOne({
+      const activity = await this.activityRepository.findOne({
         where: {
           name: activityName,
         },
       });
 
-      return await Prospect.find({
+      return await this.prospectRepository.find({
+        relations: ['activity'],
         where: {
-          activity: activity,
+          activity: {
+            id: activity.id,
+          },
         },
       });
     } catch (error) {
@@ -58,8 +68,6 @@ export class ProspectsService {
       );
     }
   }
-
-  //find by activity
 
   //find by activities
 
