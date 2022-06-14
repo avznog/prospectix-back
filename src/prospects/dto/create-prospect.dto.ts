@@ -91,4 +91,9 @@ export class CreateProspectDto {
     description: 'Number No, Nombre de "NON" suite à la prospection',
   })
   nbNo: number;
+
+  @ApiProperty({
+    description: 'Prospect is enabled or not',
+  })
+  disabled: boolean;
 }

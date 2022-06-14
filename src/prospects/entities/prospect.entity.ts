@@ -64,4 +64,7 @@ export class Prospect extends BaseEntity {
 
   @Column()
   nbNo: number;
+
+  @Column()
+  disabled: boolean;
 }

@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { CreateProspectDto } from './dto/create-prospect.dto';
 import { UpdateProspectDto } from './dto/update-prospect.dto';
 import { Prospect } from './entities/prospect.entity';
@@ -8,9 +8,6 @@ import { Phone } from 'src/phones/entities/phone.entity';
 import { Email } from 'src/emails/entities/email.entity';
 import { Website } from 'src/websites/entities/website.entity';
 import { City } from 'src/cities/entities/city.entity';
-import { Country } from 'src/countries/entities/country.entity';
-import { Meeting } from 'src/meetings/entities/meeting.entity';
-import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
@@ -41,6 +38,7 @@ export class ProspectsService {
     @InjectRepository(Phone)
     private readonly phoneRepository: Repository<Phone>,
   ) {}
+
   async create(createProspectDto: CreateProspectDto) {
     const prospect = await this.prospectRepository.findOne({
       where: {
@@ -48,7 +46,7 @@ export class ProspectsService {
       },
     });
     if (!prospect)
-      throw new HttpException("Ce proset n'existe pas", HttpStatus.NOT_FOUND);
+      throw new HttpException("Ce prospect n'existe pas", HttpStatus.NOT_FOUND);
     return await this.prospectRepository.save(createProspectDto);
   }
 
@@ -88,8 +86,6 @@ export class ProspectsService {
     }
   }
 
-  //find by city
-
   async findAllByCity(cityName: string): Promise<Prospect[]> {
     try {
       const city = await this.cityRepository.findOne({
@@ -113,21 +109,14 @@ export class ProspectsService {
     }
   }
 
-  //find by pm
-
-  async findAllByProjectManagerBookmark(idPm: number): Promise<Prospect[]> {
+  async findAllByBookmark(pmName: string): Promise<Prospect[]> {
     try {
-      const pm = await this.pmRepository.findOne({
-        where: {
-          id: idPm,
-        },
-      });
       return await this.prospectRepository.find({
         relations: ['bookmarks', 'pm'],
         where: {
           bookmarks: {
             pm: {
-              id: idPm,
+              pseudo: pmName
             },
           },
         },
@@ -139,8 +128,6 @@ export class ProspectsService {
       );
     }
   }
-
-  //find by phone
 
   async findAllByPhone(phoneProspect: string): Promise<Prospect[]> {
     try {
@@ -165,7 +152,7 @@ export class ProspectsService {
     }
   }
 
-  async findAllbyWebsite(websiteProspect: string): Promise<Prospect[]> {
+  async findAllByWebsite(websiteProspect: string): Promise<Prospect[]> {
     try {
       const website = await this.websiteRepository.findOne({
         where: {
@@ -231,11 +218,17 @@ export class ProspectsService {
     }
   }
 
-  async update(id: number, updateProspectDto: UpdateProspectDto) {
-    return `This action updates a #${id} prospect`;
+  async update(idProspect: number, updateProspectDto: UpdateProspectDto) {
+    return this.prospectRepository.update(idProspect, updateProspectDto);
   }
 
-  async remove(id: number) {
-    return `This action removes a #${id} prospect`;
+  async disable(id: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
+    this.prospectRepository.findOne({
+      where: {
+        id: id
+      }
+    });
+    updateProspectDto.disabled = true;
+    return await this.prospectRepository.update(id, updateProspectDto);
   }
 }
