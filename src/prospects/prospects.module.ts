@@ -16,9 +16,7 @@ import { Event } from 'src/events/entities/event.entity';
 import { ActivitiesController } from 'src/activities/activities.controller';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Prospect, Activity]),
-  ],
+  imports: [TypeOrmModule.forFeature([Prospect, Activity])],
   controllers: [ProspectsController],
   providers: [ProspectsService],
 })
