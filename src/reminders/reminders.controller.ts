@@ -2,11 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } fro
 import { RemindersService } from './reminders.service';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
-import { ProjectManagersService } from 'src/project-managers/project-managers.service';
 import { Reminder } from './entities/reminder.entity';
-import { ProspectsService } from 'src/prospects/prospects.service';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthService } from 'src/auth/services/auth.service';
 import RequestWithPm from 'src/auth/interfaces/requestWithPm.interface';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';

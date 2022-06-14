@@ -7,7 +7,7 @@ import { LoginPmDto } from './dto/login-project-manager.dto';
 import { ProjectManagersService } from 'src/project-managers/project-managers.service';
 import RequestWithPm from './interfaces/requestWithPm.interface';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import TokenPayload from './interfaces/tokenPayload.interface';
+import { Auth } from './entities/auth.entity';
 
 
 @Controller('auth')
@@ -21,8 +21,8 @@ export class AuthController {
 
   @HttpCode(200)
   @Post("login")
-  async loginldap(@Body() loginPmDto: LoginPmDto, @Req() request: RequestWithPm){
-    return this.authService.login(loginPmDto, request);
+  async loginldap(@Body() loginPmDto: LoginPmDto, @Req() request: RequestWithPm) : Promise<Auth>{
+    return await this.authService.login(loginPmDto, request);
   }
 
   @UseGuards(JwtAuthGuard)

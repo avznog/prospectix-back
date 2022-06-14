@@ -15,11 +15,11 @@ export class ProjectManagersService {
     private readonly pmRepository: Repository<ProjectManager>
   ){}
 
-  async create(createProjectManagerDto: CreateProjectManagerDto){
+  async create(createProjectManagerDto: CreateProjectManagerDto) : Promise<ProjectManager> {
     return await this.pmRepository.save(createProjectManagerDto)
   }
   
-  async setCurrentRefreshToken(refreshToken: string, username: string) {
+  async setCurrentRefreshToken(refreshToken: string, username: string) : Promise<UpdateResult> {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     const pmDto = new ProjectManagerDto();
     pmDto.pseudo = username;
@@ -38,8 +38,6 @@ export class ProjectManagersService {
   }
 
   async findByPayload(payload: TokenPayload): Promise<ProjectManager>{
-    // console.log(payload.username)
-    // console.log("here")
     return await this.pmRepository.findOne({
       where: {
         pseudo: payload.username

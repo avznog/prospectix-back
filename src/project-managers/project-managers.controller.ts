@@ -1,16 +1,9 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ProjectManagersService } from './project-managers.service';
 import { CreateProjectManagerDto } from './dto/create-project-manager.dto';
 import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { ProjectManager } from './entities/project-manager.entity';
 
 @Controller('project-managers')
 @ApiTags('project-managers')
@@ -18,7 +11,7 @@ export class ProjectManagersController {
   constructor(private readonly projectManagerService: ProjectManagersService) {}
 
   @Post()
-  create(@Body() createProjectManagerDto: CreateProjectManagerDto) {
+  create(@Body() createProjectManagerDto: CreateProjectManagerDto) : Promise<ProjectManager> {
     return this.projectManagerService.create(createProjectManagerDto);
   }
 
