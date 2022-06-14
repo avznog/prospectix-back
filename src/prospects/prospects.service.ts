@@ -19,7 +19,7 @@ export class ProspectsService {
     return `This action returns all prospects`;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Prospect> {
     return await this.prospectRepository.findOne({
       where: {
         id: id,

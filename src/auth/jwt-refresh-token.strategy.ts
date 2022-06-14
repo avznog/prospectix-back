@@ -4,8 +4,8 @@ import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { Request } from "express";
 import TokenPayload from "./interfaces/tokenPayload.interface";
-import { AuthService } from "./services/auth.service";
 import { ProjectManagersService } from "src/project-managers/project-managers.service";
+import { ProjectManager } from "src/project-managers/entities/project-manager.entity";
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, "jwt-refresh-token") {
   constructor (
@@ -22,7 +22,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, "jwt-ref
     });
   }
 
-  async validate(request: Request, payload: TokenPayload) {
+  async validate(request: Request, payload: TokenPayload) : Promise<ProjectManager>{
     const refreshToken = request.cookies?.Refresh;
     return this.pmService.getPmIfRefreshTokenMatches(refreshToken, payload.username)
   }

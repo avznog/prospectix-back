@@ -6,6 +6,7 @@ import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
 import { ProjectManager } from './entities/project-manager.entity';
 import * as bcrypt from 'bcrypt';
 import TokenPayload from 'src/auth/interfaces/tokenPayload.interface';
+import { CreateProjectManagerDto } from './dto/create-project-manager.dto';
 
 @Injectable()
 export class ProjectManagersService {
@@ -14,7 +15,16 @@ export class ProjectManagersService {
     private readonly pmRepository: Repository<ProjectManager>,
   ) {}
 
-  async setCurrentRefreshToken(refreshToken: string, username: string) {
+  async create(
+    createProjectManagerDto: CreateProjectManagerDto,
+  ): Promise<ProjectManager> {
+    return await this.pmRepository.save(createProjectManagerDto);
+  }
+
+  async setCurrentRefreshToken(
+    refreshToken: string,
+    username: string,
+  ): Promise<UpdateResult> {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     const pmDto = new ProjectManagerDto();
     pmDto.pseudo = username;

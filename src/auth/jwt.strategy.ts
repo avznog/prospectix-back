@@ -5,6 +5,7 @@ import { Request } from "express";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import TokenPayload from "./interfaces/tokenPayload.interface";
 import { AuthService } from "./services/auth.service";
+import { ProjectManagerDto } from "src/project-managers/dto/project-manager.dto";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -20,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
   
-  async validate(payload: TokenPayload) {
+  async validate(payload: TokenPayload) : Promise<ProjectManagerDto>{
     const user = await this.authService.validatePm(payload);
     if (!user) {
       throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);

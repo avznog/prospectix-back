@@ -20,7 +20,7 @@ export class RemindersService {
     private prospectRepository: Repository<Prospect>
   ){}
   
-  async create(idPm: number, createReminderDto: CreateReminderDto, idProspect: number) {
+  async create(idPm: number, createReminderDto: CreateReminderDto, idProspect: number) : Promise<Reminder>{
     try {
     const pm = await this.pmRepository.findOne({
       where: {
