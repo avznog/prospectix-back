@@ -32,6 +32,14 @@ export class ProspectsService {
 
     @InjectRepository(ProjectManager)
     private readonly pmRepository: Repository<ProjectManager>,
+    @InjectRepository(Email)
+    private readonly emailRepository: Repository<Email>,
+
+    @InjectRepository(Website)
+    private readonly websiteRepository: Repository<Website>,
+
+    @InjectRepository(Phone)
+    private readonly phoneRepository: Repository<Phone>,
   ) {}
   async create(createProspectDto: CreateProspectDto) {
     const prospect = await this.prospectRepository.findOne({
@@ -134,11 +142,94 @@ export class ProspectsService {
 
   //find by phone
 
-  //find by website
+  async findAllByPhone(phoneProspect: string): Promise<Prospect[]> {
+    try {
+      const phone = await this.phoneRepository.findOne({
+        where: {
+          number: phoneProspect,
+        },
+      });
 
-  //find by adress
+      return await this.prospectRepository.find({
+        relations: ['phone'],
+        where: {
+          id: phone.id,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        'Aucun prospect pour ce numéro de téléphone',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
 
-  //find by find by mail
+  async findAllbyWebsite(websiteProspect: string): Promise<Prospect[]> {
+    try {
+      const website = await this.websiteRepository.findOne({
+        where: {
+          website: websiteProspect,
+        },
+      });
+
+      return await this.prospectRepository.find({
+        relations: ['website'],
+        where: {
+          website: {
+            id: website.id,
+          },
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        'Aucun prospect pour ce site internet',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
+  async findAllByAddress(addressProspect: string): Promise<Prospect[]> {
+    try {
+      return await this.prospectRepository.find({
+        where: {
+          streetAddress: addressProspect,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        'Aucun prospect pour cette adresse',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
+  async findAllByMail(emailProspect: string): Promise<Prospect[]> {
+    try {
+      const email = await this.emailRepository.findOne({
+        where: {
+          email: emailProspect,
+        },
+      });
+
+      return await this.prospectRepository.find({
+        relations: ['email'],
+        where: {
+          email: {
+            id: email.id,
+          },
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        'Aucun prospect pour cet email',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
 
   async update(id: number, updateProspectDto: UpdateProspectDto) {
     return `This action updates a #${id} prospect`;

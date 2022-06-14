@@ -48,7 +48,7 @@ export class ProjectManager extends BaseEntity {
   })
   sentEmails: SentEmail[];
 
-  @OneToMany(() => Bookmark, (bookmark) => bookmark.projectManager, {
+  @OneToMany(() => Bookmark, (bookmark) => bookmark.pm, {
     lazy: true,
   })
   bookmarks: Bookmark[];
