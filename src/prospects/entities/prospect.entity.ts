@@ -9,15 +9,17 @@ import { Phone } from 'src/phones/entities/phone.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { Website } from 'src/websites/entities/website.entity';
 import {
+  BaseEntity,
   Column,
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity({ name: 'prospects' })
-export class Prospect {
+export class Prospect extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
@@ -26,9 +28,6 @@ export class Prospect {
 
   @ManyToOne(() => Activity)
   activity: Activity;
-
-  @OneToMany(() => Phone, (phone) => phone.prospect, { lazy: true })
-  phone: Phone[];
 
   @Column()
   streetAddress: string;
@@ -39,17 +38,14 @@ export class Prospect {
   @ManyToOne(() => Country)
   country: Country;
 
-  @Column()
-  website: string;
+  @OneToOne(() => Phone, (phone) => phone.prospect, { lazy: true })
+  phone: Phone;
 
-  @Column()
-  lastEvent: string;
+  @OneToOne(() => Email, (email) => email.prospect, { lazy: true })
+  email: Email;
 
-  @Column()
-  comment: string;
-
-  @Column()
-  nbNo: number;
+  @OneToOne(() => Website, (website) => website.prospect, { lazy: true })
+  website: Website;
 
   @OneToMany(() => Meeting, (meeting) => meeting.prospect, { lazy: true })
   meetings: Meeting[];
@@ -57,18 +53,15 @@ export class Prospect {
   @OneToMany(() => Reminder, (reminder) => reminder.prospect, { lazy: true })
   reminders: Reminder[];
 
-  @OneToMany(() => Email, (email) => email.prospect, { lazy: true })
-  emails: Email[];
-
-  @OneToMany(() => Phone, (phone) => phone.prospect, { lazy: true })
-  phones: Phone[];
-
-  @OneToMany(() => Website, (website) => website.prospect, { lazy: true })
-  websites: Website[];
-
-  @OneToMany(() => Bookmark, (bookmark) => bookmark.prospect, { lazy: true })
+  @OneToOne(() => Bookmark, (bookmark) => bookmark.prospect, { lazy: true })
   bookmarks: Bookmark[];
 
   @OneToMany(() => Event, (event) => event.prospect, { lazy: true })
   events: Event[];
+
+  @Column()
+  comment: string;
+
+  @Column()
+  nbNo: number;
 }

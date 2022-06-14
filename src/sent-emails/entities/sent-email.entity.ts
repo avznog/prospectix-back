@@ -1,9 +1,15 @@
 import { Email } from 'src/emails/entities/email.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'sent_email' })
-export class SentEmail {
+export class SentEmail extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 

@@ -1,8 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Activity } from 'src/activities/entities/activity.entity';
+import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { City } from 'src/cities/entities/city.entity';
 import { Country } from 'src/countries/entities/country.entity';
+import { Email } from 'src/emails/entities/email.entity';
+import { Event } from 'src/events/entities/event.entity';
+import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { Phone } from 'src/phones/entities/phone.entity';
+import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { Website } from 'src/websites/entities/website.entity';
 
 export class CreateProspectDto {
@@ -22,7 +27,7 @@ export class CreateProspectDto {
     description: "Domaine d'activité de l'entreprise",
     required: true,
   })
-  activity: Activity[];
+  activity: Activity;
 
   @ApiProperty({
     description: 'Adresse postale',
@@ -48,9 +53,34 @@ export class CreateProspectDto {
   phone: Phone;
 
   @ApiProperty({
+    description: "Email de l'entreprise",
+  })
+  email: Email;
+
+  @ApiProperty({
     description: "Lien du site web de l'entreprise",
   })
   website: Website;
+
+  @ApiProperty({
+    description: 'RDV avec ce prospect',
+  })
+  meetings: Meeting[];
+
+  @ApiProperty({
+    description: 'Rappels des CDP pour ce prospect',
+  })
+  reminders: Reminder[];
+
+  @ApiProperty({
+    description: 'Qui a mis ce prospect en favori ?',
+  })
+  bookmarks: Bookmark[];
+
+  @ApiProperty({
+    description: 'Toutes les interactions CDP / Prospect',
+  })
+  events: Event[];
 
   @ApiProperty({
     description: 'Commentaire de prospection',

@@ -1,8 +1,14 @@
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'goal' })
-export class Goal {
+export class Goal extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 

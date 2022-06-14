@@ -1,14 +1,20 @@
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'reminder' })
-export class Reminder {
+export class Reminder extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
   @ManyToOne(() => ProjectManager)
-  projectManager: ProjectManager;
+  pm: ProjectManager;
 
   @ManyToOne(() => Prospect)
   prospect: Prospect;

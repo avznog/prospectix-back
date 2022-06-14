@@ -1,10 +1,16 @@
 import { EventType } from 'src/constants/event.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-@Entity({ name: 'event' })
-export class Event {
+@Entity({ name: 'events' })
+export class Event extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
