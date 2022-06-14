@@ -1,49 +1,41 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ActivitiesModule } from './activities/activities.module';
-import { CitiesModule } from './cities/cities.module';
-import { CountriesModule } from './countries/countries.module';
-import { MeetingsModule } from './meetings/meetings.module';
-import { WebsitesModule } from './websites/websites.module';
-import { PhonesModule } from './phones/phones.module';
-import { EmailsModule } from './emails/emails.module';
-import { SentEmailsModule } from './sent-emails/sent-emails.module';
-import { AgendaLinksModule } from './agenda-links/agenda-links.module';
-import { EventsModule } from './events/events.module';
-import { GoalsModule } from './goals/goals.module';
-import { BookmarksModule } from './bookmarks/bookmarks.module';
-import { ProjectManagersModule } from './project-managers/project-managers.module';
-import { RemindersModule } from './reminders/reminders.module';
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+import * as Joi from '@hapi/joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Auth } from './auth/entities/auth.entity';
+import { ProjectManagersModule } from './project-managers/project-managers.module';
+import { ProjectManager } from './project-managers/entities/project-manager.entity';
+import { Prospect } from './prospects/entities/prospect.entity';
+import { Reminder } from './reminders/entities/reminder.entity';
 import { ProspectsModule } from './prospects/prospects.module';
+import { RemindersModule } from './reminders/reminders.module';
 
 @Module({
   imports: [
-    ActivitiesModule,
-    CitiesModule,
-    CountriesModule,
-    MeetingsModule,
-    WebsitesModule,
-    PhonesModule,
-    EmailsModule,
-    SentEmailsModule,
-    RemindersModule,
+    AuthModule,
     ProjectManagersModule,
     ProspectsModule,
-    BookmarksModule,
-    GoalsModule,
-    EventsModule,
-    AgendaLinksModule,
+    RemindersModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'thomas',
-      password: 'password',
-      database: 'prospectix',
-      entities: [__dirname + 'entities/**/*.entity.ts'],
+      host: process.env.POSTGRES_HOST || 'localhost',
+      port: +process.env.POSTGRES_PORT || 5432,
+      username: process.env.POSTGRES_USER || 'benjamingonzva',
+      password: process.env.POSTGRES_PASSWORD || 'postgres',
+      database: process.env.POSTGRES_DB || 'testnew',
       synchronize: true,
+      entities: [Auth, ProjectManager, Prospect, Reminder],
+    }),
+    ConfigModule.forRoot({
+      validationSchema: Joi.object({
+        JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
+        JWT_ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+        JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
+        JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+      }),
     }),
   ],
   controllers: [AppController],

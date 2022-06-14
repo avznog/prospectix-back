@@ -13,6 +13,7 @@ import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { Activity } from 'src/activities/entities/activity.entity';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 
 @Injectable()
 export class ProspectsService {
@@ -22,6 +23,15 @@ export class ProspectsService {
 
     @InjectRepository(Activity)
     private readonly activityRepository: Repository<Activity>,
+
+    @InjectRepository(City)
+    private readonly cityRepository: Repository<City>,
+
+    @InjectRepository(Bookmark)
+    private readonly bookmarkRepository: Repository<Bookmark>,
+
+    @InjectRepository(ProjectManager)
+    private readonly pmRepository: Repository<ProjectManager>,
   ) {}
   async create(createProspectDto: CreateProspectDto) {
     const prospect = await this.prospectRepository.findOne({
@@ -30,22 +40,23 @@ export class ProspectsService {
       },
     });
     if (!prospect)
-      throw new HttpException(
-        'Prospect does not exist yet.',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException("Ce proset n'existe pas", HttpStatus.NOT_FOUND);
     return await this.prospectRepository.save(createProspectDto);
   }
 
-  async findAll() {
-    return await this.findAll();
+  async findAll(): Promise<Prospect[]> {
+    return await this.prospectRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} prospect`;
+  async findOne(idProspect: number): Promise<Prospect> {
+    return await this.prospectRepository.findOne({
+      where: {
+        id: idProspect,
+      },
+    });
   }
 
-  async findAllByActivity(activityName: string) {
+  async findAllByActivity(activityName: string): Promise<Prospect[]> {
     try {
       const activity = await this.activityRepository.findOne({
         where: {
@@ -69,13 +80,57 @@ export class ProspectsService {
     }
   }
 
-  //find by activities
-
   //find by city
 
-  //find by cities
+  async findAllByCity(cityName: string): Promise<Prospect[]> {
+    try {
+      const city = await this.cityRepository.findOne({
+        where: {
+          name: cityName,
+        },
+      });
+      return await this.prospectRepository.find({
+        relations: ['city'],
+        where: {
+          city: {
+            id: city.id,
+          },
+        },
+      });
+    } catch (error) {
+      throw new HttpException(
+        'Aucun prospect pour cette ville',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
 
   //find by pm
+
+  async findAllByProjectManagerBookmark(idPm: number): Promise<Prospect[]> {
+    try {
+      const pm = await this.pmRepository.findOne({
+        where: {
+          id: idPm,
+        },
+      });
+      return await this.prospectRepository.find({
+        relations: ['bookmarks', 'pm'],
+        where: {
+          bookmarks: {
+            pm: {
+              id: idPm,
+            },
+          },
+        },
+      });
+    } catch (error) {
+      throw new HttpException(
+        'Aucun prospect ajouté en favori pour ce Chef de Projet',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
 
   //find by phone
 

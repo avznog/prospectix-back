@@ -14,7 +14,7 @@ export class Bookmark extends BaseEntity {
   id: number;
 
   @ManyToOne(() => ProjectManager)
-  projectManager: ProjectManager;
+  pm: ProjectManager;
 
   @ManyToOne(() => Prospect)
   prospect: Prospect;
