@@ -1,4 +1,9 @@
+import { ApiProperty } from "@nestjs/swagger";
+
 export class CreateCountryDto {
-  id: number;
+  @ApiProperty({
+    description: "Nom du pays",
+    required: true
+  })
   name: string;
 }

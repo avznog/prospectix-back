@@ -3,21 +3,39 @@ import { ProjectManager } from 'src/project-managers/entities/project-manager.en
 import { Prospect } from 'src/prospects/entities/prospect.entity';
 
 export class CreateReminderDto {
-  @ApiProperty()
+  @ApiProperty({
+    description: "Type du rappel",
+    required: true
+  })
   type: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: "Description du rappel",
+    required: true
+  })
   description: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: "Date du rappel",
+    required: true
+  })
   date: Date;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: "Priorité du rappel",
+    required: true
+  })
   priority: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: "Project manager à qui est affecté le rappel",
+    required: true
+  })
   pm: ProjectManager;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: "Prospect à qui est affecté le rappel",
+    required: true
+  })
   prospect: Prospect;
 }

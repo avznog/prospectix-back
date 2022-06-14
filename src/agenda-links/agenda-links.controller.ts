@@ -1,9 +1,11 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { AgendaLinksService } from './agenda-links.service';
 import { CreateAgendaLinkDto } from './dto/create-agenda-link.dto';
 import { UpdateAgendaLinkDto } from './dto/update-agenda-link.dto';
 
 @Controller('agenda-links')
+@ApiTags("agenda-links")
 export class AgendaLinksController {
   constructor(private readonly agendaLinksService: AgendaLinksService) {}
 

@@ -12,12 +12,6 @@ import { Website } from 'src/websites/entities/website.entity';
 
 export class CreateProspectDto {
   @ApiProperty({
-    description: 'ID du prospect',
-    required: true,
-  })
-  id: number;
-
-  @ApiProperty({
     description: "Nom de l'entreprise",
     required: true,
   })

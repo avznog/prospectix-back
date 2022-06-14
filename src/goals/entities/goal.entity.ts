@@ -25,10 +25,10 @@ export class Goal extends BaseEntity {
   description: string;
 
   @Column()
-  achievementTotalSteps: number;
+  totalSteps: number;
 
   @Column()
-  currentAchievement: number;
+  currentStep: number;
 
   @ManyToOne(() => ProjectManager)
   projectManager: ProjectManager;

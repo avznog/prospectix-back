@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { GoalsService } from './goals.service';
 import { CreateGoalDto } from './dto/create-goal.dto';
 import { UpdateGoalDto } from './dto/update-goal.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('goals')
+@ApiTags("goals")
 export class GoalsController {
   constructor(private readonly goalsService: GoalsService) {}
 
