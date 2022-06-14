@@ -1,19 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
-import { CreateProjectManagerDto } from './dto/create-project-manager.dto';
 import { ProjectManagerDto } from './dto/project-manager.dto';
 import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
 import { ProjectManager } from './entities/project-manager.entity';
-import * as bcrypt from "bcrypt";
+import * as bcrypt from 'bcrypt';
 import TokenPayload from 'src/auth/interfaces/tokenPayload.interface';
 
 @Injectable()
 export class ProjectManagersService {
   constructor(
     @InjectRepository(ProjectManager)
-    private readonly pmRepository: Repository<ProjectManager>
-  ){}
+    private readonly pmRepository: Repository<ProjectManager>,
+  ) {}
 
   async setCurrentRefreshToken(refreshToken: string, username: string) {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
@@ -21,59 +20,50 @@ export class ProjectManagersService {
     pmDto.pseudo = username;
     const pm = await this.pmRepository.findOne({
       where: {
-        pseudo: pmDto.pseudo
-      }
-    })
+        pseudo: pmDto.pseudo,
+      },
+    });
 
-    return await this.pmRepository.update(
-      pm.id, {
-        currentHashedRefreshToken: currentHashedRefreshToken
-      }
-      
-    );
-  }
-
-  async findByPayload(payload: TokenPayload): Promise<ProjectManager>{
-    // console.log(payload.username)
-    // console.log("here")
-    return await this.pmRepository.findOne({
-      where: {
-        pseudo: payload.username
-      }
+    return await this.pmRepository.update(pm.id, {
+      currentHashedRefreshToken: currentHashedRefreshToken,
     });
   }
 
-  async getPmIfRefreshTokenMatches(refreshToken: string, username: string) : Promise<ProjectManager>{
+  async getPmIfRefreshTokenMatches(
+    refreshToken: string,
+    username: string,
+  ): Promise<ProjectManager> {
     const pm = await this.pmRepository.findOne({
       where: {
-        pseudo: username
-      }
+        pseudo: username,
+      },
     });
 
-    if(!pm)
-      throw new HttpException("Aucun cdp n'existe avec ce nom d'utilisateur", HttpStatus.NOT_FOUND)
+    if (!pm)
+      throw new HttpException(
+        "Aucun cdp n'existe avec ce nom d'utilisateur",
+        HttpStatus.NOT_FOUND,
+      );
 
     const isRefreshtokenMatching = await bcrypt.compare(
       refreshToken,
-      pm.currentHashedRefreshToken
+      pm.currentHashedRefreshToken,
     );
 
-    if(isRefreshtokenMatching){
+    if (isRefreshtokenMatching) {
       return pm;
     }
   }
 
-  async removeRefreshToken(username: string) : Promise<UpdateResult> {
+  async removeRefreshToken(username: string): Promise<UpdateResult> {
     const pm = await this.pmRepository.findOne({
       where: {
-        pseudo: username
-      }
+        pseudo: username,
+      },
     });
-    return await this.pmRepository.update(
-      pm.id, {
-        pseudo: username
-      }
-    )
+    return await this.pmRepository.update(pm.id, {
+      pseudo: username,
+    });
   }
 
   findAll() {
@@ -92,4 +82,11 @@ export class ProjectManagersService {
     return `This action removes a #${id} projectManager`;
   }
 
+  async findByPayload(payload: TokenPayload): Promise<ProjectManager> {
+    return await this.pmRepository.findOne({
+      where: {
+        pseudo: payload.username,
+      },
+    });
+  }
 }

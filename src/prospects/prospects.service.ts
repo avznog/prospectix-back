@@ -9,9 +9,8 @@ import { Prospect } from './entities/prospect.entity';
 export class ProspectsService {
   constructor(
     @InjectRepository(Prospect)
-    private readonly prospectRepository: Repository<Prospect>
-  ){}
-  
+    private readonly prospectRepository: Repository<Prospect>,
+  ) {}
   create(createProspectDto: CreateProspectDto) {
     return 'This action adds a new prospect';
   }
@@ -23,9 +22,9 @@ export class ProspectsService {
   async findOne(id: number) {
     return await this.prospectRepository.findOne({
       where: {
-        id: id
-      }
-    })
+        id: id,
+      },
+    });
   }
 
   update(id: number, updateProspectDto: UpdateProspectDto) {
