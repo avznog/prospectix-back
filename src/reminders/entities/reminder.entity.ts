@@ -1,14 +1,23 @@
-import { ProjectManager } from "src/project-managers/entities/project-manager.entity";
-import { Prospect } from "src/prospects/entities/prospect.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { Prospect } from 'src/prospects/entities/prospect.entity';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-@Entity()
-export class Reminder {
-  @PrimaryGeneratedColumn()
+@Entity({ name: 'reminder' })
+export class Reminder extends BaseEntity {
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column()
-  type: string;
+  @ManyToOne(() => ProjectManager)
+  pm: ProjectManager;
+
+  @ManyToOne(() => Prospect)
+  prospect: Prospect;
 
   @Column()
   description: string;
@@ -18,10 +27,4 @@ export class Reminder {
 
   @Column()
   date: Date;
-
-  @ManyToOne(() => ProjectManager)
-  pm: ProjectManager;
-
-  @ManyToOne(() => Prospect)
-  prospect: Prospect;
 }

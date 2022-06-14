@@ -1,9 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { Email } from 'src/emails/entities/email.entity';
 
 export class CreateProjectManagerDto {
-  @ApiProperty()
+  id: number;
+  firstname: string;
+  lastname: string;
+  email: Email;
   pseudo: string;
-
-  @ApiProperty()
+  tokenEmail: string;
   admin: boolean;
 }

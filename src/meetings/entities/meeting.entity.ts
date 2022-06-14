@@ -1,22 +1,28 @@
-import { MeetingType } from "src/constants/meeting.type";
-import { ProjectManager } from "src/project-managers/entities/project-manager.entity";
-import { Prospect } from "src/prospects/entities/prospect.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { MeetingType } from 'src/constants/meeting.type';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { Prospect } from 'src/prospects/entities/prospect.entity';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-@Entity()
-export class Meeting {
-  @PrimaryGeneratedColumn()
+@Entity({ name: 'meeting' })
+export class Meeting extends BaseEntity {
+  @PrimaryGeneratedColumn('increment')
   id: number;
+
+  @Column()
+  type: MeetingType = MeetingType.TEL_VISIO;
 
   @Column()
   date: Date;
 
-  @Column()
-  type: string;
+  @ManyToOne(() => ProjectManager)
+  pm: ProjectManager;
 
   @ManyToOne(() => Prospect)
   prospect: Prospect;
-
-  @ManyToOne(() => ProjectManager)
-  pm: ProjectManager;
 }
