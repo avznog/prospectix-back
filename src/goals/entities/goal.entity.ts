@@ -64,5 +64,5 @@ export class Goal extends BaseEntity {
     description: "Chef de projet à qui appartient l'objectif",
     required: true
   })
-  projectManager: ProjectManager;
+  pm: ProjectManager;
 }
