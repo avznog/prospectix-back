@@ -4,18 +4,34 @@ import { ProjectManager } from 'src/project-managers/entities/project-manager.en
 import { Prospect } from 'src/prospects/entities/prospect.entity';
 
 export class CreateEventDto {
-  @ApiProperty()
-  id: number;
-
-  @ApiProperty()
+  @ApiProperty({
+    description: "Project manager lié à l'évènement",
+    required: true
+  })
   pm: ProjectManager;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: "Prospect lié à l'évènement",
+    required: true
+  })
   prospect: Prospect;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: "Evènement",
+    required: true,
+    enum: {
+      NOANSWER: "NOANSWER",
+      MEETING: "MEETING",
+      RECALL: "RECALL",
+      REJECTION: "REJECTION",
+      NA: "NA"
+    }
+  })
   event: EventType;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: "Date de création de l'évènement",
+    required: true
+  })
   creationDate: Date;
 }

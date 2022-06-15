@@ -1,7 +1,16 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
 
 export class CreateWebsiteDto {
-  id: number;
+  @ApiProperty({
+    description: "Prospect à qui appartient le site internet",
+    required: true
+  })
   prospect: Prospect;
+
+  @ApiProperty({
+    description: "Addresse web du site internet",
+    required: true
+  })
   website: string;
 }

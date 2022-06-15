@@ -6,8 +6,10 @@ import { Meeting } from './entities/meeting.entity';
 import { UpdateResult } from 'typeorm';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import RequestWithPm from 'src/auth/interfaces/requestWithPm.interface';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('meetings')
+@ApiTags("meetings")
 export class MeetingsController {
   constructor(
     private readonly meetingsService: MeetingsService
