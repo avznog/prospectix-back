@@ -16,25 +16,25 @@ export class MeetingsController {
     ) {}
 
   @Post(":idProspect")
-  async create(@Body() createMeetingDto: CreateMeetingDto, @Param("idProspect") idProspect: number, @Req() request: RequestWithPm) : Promise<Meeting> {
+  create(@Body() createMeetingDto: CreateMeetingDto, @Param("idProspect") idProspect: number, @Req() request: RequestWithPm) : Promise<Meeting> {
     request.pm = request.user as ProjectManager;
-    return await this.meetingsService.create(createMeetingDto, request.pm.id, idProspect);
+    return this.meetingsService.create(createMeetingDto, request.pm.id, idProspect);
   }
 
   @Get("by-pm")
-  async findAllByPm(@Req() request: RequestWithPm) : Promise<Meeting[]>{
+  findAllByPm(@Req() request: RequestWithPm) : Promise<Meeting[]>{
     request.pm = request.user as ProjectManager;
-    return await this.meetingsService.findAllByPm(request.pm.id);
+    return this.meetingsService.findAllByPm(request.pm.id);
   }
 
   @Get("by-prospect/:idProspect")
-  async findAllByProspect(@Param("idProspect") idProspect: number) : Promise<Meeting[]> {
-    return await this.meetingsService.findAllByProspect(idProspect);
+  findAllByProspect(@Param("idProspect") idProspect: number) : Promise<Meeting[]> {
+    return this.meetingsService.findAllByProspect(idProspect);
   }
 
   @Patch(':idMeeting')
-  async update(@Param('idMeeting') idMeeting: string, @Body() updateMeetingDto: UpdateMeetingDto) : Promise<UpdateResult>{
-    return await this.meetingsService.update(+idMeeting, updateMeetingDto);
+  update(@Param('idMeeting') idMeeting: string, @Body() updateMeetingDto: UpdateMeetingDto) : Promise<UpdateResult>{
+    return this.meetingsService.update(+idMeeting, updateMeetingDto);
   }
 
   @Delete(':id')

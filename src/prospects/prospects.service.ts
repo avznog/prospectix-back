@@ -218,7 +218,7 @@ export class ProspectsService {
     }
   }
 
-  async update(idProspect: number, updateProspectDto: UpdateProspectDto) {
+  async update(idProspect: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
     return this.prospectRepository.update(idProspect, updateProspectDto);
   }
 

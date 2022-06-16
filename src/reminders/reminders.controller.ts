@@ -17,22 +17,22 @@ export class RemindersController {
 
   @UseGuards(JwtAuthGuard)
   @Post(":idProspect")
-  async create(@Body() createReminderDto: CreateReminderDto, @Param("idProspect") idProspect: number, @Req() request: RequestWithPm) : Promise<Reminder>{
+  create(@Body() createReminderDto: CreateReminderDto, @Param("idProspect") idProspect: number, @Req() request: RequestWithPm) : Promise<Reminder>{
     request.pm = request.user as ProjectManager;
-    return await this.reminderService.create(request.pm.id, createReminderDto, idProspect);
+    return this.reminderService.create(request.pm.id, createReminderDto, idProspect);
 
   }
 
   @UseGuards(JwtAuthGuard)
   @Get("by-pm")
-  async findAllByPm(@Req() request: RequestWithPm) : Promise<Reminder[]>{
+  findAllByPm(@Req() request: RequestWithPm) : Promise<Reminder[]>{
     request.pm = request.user as ProjectManager;
-    return await this.reminderService.findAllByPm(request.pm.id);
+    return this.reminderService.findAllByPm(request.pm.id);
   }
 
   @Get("by-prospect/:idProspect")
-  async findAllByProspect(@Param("idProspect") idProspect: number): Promise<Reminder[]> {
-    return await this.reminderService.findAllByProspect(idProspect);
+  findAllByProspect(@Param("idProspect") idProspect: number): Promise<Reminder[]> {
+    return this.reminderService.findAllByProspect(idProspect);
   }
 
   @Get(':id')

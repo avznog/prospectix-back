@@ -11,6 +11,7 @@ import { CreateProspectDto } from './dto/create-prospect.dto';
 import { UpdateProspectDto } from './dto/update-prospect.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Prospect } from './entities/prospect.entity';
+import { UpdateResult } from 'typeorm';
 
 @Controller('prospects')
 @ApiTags('prospects')
@@ -19,19 +20,19 @@ export class ProspectsController {
 
   // @UseGuards(JwtAuthenticationGuard)
   @Post()
-  create(@Body() createProspectDto: CreateProspectDto) {
+  create(@Body() createProspectDto: CreateProspectDto) : Promise<Prospect> {
     return this.prospectsService.create(createProspectDto);
   }
 
   // @UseGuards(JwtAuthenticationGuard)
   @Get()
-  findAll() {
+  findAll() : Promise<Prospect[]> {
     return this.prospectsService.findAll();
   }
 
   // @UseGuards(JwtAuthenticationGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string) : Promise<Prospect> {
     return this.prospectsService.findOne(+id);
   }
 
@@ -40,13 +41,13 @@ export class ProspectsController {
   update(
     @Param('id') id: string,
     @Body() updateProspectDto: UpdateProspectDto,
-  ) {
+  ) : Promise<UpdateResult>{
     return this.prospectsService.update(+id, updateProspectDto);
   }
 
   // @UseGuards(JwtAuthenticationGuard)
   @Patch(':id')
-  remove(@Param('id') id: string, @Body() createProspectDto: CreateProspectDto) {
+  remove(@Param('id') id: string, @Body() createProspectDto: CreateProspectDto) : Promise<UpdateResult>{
     return this.prospectsService.disable(+id, createProspectDto);
   }
 
