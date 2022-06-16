@@ -87,12 +87,4 @@ export class RemindersService {
       throw new HttpException("Impossible de trouver les rappels pour ce prospect", HttpStatus.BAD_REQUEST)
     }
   }
-
-  findOne(id: number) {
-    return `This action returns a #${id} reminder`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} reminder`;
-  }
 }

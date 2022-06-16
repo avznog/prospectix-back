@@ -4,7 +4,6 @@ import { ProjectManager } from 'src/project-managers/entities/project-manager.en
 import { Prospect } from 'src/prospects/entities/prospect.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
-import { UpdateMeetingDto } from './dto/update-meeting.dto';
 import { Meeting } from './entities/meeting.entity';
 
 @Injectable()
@@ -79,15 +78,4 @@ export class MeetingsService {
     
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} meeting`;
-  }
-
-  async update(idMeeting: number, updateMeetingDto: UpdateMeetingDto) : Promise<UpdateResult> {
-    return await this.meetingRepository.update(idMeeting, updateMeetingDto);
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} meeting`;
-  }
 }

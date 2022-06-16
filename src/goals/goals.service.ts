@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Like, Repository } from 'typeorm';
 import { CreateGoalDto } from './dto/create-goal.dto';
-import { UpdateGoalDto } from './dto/update-goal.dto';
 import { Goal } from './entities/goal.entity';
 
 @Injectable()
@@ -105,15 +104,4 @@ export class GoalsService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} goal`;
-  }
-
-  update(id: number, updateGoalDto: UpdateGoalDto) {
-    return `This action updates a #${id} goal`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} goal`;
-  }
 }
