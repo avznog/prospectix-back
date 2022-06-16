@@ -55,13 +55,13 @@ export class GoalsService {
     }
   }
 
-  async findAllByPm(idPm: number) : Promise<Goal[]> {
+  async findAllByPm(pseudoPm: string) : Promise<Goal[]> {
     try{
       return await this.goalRepository.find({
         relations: ["pm"],
         where: {
           pm: {
-            id: idPm
+            pseudo: pseudoPm
           }
         }
       })
@@ -71,13 +71,13 @@ export class GoalsService {
     }
   }
 
-  async findAllByTitleAndCurrentPm(title: string, idPm: number) : Promise<Goal[]> {
+  async findAllByTitleAndCurrentPm(title: string, pseudoPm: string) : Promise<Goal[]> {
     try {
       return await this.goalRepository.find({
         relations: ["pm"],
         where: {
           pm: {
-            id: idPm
+            pseudo: pseudoPm
           },
           title: Like("%" + title + "%")
         }
@@ -88,13 +88,13 @@ export class GoalsService {
     }
   }
 
-  async findAllByTitleAndPm(title: string, idPm: number) : Promise<Goal[]> {
+  async findAllByTitleAndPm(title: string, pseudoPm: string) : Promise<Goal[]> {
     try {
       return await this.goalRepository.find({
         relations: ["pm"],
         where: {
           pm: {
-            id: idPm
+            pseudo: pseudoPm
           },
           title: Like("%" + title + "%")
         }

@@ -28,9 +28,9 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post("logout")
   @HttpCode(200)
-  async logOut(@Req() request: RequestWithPm) : Promise<ProjectManager>{
+  logOut(@Req() request: RequestWithPm) : ProjectManager{
     request.pm = request.user as ProjectManager;
-    await this.pmService.removeRefreshToken(request.pm.pseudo);
+    this.pmService.removeRefreshToken(request.pm.pseudo);
     request.res.setHeader('Set-Cookie', this.authService.getCookiesForLogOut());
     return request.pm;
   }
