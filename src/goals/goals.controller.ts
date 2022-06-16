@@ -37,7 +37,7 @@ export class GoalsController {
   @Get("by-title-and-current-pm/:title")
   findAllByTitleAndCurrentPm(@Param("title") title: string, @Req() request: RequestWithPm) : Promise<Goal[]> {
     request.pm = request.user as ProjectManager;
-    return this.goalsService.findAllByTitleAndCurrentPm(title, request.pm.id);
+    return this.goalsService.findAllByTitleAndCurrentPm(title, request.pm.pseudo);
   }
 
   @Get("by-title-and-pm/:title/:pseudoPm")
