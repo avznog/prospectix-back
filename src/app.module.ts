@@ -12,6 +12,30 @@ import { Prospect } from './prospects/entities/prospect.entity';
 import { Reminder } from './reminders/entities/reminder.entity';
 import { ProspectsModule } from './prospects/prospects.module';
 import { RemindersModule } from './reminders/reminders.module';
+import { Meeting } from './meetings/entities/meeting.entity';
+import { Activity } from './activities/entities/activity.entity';
+import { AgendaLink } from './agenda-links/entities/agenda-link.entity';
+import { Bookmark } from './bookmarks/entities/bookmark.entity';
+import { City } from './cities/entities/city.entity';
+import { Country } from './countries/entities/country.entity';
+import { Email } from './emails/entities/email.entity';
+import { Event } from './events/entities/event.entity';
+import { Goal } from './goals/entities/goal.entity';
+import { Phone } from './phones/entities/phone.entity';
+import { SentEmail } from './sent-emails/entities/sent-email.entity';
+import { Website } from './websites/entities/website.entity';
+import { MeetingsModule } from './meetings/meetings.module';
+import { ActivitiesModule } from './activities/activities.module';
+import { AgendaLinksModule } from './agenda-links/agenda-links.module';
+import { BookmarksModule } from './bookmarks/bookmarks.module';
+import { CitiesModule } from './cities/cities.module';
+import { CountriesModule } from './countries/countries.module';
+import { EmailsModule } from './emails/emails.module';
+import { EventsModule } from './events/events.module';
+import { GoalsModule } from './goals/goals.module';
+import { PhonesModule } from './phones/phones.module';
+import { SentEmailsModule } from './sent-emails/sent-emails.module';
+import { WebsitesModule } from './websites/websites.module';
 
 @Module({
   imports: [
@@ -19,15 +43,27 @@ import { RemindersModule } from './reminders/reminders.module';
     ProjectManagersModule,
     ProspectsModule,
     RemindersModule,
+    MeetingsModule,
+    ActivitiesModule,
+    AgendaLinksModule,
+    BookmarksModule,
+    CitiesModule,
+    CountriesModule,
+    EmailsModule,
+    EventsModule,
+    GoalsModule,
+    PhonesModule,
+    SentEmailsModule,
+    WebsitesModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST || 'localhost',
       port: +process.env.POSTGRES_PORT || 5432,
       username: process.env.POSTGRES_USER || 'benjamingonzva',
       password: process.env.POSTGRES_PASSWORD || 'postgres',
-      database: process.env.POSTGRES_DB || 'testnew',
+      database: process.env.POSTGRES_DB || 'new_mr_table',
       synchronize: true,
-      entities: [Auth, ProjectManager, Prospect, Reminder],
+      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website],
     }),
     ConfigModule.forRoot({
       validationSchema: Joi.object({

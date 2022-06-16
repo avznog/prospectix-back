@@ -3,16 +3,16 @@ import { MeetingsService } from './meetings.service';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { UpdateMeetingDto } from './dto/update-meeting.dto';
 import { Meeting } from './entities/meeting.entity';
-import { ProjectManagersService } from 'src/project-managers/project-managers.service';
 import { UpdateResult } from 'typeorm';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import RequestWithPm from 'src/auth/interfaces/requestWithPm.interface';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('meetings')
+@ApiTags("meetings")
 export class MeetingsController {
   constructor(
-    private readonly meetingsService: MeetingsService,
-    private readonly pmService: ProjectManagersService
+    private readonly meetingsService: MeetingsService
     ) {}
 
   @Post(":idProspect")

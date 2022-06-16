@@ -84,12 +84,7 @@ export class MeetingsService {
   }
 
   async update(idMeeting: number, updateMeetingDto: UpdateMeetingDto) : Promise<UpdateResult> {
-    const oldMeeting = await this.meetingRepository.findOne({
-      where: {
-        id: idMeeting
-      }
-    });
-    return await this.meetingRepository.update(idMeeting, oldMeeting);
+    return await this.meetingRepository.update(idMeeting, updateMeetingDto);
   }
 
   remove(id: number) {

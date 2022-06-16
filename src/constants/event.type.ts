@@ -1,7 +1,7 @@
 export enum EventType {
-  NOANSWER,
-  MEETING,
-  RECALL,
-  REJECTION,
-  NA,
+  NOANSWER = 'NOANSWER',
+  MEETING = 'MEETING',
+  RECALL = 'RECALL',
+  REJECTION = 'REJECTION',
+  NA = 'NA',
 }

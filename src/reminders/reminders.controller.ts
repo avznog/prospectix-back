@@ -40,11 +40,6 @@ export class RemindersController {
     return this.reminderService.findOne(+id);
   }
 
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateReminderDto: UpdateReminderDto ){
-    
-  }
-
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.reminderService.remove(+id);

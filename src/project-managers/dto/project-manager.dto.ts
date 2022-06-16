@@ -1,4 +1,9 @@
+import { ApiProperty } from "@nestjs/swagger";
+
 export class ProjectManagerDto {
-  id?: number;
+  @ApiProperty({
+    description: "Pseudo du chef de projet",
+    required: true
+  })
   pseudo: string;
 }
