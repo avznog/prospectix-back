@@ -29,9 +29,9 @@ export class GoalsController {
     return this.goalsService.findAllByCurrentPm(request.pm.id);
   }
 
-  @Get("by-pm/:idPm")
-  findAllByPm(@Param("idPm") idPm: number ) : Promise<Goal[]> {
-    return this.goalsService.findAllByPm(idPm);
+  @Get("by-pm/:pseudoPm")
+  findAllByPm(@Param("pseudoPm") pseudoPm: string ) : Promise<Goal[]> {
+    return this.goalsService.findAllByPm(pseudoPm);
   }
 
   @Get("by-title-and-current-pm/:title")
@@ -40,9 +40,9 @@ export class GoalsController {
     return this.goalsService.findAllByTitleAndCurrentPm(title, request.pm.id);
   }
 
-  @Get("by-title-and-pm/:title/:idPm")
-  findAllByTitleAndPm(@Param("title") title: string, @Param("idPm") idPm: number) : Promise<Goal[]> {
-    return this.goalsService.findAllByTitleAndPm(title, idPm);
+  @Get("by-title-and-pm/:title/:pseudoPm")
+  findAllByTitleAndPm(@Param("title") title: string, @Param("pseudoPm") pseudoPm: string) : Promise<Goal[]> {
+    return this.goalsService.findAllByTitleAndPm(title, pseudoPm);
   }
   @Get(':id')
   findOne(@Param('id') id: string) {
