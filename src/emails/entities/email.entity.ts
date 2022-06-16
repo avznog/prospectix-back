@@ -31,7 +31,7 @@ export class Email extends BaseEntity {
   prospect: Prospect;
 
   @OneToOne(() => ProjectManager)
-  projectManager: ProjectManager;
+  pm: ProjectManager;
 
   @OneToMany(() => SentEmail, (sentEmail) => sentEmail.email, { lazy: true })
   sentEmails: SentEmail[];
