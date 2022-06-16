@@ -61,7 +61,7 @@ import { WebsitesModule } from './websites/websites.module';
       port: +process.env.POSTGRES_PORT || 5432,
       username: process.env.POSTGRES_USER || 'benjamingonzva',
       password: process.env.POSTGRES_PASSWORD || 'postgres',
-      database: process.env.POSTGRES_DB || 'new_mr_table',
+      database: process.env.POSTGRES_DB || 'prospectix',
       synchronize: true,
       entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website],
     }),
