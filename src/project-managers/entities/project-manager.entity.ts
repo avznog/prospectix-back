@@ -14,7 +14,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'cdp' })
+@Entity({ name: 'project-manager' })
 export class ProjectManager extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   @ApiProperty({
