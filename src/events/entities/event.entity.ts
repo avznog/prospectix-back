@@ -24,7 +24,7 @@ export class Event extends BaseEntity {
     description: "Chef de projet lié à l'évènement",
     required: true
   })
-  projectManager: ProjectManager;
+  pm: ProjectManager;
 
   @ManyToOne(() => Prospect)
   @ApiProperty({

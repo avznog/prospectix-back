@@ -23,7 +23,7 @@ export class SentEmail extends BaseEntity {
     description: "Chef de projet lié à l'email envoyé",
     required: true
   })
-  projectManager: ProjectManager;
+  pm: ProjectManager;
 
   @ManyToOne(() => Email)
   @ApiProperty({

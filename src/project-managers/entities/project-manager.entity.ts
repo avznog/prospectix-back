@@ -73,7 +73,7 @@ export class ProjectManager extends BaseEntity {
   })
   tokenEmail: string;
 
-  @OneToMany(() => Goal, (goal) => goal.projectManager, { lazy: true })
+  @OneToMany(() => Goal, (goal) => goal.pm, { lazy: true })
   @ApiProperty({
     description: "Objectifs du chef de projet",
     required: true
@@ -96,7 +96,7 @@ export class ProjectManager extends BaseEntity {
   })
   reminders: Reminder[];
 
-  @OneToMany(() => SentEmail, (sentEmail) => sentEmail.projectManager, {
+  @OneToMany(() => SentEmail, (sentEmail) => sentEmail.pm, {
     lazy: true,
   })
   @ApiProperty({
