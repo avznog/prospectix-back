@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'bookmark' })
+@Entity()
 export class Bookmark extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   @ApiProperty({

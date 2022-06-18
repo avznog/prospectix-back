@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'agenda_link_entity' })
+@Entity()
 export class AgendaLink extends BaseEntity {
   @PrimaryGeneratedColumn()
   @ApiProperty({

@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'events' })
+@Entity()
 export class Event extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   @ApiProperty({

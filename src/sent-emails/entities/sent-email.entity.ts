@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'sent_email' })
+@Entity()
 export class SentEmail extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   @ApiProperty({

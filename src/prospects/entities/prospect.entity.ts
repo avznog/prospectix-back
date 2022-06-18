@@ -19,7 +19,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'prospects' })
+@Entity()
 export class Prospect extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   @ApiProperty({

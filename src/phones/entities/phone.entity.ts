@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'phone' })
+@Entity()
 export class Phone extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   @ApiProperty({
