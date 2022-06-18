@@ -13,7 +13,7 @@ services:
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_USER=postgres
-      - DB_PW=postgres
+      - DB_PW=gJdh]&qpTC2h6
     ports:
       - 3000:3000
     depends_on:
