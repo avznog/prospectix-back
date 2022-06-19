@@ -33,7 +33,6 @@ export class ProspectsController {
     return this.prospectsService.findOne(+id);
   }
 
-  @Roles("")
   @Patch(':id')
   @Roles("Cdp","Admin")
   update(
@@ -50,37 +49,37 @@ export class ProspectsController {
   }
 
   @Roles("Cdp","Admin")
-  @Get("by-activity:activityName")
-  findAllByActivity(@Param() activityName: string) : Promise<Prospect[]> {
+  @Get("by-activity/:activityName")
+  findAllByActivity(@Param("activityName") activityName: string) : Promise<Prospect[]> {
     return this.prospectsService.findAllByActivity(activityName);
   }
 
   @Roles("Cdp","Admin")
-  @Get("by-city:cityName")
-  findAllByCity(@Param() cityName: string) : Promise<Prospect[]> {
+  @Get("by-city/:cityName")
+  findAllByCity(@Param("cityName") cityName: string) : Promise<Prospect[]> {
     return this.prospectsService.findAllByCity(cityName);
   }
 
   @Roles("Cdp","Admin")
-  @Get("by-bookmarks:pmName")
-  findAllByBookmark(@Param() pmName: string) : Promise<Prospect[]> {
+  @Get("by-bookmarks/:pmName")
+  findAllByBookmark(@Param("pmName") pmName: string) : Promise<Prospect[]> {
     return this.prospectsService.findAllByBookmark(pmName);
   }
 
   @Roles("Cdp","Admin")
-  @Get("by-phone:phoneProspect")
+  @Get("by-phone/:phoneProspect")
   findAllByPhone(@Param("phoneProspect") phoneProspect: string) : Promise<Prospect[]> {
     return this.prospectsService.findAllByPhone(phoneProspect);
   }
 
   @Roles("Cdp","Admin")
-  @Get("by-website:websiteProspect")
+  @Get("by-website/:websiteProspect")
   findAllByWebsite(@Param("websiteProspect") websiteProspect: string) : Promise<Prospect[]> {
     return this.prospectsService.findAllByWebsite(websiteProspect);
   }
   
   @Roles("Cdp","Admin")
-  @Get("by-address:addressProspect")
+  @Get("by-address/:addressProspect")
   findAllByAddress(@Param("addressProspect") addressProspect: string) : Promise<Prospect[]> {
     return this.prospectsService.findAllByAddress(addressProspect);
   }
@@ -89,5 +88,11 @@ export class ProspectsController {
   @Get("by-mail/:emailProspect")
   findAllByMail(@Param("emailProspect") emailProspect: string) : Promise<Prospect[]> {
    return this.prospectsService.findAllByMail(emailProspect); 
+  }
+
+  @Roles("Cdp","Admin")
+  @Get("by-words/:words")
+  findAllByKeyWords(@Param("words") words: string) : Promise<Prospect[][]> {
+    return this.prospectsService.findAllByKeyWords([words]);
   }
 }
