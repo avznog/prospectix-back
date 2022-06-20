@@ -6,6 +6,7 @@ import {
   BaseEntity,
   Column,
   Entity,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -27,7 +28,7 @@ export class Email extends BaseEntity {
   })
   email: string;
 
-  @OneToOne(() => Prospect)
+  @ManyToOne(() => Prospect)
   prospect: Prospect;
 
   @OneToOne(() => ProjectManager)

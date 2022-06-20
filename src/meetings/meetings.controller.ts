@@ -24,11 +24,11 @@ export class MeetingsController {
     return this.meetingsService.create(createMeetingDto, request.pm.id, idProspect);
   }
 
-  @Get("by-pm")
+  @Get("by-current-pm")
   @Roles("Cdp","Admin")
-  findAllByPm(@Req() request: RequestWithPm) : Promise<Meeting[]>{
+  findAllByCurrentPm(@Req() request: RequestWithPm) : Promise<Meeting[]>{
     request.pm = request.user as ProjectManager;
-    return this.meetingsService.findAllByPm(request.pm.id);
+    return this.meetingsService.findAllByCurrentPm(request.pm.id);
   }
 
   @Get("by-prospect/:idProspect")

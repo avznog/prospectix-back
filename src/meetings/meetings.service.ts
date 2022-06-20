@@ -45,7 +45,7 @@ export class MeetingsService {
     
   }
 
-  async findAllByPm(idPm: number) : Promise<Meeting[]>{
+  async findAllByCurrentPm(idPm: number) : Promise<Meeting[]>{
     try {
       return await this.meetingRepository.find({
         relations: ["pm"],

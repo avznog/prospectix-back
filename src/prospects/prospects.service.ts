@@ -51,30 +51,38 @@ export class ProspectsService {
   }
 
   async findAll(): Promise<Prospect[]> {
-    return await this.prospectRepository.find();
+    try{
+      return await this.prospectRepository.find();
+    } catch (error){
+      console.log(error)
+      throw new HttpException("Il y a eu une erreur dans la recherche de prospect",HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    
   }
 
   async findOne(idProspect: number): Promise<Prospect> {
-    return await this.prospectRepository.findOne({
-      where: {
-        id: idProspect,
-      },
-    });
+    try {
+      const prospects = await this.prospectRepository.findOne({
+        where: {
+          id: idProspect,
+        },
+      });
+      if(!prospects)
+         throw new HttpException("Ce prospect n'existe pas",HttpStatus.NOT_FOUND);
+      return prospects;
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(`Impossible de trouver le prospect pour l'id ${idProspect}`,HttpStatus.NOT_FOUND)
+    }
   }
 
   async findAllByActivity(activityName: string): Promise<Prospect[]> {
     try {
-      const activity = await this.activityRepository.findOne({
-        where: {
-          name: activityName,
-        },
-      });
-
       return await this.prospectRepository.find({
-        relations: ['activity'],
+        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
           activity: {
-            id: activity.id,
+            name: activityName
           },
         },
       });
@@ -88,17 +96,12 @@ export class ProspectsService {
 
   async findAllByCity(cityName: string): Promise<Prospect[]> {
     try {
-      const city = await this.cityRepository.findOne({
-        where: {
-          name: cityName,
-        },
-      });
       return await this.prospectRepository.find({
-        relations: ['city'],
+        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
           city: {
-            id: city.id,
-          },
+            name: cityName
+          }
         },
       });
     } catch (error) {
@@ -111,8 +114,8 @@ export class ProspectsService {
 
   async findAllByBookmark(pmName: string): Promise<Prospect[]> {
     try {
-      return await this.prospectRepository.find({
-        relations: ['bookmarks', 'pm'],
+      const prospects = await this.prospectRepository.find({
+        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
           bookmarks: {
             pm: {
@@ -121,6 +124,10 @@ export class ProspectsService {
           },
         },
       });
+
+      if(!prospects)
+        throw new HttpException("Ce prospect n'existe pas",HttpStatus.NOT_FOUND);
+      return prospects;
     } catch (error) {
       throw new HttpException(
         'Aucun prospect ajouté en favori pour ce Chef de Projet',
@@ -131,18 +138,14 @@ export class ProspectsService {
 
   async findAllByPhone(phoneProspect: string): Promise<Prospect[]> {
     try {
-      const phone = await this.phoneRepository.findOne({
-        where: {
-          number: phoneProspect,
-        },
-      });
-
       return await this.prospectRepository.find({
-        relations: ['phone'],
+        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
-          id: phone.id,
-        },
-      });
+          phone: {
+            number: phoneProspect
+          }
+        }
+      })
     } catch (error) {
       console.log(error);
       throw new HttpException(
@@ -154,17 +157,11 @@ export class ProspectsService {
 
   async findAllByWebsite(websiteProspect: string): Promise<Prospect[]> {
     try {
-      const website = await this.websiteRepository.findOne({
-        where: {
-          website: websiteProspect,
-        },
-      });
-
       return await this.prospectRepository.find({
-        relations: ['website'],
+        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
           website: {
-            id: website.id,
+            website: websiteProspect
           },
         },
       });
@@ -179,7 +176,9 @@ export class ProspectsService {
 
   async findAllByAddress(addressProspect: string): Promise<Prospect[]> {
     try {
+      // console.log(addressProspect.replace("_"," "))
       return await this.prospectRepository.find({
+        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
           streetAddress: addressProspect,
         },
@@ -193,22 +192,22 @@ export class ProspectsService {
     }
   }
 
-  async findAllByMail(emailProspect: string): Promise<Prospect[]> {
+  async findAllByEmail(emailProspect: string): Promise<Prospect[]> {
     try {
-      const email = await this.emailRepository.findOne({
-        where: {
-          email: emailProspect,
-        },
-      });
-
+      // return await this.prospectRepository.find({
+      //   relations: ['email'],
+      //   where: {
+      //     email: {
+      //       email: emailProspect
+      //     },
+      //   },
+      // });
       return await this.prospectRepository.find({
-        relations: ['email'],
+        relations: ["email"],
         where: {
-          email: {
-            id: email.id,
-          },
-        },
-      });
+          id: 1
+        }
+      })
     } catch (error) {
       console.log(error);
       throw new HttpException(

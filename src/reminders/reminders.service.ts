@@ -44,20 +44,14 @@ export class RemindersService {
     } 
   }
 
-  async findAllByPm(idPm: number) : Promise<Reminder[]>{
+  async findAllByCurrentPm(idPm: number) : Promise<Reminder[]>{
     try{
-      const pm = await this.pmRepository.findOne({
-        where: {
-          id: idPm
-        }
-      });
-
       return await this.reminderRepository.find({
         relations: ["pm"],
         where: {
           pm: {
-            id: pm.id
-          }
+            id: idPm
+          },
         }
       });
     } catch (error){
@@ -66,19 +60,29 @@ export class RemindersService {
     
   }
 
+  async findAllByPm(pseudpPm: string) : Promise<Reminder[]> {
+    try{
+      return await this.reminderRepository.find({
+        relations: ["pm"],
+        where: {
+          pm: {
+            pseudo: pseudpPm
+          }
+        }
+      });
+    } catch(error){
+      console.log(error)
+      throw new HttpException("Impossible de trouver les rappels pour le chef de projet sélectionné", HttpStatus.NOT_FOUND);
+    }
+  }
+
   async findAllByProspect(idProspect: number): Promise<Reminder[]> {
     try {
-      const prospect = await this.prospectRepository.findOne({
-        where: {
-          id: idProspect
-        }
-      })
-
       return await this.reminderRepository.find({
         relations: ["prospect"],
         where: {
           prospect: {
-            id: prospect.id
+            id: idProspect
           }
         }
       })

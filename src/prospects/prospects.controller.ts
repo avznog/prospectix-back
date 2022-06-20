@@ -42,8 +42,8 @@ export class ProspectsController {
     return this.prospectsService.update(+id, updateProspectDto);
   }
 
-  @Roles("Cdp","Amin")
-  @Patch(':id')
+  @Roles("Cdp","Admin")
+  @Patch('disable/:id')
   remove(@Param('id') id: string, @Body() createProspectDto: CreateProspectDto) : Promise<UpdateResult>{
     return this.prospectsService.disable(+id, createProspectDto);
   }
@@ -85,9 +85,9 @@ export class ProspectsController {
   }
 
   @Roles("Cdp","Admin")
-  @Get("by-mail/:emailProspect")
+  @Get("by-email/:emailProspect")
   findAllByMail(@Param("emailProspect") emailProspect: string) : Promise<Prospect[]> {
-   return this.prospectsService.findAllByMail(emailProspect); 
+   return this.prospectsService.findAllByEmail(emailProspect); 
   }
 
   @Roles("Cdp","Admin")

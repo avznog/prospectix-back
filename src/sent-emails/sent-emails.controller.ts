@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { SentEmailsService } from './sent-emails.service';
 import { ApiTags } from '@nestjs/swagger';
 
