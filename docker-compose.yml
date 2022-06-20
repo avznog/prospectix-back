@@ -10,7 +10,7 @@ services:
       dockerfile: ./Dockerfile
     environment:
       - PORT=3000
-      - POSTGRES_HOST=127.0.0.1
+      - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=gJdh]&qpTC2h6
