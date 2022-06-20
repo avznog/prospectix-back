@@ -63,7 +63,7 @@ import { WebsitesModule } from './websites/websites.module';
       password: process.env.POSTGRES_PASSWORD,
       database: 'prospectix',
       // url: "postgres://" + process.env.DB_USER + ":" + process.env.DB_PW + "@" + process.env.DB_HOST + ":" + process.env.DB_PORT + "/prospectix",
-      url: "pgsql://postgres:postgres@127.0.0.1:5432/prospectix",
+      url: "pgsql://postgres:postgres@db:5432/prospectix",
       synchronize: true,
       entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website],
     }),
