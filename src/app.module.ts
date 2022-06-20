@@ -58,8 +58,8 @@ import { WebsitesModule } from './websites/websites.module';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
-      port: +process.env.DB__PORT ,
-      username: process.env.DB_USER ,
+      port: +process.env.DB__PORT,
+      username: process.env.DB_USER,
       password: process.env.DB_PW,
       database: 'prospectix',
       url: "postgresql://" + process.env.DB_USER + ":" + process.env.DB_PW + "@" + process.env.DB_HOST + ":" + process.env.DB_PORT + "/prospectix",

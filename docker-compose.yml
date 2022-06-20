@@ -24,16 +24,16 @@ services:
     command: yarn run start
     restart: unless-stopped
 
-  # postgres:
-  #   image: postgres:alpine
-  #   container_name: postgres
-  #   environment:
-  #     - DB_USER=postgres
-  #     - DB_PASSWORD=postgres
-  #   ports:
-  #     - 5432:5432
-  #   volumes:
-  #     - pgdata:/var/lib/postgresql/data
+  postgres:
+    image: postgres:alpine
+    container_name: postgres
+    environment:
+      - DB_USER=postgres
+      - DB_PW=gJdh]&qpTC2h6
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
     
     

@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { ProjectManagerDto } from './dto/project-manager.dto';
-import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
 import { ProjectManager } from './entities/project-manager.entity';
 import * as bcrypt from 'bcrypt';
 import TokenPayload from 'src/auth/interfaces/tokenPayload.interface';
@@ -74,22 +73,6 @@ export class ProjectManagersService {
     return await this.pmRepository.update(pm.id, {
       pseudo: username,
     });
-  }
-
-  findAll() {
-    return `This action returns all projectManagers`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} projectManager`;
-  }
-
-  update(id: number, updateProjectManagerDto: UpdateProjectManagerDto) {
-    return `This action updates a #${id} projectManager`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} projectManager`;
   }
 
   async findByPayload(payload: TokenPayload): Promise<ProjectManager> {
