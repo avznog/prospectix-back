@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Repository, UpdateResult } from 'typeorm';
+import { Like, Repository, UpdateResult } from 'typeorm';
 import { CreateProspectDto } from './dto/create-prospect.dto';
 import { UpdateProspectDto } from './dto/update-prospect.dto';
 import { Prospect } from './entities/prospect.entity';
@@ -51,30 +51,38 @@ export class ProspectsService {
   }
 
   async findAll(): Promise<Prospect[]> {
-    return await this.prospectRepository.find();
+    try{
+      return await this.prospectRepository.find();
+    } catch (error){
+      console.log(error)
+      throw new HttpException("Il y a eu une erreur dans la recherche de prospect",HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    
   }
 
   async findOne(idProspect: number): Promise<Prospect> {
-    return await this.prospectRepository.findOne({
-      where: {
-        id: idProspect,
-      },
-    });
+    try {
+      const prospects = await this.prospectRepository.findOne({
+        where: {
+          id: idProspect,
+        },
+      });
+      if(!prospects)
+         throw new HttpException("Ce prospect n'existe pas",HttpStatus.NOT_FOUND);
+      return prospects;
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(`Impossible de trouver le prospect pour l'id ${idProspect}`,HttpStatus.NOT_FOUND)
+    }
   }
 
   async findAllByActivity(activityName: string): Promise<Prospect[]> {
     try {
-      const activity = await this.activityRepository.findOne({
-        where: {
-          name: activityName,
-        },
-      });
-
       return await this.prospectRepository.find({
-        relations: ['activity'],
+        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
           activity: {
-            id: activity.id,
+            name: Like(`%${activityName}%`)
           },
         },
       });
@@ -88,17 +96,12 @@ export class ProspectsService {
 
   async findAllByCity(cityName: string): Promise<Prospect[]> {
     try {
-      const city = await this.cityRepository.findOne({
-        where: {
-          name: cityName,
-        },
-      });
       return await this.prospectRepository.find({
-        relations: ['city'],
+        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
           city: {
-            id: city.id,
-          },
+            name: Like(`%${cityName}%`)
+          }
         },
       });
     } catch (error) {
@@ -111,16 +114,20 @@ export class ProspectsService {
 
   async findAllByBookmark(pmName: string): Promise<Prospect[]> {
     try {
-      return await this.prospectRepository.find({
-        relations: ['bookmarks', 'pm'],
+      const prospects = await this.prospectRepository.find({
+        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
           bookmarks: {
             pm: {
-              pseudo: pmName
+              pseudo: Like(`%${pmName}%`)
             },
           },
         },
       });
+
+      if(!prospects)
+        throw new HttpException("Ce prospect n'existe pas",HttpStatus.NOT_FOUND);
+      return prospects;
     } catch (error) {
       throw new HttpException(
         'Aucun prospect ajouté en favori pour ce Chef de Projet',
@@ -131,18 +138,14 @@ export class ProspectsService {
 
   async findAllByPhone(phoneProspect: string): Promise<Prospect[]> {
     try {
-      const phone = await this.phoneRepository.findOne({
-        where: {
-          number: phoneProspect,
-        },
-      });
-
       return await this.prospectRepository.find({
-        relations: ['phone'],
+        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
-          id: phone.id,
-        },
-      });
+          phone: {
+            number: Like(`%${phoneProspect}%`)
+          }
+        }
+      })
     } catch (error) {
       console.log(error);
       throw new HttpException(
@@ -154,17 +157,11 @@ export class ProspectsService {
 
   async findAllByWebsite(websiteProspect: string): Promise<Prospect[]> {
     try {
-      const website = await this.websiteRepository.findOne({
-        where: {
-          website: websiteProspect,
-        },
-      });
-
       return await this.prospectRepository.find({
-        relations: ['website'],
+        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
           website: {
-            id: website.id,
+            website: Like(`%${websiteProspect}%`)
           },
         },
       });
@@ -180,8 +177,9 @@ export class ProspectsService {
   async findAllByAddress(addressProspect: string): Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
+        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
-          streetAddress: addressProspect,
+          streetAddress: Like(`%${addressProspect}%`),
         },
       });
     } catch (error) {
@@ -193,21 +191,19 @@ export class ProspectsService {
     }
   }
 
-  async findAllByMail(emailProspect: string): Promise<Prospect[]> {
+  async findAllByEmail(emailProspect: string): Promise<Prospect> {
     try {
       const email = await this.emailRepository.findOne({
         where: {
-          email: emailProspect,
-        },
+          email: emailProspect
+        }
       });
 
-      return await this.prospectRepository.find({
-        relations: ['email'],
+      return await this.prospectRepository.findOne({
+        relations: ["activity","city","country","events","meetings","phone","reminders","website"],
         where: {
-          email: {
-            id: email.id,
-          },
-        },
+          id: email.id,
+        }
       });
     } catch (error) {
       console.log(error);
@@ -217,18 +213,36 @@ export class ProspectsService {
       );
     }
   }
-
+  
   async update(idProspect: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
-    return this.prospectRepository.update(idProspect, updateProspectDto);
+    try {
+      return this.prospectRepository.update(idProspect, updateProspectDto);  
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("impossible de modifier le prospect",HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    
   }
 
-  async disable(id: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
-    this.prospectRepository.findOne({
-      where: {
-        id: id
-      }
-    });
-    updateProspectDto.disabled = true;
-    return await this.prospectRepository.update(id, updateProspectDto);
+  async disable(idProspect: number) : Promise<UpdateResult> {
+    try {
+      const updateProspectDto = new UpdateProspectDto();
+      updateProspectDto.disabled = true;
+      return await this.prospectRepository.update(idProspect, updateProspectDto);
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de désactiver le prospect",HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async enable(idProspect: number) : Promise<UpdateResult> {
+    try {
+      const updateProspectDto = new UpdateProspectDto();
+      updateProspectDto.disabled = false;
+      return await this.prospectRepository.update(idProspect, updateProspectDto);
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible d'activer le prospect demandé",HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 }

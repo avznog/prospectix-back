@@ -56,14 +56,19 @@ export class GoalsService {
 
   async findAllByPm(pseudoPm: string) : Promise<Goal[]> {
     try{
-      return await this.goalRepository.find({
+      const goals =  this.goalRepository.find({
         relations: ["pm"],
         where: {
           pm: {
             pseudo: pseudoPm
           }
         }
-      })
+      }); 
+      if( (await goals).length == 0){
+        throw new HttpException("Il n'y a aucun objectif pour " + pseudoPm, HttpStatus.OK)
+      }
+    
+      return goals;
     } catch (error){
       console.log(error)
       throw new HttpException("Impossible de récupérer les objectfis pour ce chef de projet", HttpStatus.BAD_REQUEST)

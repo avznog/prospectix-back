@@ -38,8 +38,10 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Get("refresh")
   refresh(@Req() request: RequestWithPm) : ProjectManager{
-    const accessTokenCookie = request.cookies["Authentication"];
+    const pm = request.user as ProjectManager;
+    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(pm.pseudo)
     request.res.setHeader("Set-Cookie",accessTokenCookie);
+    
     return request.pm;
   }
 
