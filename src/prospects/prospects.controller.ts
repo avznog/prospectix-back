@@ -92,7 +92,7 @@ export class ProspectsController {
 
   @Roles("Cdp","Admin")
   @Get("by-email/:emailProspect")
-  findAllByMail(@Param("emailProspect") emailProspect: string) : Promise<Prospect[]> {
+  findAllByMail(@Param("emailProspect") emailProspect: string) : Promise<Prospect> {
    return this.prospectsService.findAllByEmail(emailProspect); 
   }
 }

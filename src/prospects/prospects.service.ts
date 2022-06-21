@@ -191,16 +191,20 @@ export class ProspectsService {
     }
   }
 
-  async findAllByEmail(emailProspect: string): Promise<Prospect[]> {
+  async findAllByEmail(emailProspect: string): Promise<Prospect> {
     try {
-      return await this.prospectRepository.find({
-        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
+      const email = await this.emailRepository.findOne({
         where: {
-          email: {
-            email: Like(`%${emailProspect}%`)
-          }
+          email: emailProspect
         }
-      })
+      });
+
+      return await this.prospectRepository.findOne({
+        relations: ["activity","city","country","events","meetings","phone","reminders","website"],
+        where: {
+          id: email.id,
+        }
+      });
     } catch (error) {
       console.log(error);
       throw new HttpException(
