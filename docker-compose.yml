@@ -3,17 +3,12 @@ version: '3.3'
 services:
   nrpospectix-api:
     image: $CI_REGISTRY_IMAGE:prod
+    env_file: api.env
     container_name: nprospectix-api
-    build: 
+    build:
       context: .
       target: production
       dockerfile: ./Dockerfile
-    environment:
-      - PORT=3000
-      - DB_HOST=localhost
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PW=gJdh]&qpTC2h6
     ports:
       - 3000:3000
     depends_on:
@@ -24,17 +19,13 @@ services:
     command: yarn run start
     restart: unless-stopped
 
-  postgres:
+  db:
     image: postgres:alpine
     container_name: postgres
     environment:
-      - DB_USER=postgres
-      - DB_PW=gJdh]&qpTC2h6
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=gJdh]&qpTC2h6
     ports:
       - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
-
-    
-    
-    

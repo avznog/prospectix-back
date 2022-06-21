@@ -23,9 +23,9 @@ import { ProjectManagersService } from 'src/project-managers/project-managers.se
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get("JWT_ACCESS_TOKEN_SECRET"),
+        secret: process.env.JWT_ACCESS_TOKEN_SECRET,
         signOptions: {
-          expiresIn: `${configService.get("JWT_ACCESS_TOKEN_EXPIRATION_TIME")}s`,
+          expiresIn: `${process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME}s`,
         },
       }),
     }),
