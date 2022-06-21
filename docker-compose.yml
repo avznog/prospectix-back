@@ -3,6 +3,7 @@ version: '3.3'
 services:
   nrpospectix-api:
     image: $CI_REGISTRY_IMAGE:prod
+    env_file: api.env
     container_name: nprospectix-api
     build:
       context: .
