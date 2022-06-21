@@ -217,55 +217,6 @@ export class ProspectsService {
     }
   }
 
-  async findAllByKeyWords(words: string[]) : Promise<Prospect[][]>{
-    const allProspects : Prospect[][] = [[]];
-    for(const word in words){
-      const prospects = await this.prospectRepository.find({
-        relations: ["city","activity","country","phone","email","website"],
-        where: [
-          {
-            city: {
-              name: Like(`%${word}%`)
-            }
-          },
-          {
-            companyName: Like(`%${word}%`)
-          },
-          {
-            activity: {
-              name: Like(`%${word}%`)
-            }
-          },
-          {
-            streetAddress: Like(`%${word}%`)
-          },
-          {
-            country: {
-              name: Like(`%${word}%`)
-            }
-          },
-          {
-            phone: {
-              number: Like(`%${word}%`)
-            }
-          },
-          {
-            email: {
-              email: Like(`%${word}%`)
-            }
-          },
-          {
-            website: {
-              website: Like(`%${word}%`)
-            }
-          }
-        ]
-      });
-      allProspects.push(prospects);
-    }
-    return allProspects;
-  }
-
   async update(idProspect: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
     return this.prospectRepository.update(idProspect, updateProspectDto);
   }

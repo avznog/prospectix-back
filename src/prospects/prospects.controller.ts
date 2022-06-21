@@ -89,10 +89,4 @@ export class ProspectsController {
   findAllByMail(@Param("emailProspect") emailProspect: string) : Promise<Prospect[]> {
    return this.prospectsService.findAllByEmail(emailProspect); 
   }
-
-  @Roles("Cdp","Admin")
-  @Get("by-words/:words")
-  findAllByKeyWords(@Param("words") words: string) : Promise<Prospect[][]> {
-    return this.prospectsService.findAllByKeyWords([words]);
-  }
 }
