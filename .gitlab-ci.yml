@@ -79,4 +79,4 @@ deploy-staging:
     - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml pull"
     - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml up -d"
   only:
-    - staging 
+    - staging
