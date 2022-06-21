@@ -82,7 +82,7 @@ export class ProspectsService {
         relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
           activity: {
-            name: activityName
+            name: Like(`%${activityName}%`)
           },
         },
       });
@@ -100,7 +100,7 @@ export class ProspectsService {
         relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
           city: {
-            name: cityName
+            name: Like(`%${cityName}%`)
           }
         },
       });
@@ -119,7 +119,7 @@ export class ProspectsService {
         where: {
           bookmarks: {
             pm: {
-              pseudo: pmName
+              pseudo: Like(`%${pmName}%`)
             },
           },
         },
@@ -142,7 +142,7 @@ export class ProspectsService {
         relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
           phone: {
-            number: phoneProspect
+            number: Like(`%${phoneProspect}%`)
           }
         }
       })
@@ -161,7 +161,7 @@ export class ProspectsService {
         relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
           website: {
-            website: websiteProspect
+            website: Like(`%${websiteProspect}%`)
           },
         },
       });
@@ -176,11 +176,10 @@ export class ProspectsService {
 
   async findAllByAddress(addressProspect: string): Promise<Prospect[]> {
     try {
-      // console.log(addressProspect.replace("_"," "))
       return await this.prospectRepository.find({
         relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
-          streetAddress: addressProspect,
+          streetAddress: Like(`%${addressProspect}%`),
         },
       });
     } catch (error) {
@@ -194,18 +193,12 @@ export class ProspectsService {
 
   async findAllByEmail(emailProspect: string): Promise<Prospect[]> {
     try {
-      // return await this.prospectRepository.find({
-      //   relations: ['email'],
-      //   where: {
-      //     email: {
-      //       email: emailProspect
-      //     },
-      //   },
-      // });
       return await this.prospectRepository.find({
-        relations: ["email"],
+        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
         where: {
-          id: 1
+          email: {
+            email: Like(`%${emailProspect}%`)
+          }
         }
       })
     } catch (error) {
@@ -216,18 +209,36 @@ export class ProspectsService {
       );
     }
   }
-
+  
   async update(idProspect: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
-    return this.prospectRepository.update(idProspect, updateProspectDto);
+    try {
+      return this.prospectRepository.update(idProspect, updateProspectDto);  
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("impossible de modifier le prospect",HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    
   }
 
-  async disable(id: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
-    this.prospectRepository.findOne({
-      where: {
-        id: id
-      }
-    });
-    updateProspectDto.disabled = true;
-    return await this.prospectRepository.update(id, updateProspectDto);
+  async disable(idProspect: number) : Promise<UpdateResult> {
+    try {
+      const updateProspectDto = new UpdateProspectDto();
+      updateProspectDto.disabled = true;
+      return await this.prospectRepository.update(idProspect, updateProspectDto);
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de désactiver le prospect",HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async enable(idProspect: number) : Promise<UpdateResult> {
+    try {
+      const updateProspectDto = new UpdateProspectDto();
+      updateProspectDto.disabled = false;
+      return await this.prospectRepository.update(idProspect, updateProspectDto);
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible d'activer le prospect demandé",HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 }

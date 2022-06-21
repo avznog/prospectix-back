@@ -43,9 +43,15 @@ export class ProspectsController {
   }
 
   @Roles("Cdp","Admin")
-  @Patch('disable/:id')
-  remove(@Param('id') id: string, @Body() createProspectDto: CreateProspectDto) : Promise<UpdateResult>{
-    return this.prospectsService.disable(+id, createProspectDto);
+  @Get('disable/:id')
+  remove(@Param('id') id: number) : Promise<UpdateResult>{
+    return this.prospectsService.disable(id);
+  }
+
+  @Roles("Admin")
+  @Get("enable/:id")
+  enable(@Param("id") id: number) : Promise<UpdateResult> {
+    return this.prospectsService.enable(id);
   }
 
   @Roles("Cdp","Admin")
