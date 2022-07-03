@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { Like, Repository } from 'typeorm';
+import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
 import { CreateGoalDto } from './dto/create-goal.dto';
 import { Goal } from './entities/goal.entity';
 
@@ -106,6 +106,25 @@ export class GoalsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récupérer les objectifs pour le chef de projet demandé", HttpStatus.NOT_FOUND)
+    }
+  }
+
+  async update(updateGoalDto) : Promise<UpdateResult> {
+    try {
+      return await this.goalRepository.update(updateGoalDto.id, updateGoalDto);  
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("impossible de modifier l'objectif", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    
+  }
+
+  async delete(id: number) : Promise<DeleteResult> {
+    try {
+      return await this.goalRepository.delete(id);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException("Impossible de supprimer l'objectif", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

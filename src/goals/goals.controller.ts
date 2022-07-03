@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req, UseGuards, Patch, Delete } from '@nestjs/common';
 import { GoalsService } from './goals.service';
 import { CreateGoalDto } from './dto/create-goal.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -8,6 +8,8 @@ import { Goal } from './entities/goal.entity';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/annotations/roles.decorator';
+import { UpdateGoalDto } from './dto/update-goal.dto';
+import { DeleteResult, UpdateResult } from 'typeorm';
 
 @Controller('goals')
 @ApiTags("goals")
@@ -52,5 +54,17 @@ export class GoalsController {
   @Get("by-title-and-pm/:title/:pseudoPm")
   findAllByTitleAndPm(@Param("title") title: string, @Param("pseudoPm") pseudoPm: string) : Promise<Goal[]> {
     return this.goalsService.findAllByTitleAndPm(title, pseudoPm);
+  }
+
+  @Roles("Admin")
+  @Patch(":id")
+  update(@Param("id") id: number, @Body() updateGoalDto: UpdateGoalDto) : Promise<UpdateResult> {
+    return this.goalsService.update(updateGoalDto);
+  }
+
+  @Roles("Admin")
+  @Delete(":id")
+  delete(@Param("id") id: number) : Promise<DeleteResult> {
+    return this.goalsService.delete(+id);
   }
 }
