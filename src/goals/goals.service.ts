@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
 import { CreateGoalDto } from './dto/create-goal.dto';
+import { UpdateGoalDto } from './dto/update-goal.dto';
 import { Goal } from './entities/goal.entity';
 
 @Injectable()
@@ -109,9 +110,9 @@ export class GoalsService {
     }
   }
 
-  async update(updateGoalDto) : Promise<UpdateResult> {
+  async update(id: number, updateGoalDto: UpdateGoalDto) : Promise<UpdateResult> {
     try {
-      return await this.goalRepository.update(updateGoalDto.id, updateGoalDto);  
+      return await this.goalRepository.update(id, updateGoalDto);  
     } catch (error) {
       console.log(error)
       throw new HttpException("impossible de modifier l'objectif", HttpStatus.INTERNAL_SERVER_ERROR)

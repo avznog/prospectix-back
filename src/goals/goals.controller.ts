@@ -59,7 +59,7 @@ export class GoalsController {
   @Roles("Admin")
   @Patch(":id")
   update(@Param("id") id: number, @Body() updateGoalDto: UpdateGoalDto) : Promise<UpdateResult> {
-    return this.goalsService.update(updateGoalDto);
+    return this.goalsService.update(id, updateGoalDto);
   }
 
   @Roles("Admin")
