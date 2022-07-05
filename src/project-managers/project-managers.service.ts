@@ -82,4 +82,8 @@ export class ProjectManagersService {
       },
     });
   }
+
+  async findAll() : Promise<ProjectManager[]> {
+    return this.pmRepository.find();
+  }
 }

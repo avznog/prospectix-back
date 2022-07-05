@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
 import { ProjectManagersService } from './project-managers.service';
 import { CreateProjectManagerDto } from './dto/create-project-manager.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -17,5 +17,11 @@ export class ProjectManagersController {
   @Roles("Admin")
   create(@Body() createProjectManagerDto: CreateProjectManagerDto) : Promise<ProjectManager> {
     return this.projectManagerService.create(createProjectManagerDto);
+  }
+
+  @Get("findAll")
+  @Roles("Admin","Cdp")
+  findAll() : Promise<ProjectManager[]> {
+    return this.projectManagerService.findAll();
   }
 }
