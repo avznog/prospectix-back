@@ -1,11 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { ProjectManagerDto } from './dto/project-manager.dto';
 import { ProjectManager } from './entities/project-manager.entity';
 import * as bcrypt from 'bcrypt';
 import TokenPayload from 'src/auth/interfaces/tokenPayload.interface';
 import { CreateProjectManagerDto } from './dto/create-project-manager.dto';
+import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
 
 @Injectable()
 export class ProjectManagersService {
@@ -17,7 +18,13 @@ export class ProjectManagersService {
   async create(
     createProjectManagerDto: CreateProjectManagerDto,
   ): Promise<ProjectManager> {
-    return await this.pmRepository.save(createProjectManagerDto);
+    try {
+     createProjectManagerDto.disabled = false;
+     return await this.pmRepository.save(createProjectManagerDto); 
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de créer le nouvel utilisateur", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async setCurrentRefreshToken(
@@ -65,25 +72,67 @@ export class ProjectManagersService {
   }
 
   async removeRefreshToken(username: string): Promise<UpdateResult> {
-    const pm = await this.pmRepository.findOne({
-      where: {
+    try {
+      const pm = await this.pmRepository.findOne({
+        where: {
+          pseudo: username,
+        },
+      });
+      return await this.pmRepository.update(pm.id, {
         pseudo: username,
-      },
-    });
-    return await this.pmRepository.update(pm.id, {
-      pseudo: username,
-    });
+      });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException("Impossble de supprimer le refresh token", HttpStatus.BAD_REQUEST);
+    }
   }
 
   async findByPayload(payload: TokenPayload): Promise<ProjectManager> {
-    return await this.pmRepository.findOne({
-      where: {
-        pseudo: payload.username,
-      },
-    });
+    try {
+      return await this.pmRepository.findOne({
+        where: {
+          pseudo: payload.username,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException("Impossible de récupérer l'utilisateur par payload",HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async findAll() : Promise<ProjectManager[]> {
-    return this.pmRepository.find();
+    try {
+      return await this.pmRepository.find(); 
+    } catch (error) {
+      console.log(error);
+      throw new HttpException("Impossible de récupérer les project managers", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async update(id: number, updateProjectManagerDto: UpdateProjectManagerDto) : Promise<UpdateResult> {
+    try {
+      return await this.pmRepository.update(id, updateProjectManagerDto);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException("Impossible de modifier le chef de projet", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async disable(id: number) : Promise<UpdateResult> {
+    try {
+      return await this.pmRepository.update(id, {disabled: true});
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de désactiver l'utilisateur", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async enable(id: number) : Promise<UpdateResult> {
+    try {
+      return await this.pmRepository.update(id, { disabled: false });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible d'activer l'utilisateur", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

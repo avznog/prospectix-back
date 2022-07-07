@@ -37,4 +37,10 @@ export class CreateProjectManagerDto {
     required: true
   })
   admin: boolean;
+
+  @ApiProperty({
+    description: "Boolean indiquant si le chef de projet / compte est désactivé (supprimé pour les utilisateurs)",
+    required: true
+  })
+  disabled: boolean;
 }

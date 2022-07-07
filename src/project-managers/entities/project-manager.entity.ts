@@ -73,6 +73,13 @@ export class ProjectManager extends BaseEntity {
   })
   tokenEmail: string;
 
+  @Column()
+  @ApiProperty({
+    description: "Boolean indiquant si le chef de projet / compte est désactivé (supprimé pour les utilisateurs)",
+    required: true
+  })
+  disabled: boolean;
+
   @OneToMany(() => Goal, (goal) => goal.pm, { lazy: true })
   @ApiProperty({
     description: "Objectifs du chef de projet",
