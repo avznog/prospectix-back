@@ -27,12 +27,6 @@ export class ProjectManagersController {
     return this.pmService.findAll();
   }
 
-  @Delete(":id")
-  @Roles("Admin")
-  delete(@Param("id") id: number) : Promise<DeleteResult> {
-    return this.pmService.delete(id);
-  }
-
   @Patch(":id")
   @Roles("Admin")
   update(@Param("id") id: number, @Body() updateProjectManagerDto: UpdateProjectManagerDto) : Promise<UpdateResult> {
