@@ -4,7 +4,9 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -24,6 +26,6 @@ export class Phone extends BaseEntity {
   })
   number: string;
 
-  @ManyToOne(() => Prospect)
+  @OneToOne(() => Prospect, (prospect) => prospect.phone, { lazy: true })
   prospect: Prospect;
 }

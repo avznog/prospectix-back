@@ -4,7 +4,7 @@ import {
   BaseEntity,
   Column,
   Entity,
-  ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -17,7 +17,7 @@ export class Website extends BaseEntity {
   })
   id: number;
 
-  @ManyToOne(() => Prospect)
+  @OneToOne(() => Prospect, (prospect) => prospect.website, { lazy: true })
   prospect: Prospect;
 
   @Column()

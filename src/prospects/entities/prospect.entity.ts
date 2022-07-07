@@ -13,6 +13,7 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -63,21 +64,24 @@ export class Prospect extends BaseEntity {
   })
   country: Country;
 
-  @OneToOne(() => Phone, (phone) => phone.prospect, { lazy: true })
+  @OneToOne(() => Phone)
+  @JoinColumn()
   @ApiProperty({
     description: "Numéro de téléphone du prospect",
     required: true
   })
   phone: Phone;
 
-  @OneToOne(() => Email, (email) => email.prospect, { lazy: true })
+  @OneToOne(() => Email)
+  @JoinColumn()
   @ApiProperty({
     description: "Email du prospect",
     required: true
   })
   email: Email;
 
-  @OneToOne(() => Website, (website) => website.prospect, { lazy: true })
+  @OneToOne(() => Website)
+  @JoinColumn()
   @ApiProperty({
     description: "Site internet du prospect",
     required: true

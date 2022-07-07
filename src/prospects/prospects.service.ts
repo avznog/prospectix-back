@@ -52,7 +52,9 @@ export class ProspectsService {
 
   async findAll(): Promise<Prospect[]> {
     try{
-      return await this.prospectRepository.find();
+      return await this.prospectRepository.find({
+        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
+      });
     } catch (error){
       console.log(error)
       throw new HttpException("Il y a eu une erreur dans la recherche de prospect",HttpStatus.INTERNAL_SERVER_ERROR)
@@ -63,6 +65,7 @@ export class ProspectsService {
   async findOne(idProspect: number): Promise<Prospect> {
     try {
       const prospects = await this.prospectRepository.findOne({
+        relations: ["activity","city","country","events","meetings","phone","reminders","website"],
         where: {
           id: idProspect,
         },
