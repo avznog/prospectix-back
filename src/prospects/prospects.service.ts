@@ -53,7 +53,7 @@ export class ProspectsService {
   async findAll(): Promise<Prospect[]> {
     try{
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
       });
     } catch (error){
       console.log(error)
@@ -65,7 +65,7 @@ export class ProspectsService {
   async findOne(idProspect: number): Promise<Prospect> {
     try {
       const prospects = await this.prospectRepository.findOne({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
         where: {
           id: idProspect,
         },
@@ -82,7 +82,7 @@ export class ProspectsService {
   async findAllByActivity(activityName: string): Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
         where: {
           activity: {
             name: Like(`%${activityName}%`)
@@ -100,7 +100,7 @@ export class ProspectsService {
   async findAllByCity(cityName: string): Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
         where: {
           city: {
             name: Like(`%${cityName}%`)
@@ -118,7 +118,7 @@ export class ProspectsService {
   async findAllByBookmark(pmName: string): Promise<Prospect[]> {
     try {
       const prospects = await this.prospectRepository.find({
-        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
         where: {
           bookmarks: {
             pm: {
@@ -142,7 +142,7 @@ export class ProspectsService {
   async findAllByPhone(phoneProspect: string): Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
         where: {
           phone: {
             number: Like(`%${phoneProspect}%`)
@@ -161,7 +161,7 @@ export class ProspectsService {
   async findAllByWebsite(websiteProspect: string): Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
         where: {
           website: {
             website: Like(`%${websiteProspect}%`)
@@ -180,7 +180,7 @@ export class ProspectsService {
   async findAllByAddress(addressProspect: string): Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","email","events","meetings","phone","reminders","website"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
         where: {
           streetAddress: Like(`%${addressProspect}%`),
         },
@@ -203,7 +203,7 @@ export class ProspectsService {
       });
 
       return await this.prospectRepository.findOne({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
         where: {
           id: email.id,
         }
