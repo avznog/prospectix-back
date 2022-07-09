@@ -216,6 +216,46 @@ export class ProspectsService {
       );
     }
   }
+
+  async findAllByKeywords(keyword: string) {
+    return await this.prospectRepository.find({
+      relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
+      where : [
+        {
+          activity: {
+            name: Like(`%${keyword}%`)
+          }
+        },
+        {
+          city: {
+            name: Like(`%${keyword}%`)
+          }
+        },
+        {
+          country: {
+            name: Like(`%${keyword}%`)
+          }
+        },
+        {
+          email: {
+            email: Like(`%${keyword}%`)
+          }
+        },
+        {
+          phone: {
+            number: Like(`%${keyword}%`)
+          }
+        },
+        {
+          website: {
+            website: Like(`${keyword}`)
+          }
+        }
+        
+        
+      ]
+    })
+  }
   
   async update(idProspect: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
     try {

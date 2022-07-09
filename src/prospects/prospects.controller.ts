@@ -28,7 +28,7 @@ export class ProspectsController {
   }
 
   @Roles("Cdp","Admin")
-  @Get(':id')
+  @Get('findOne/:id')
   findOne(@Param('id') id: string) : Promise<Prospect> {
     return this.prospectsService.findOne(+id);
   }
@@ -94,5 +94,11 @@ export class ProspectsController {
   @Get("by-email/:emailProspect")
   findAllByMail(@Param("emailProspect") emailProspect: string) : Promise<Prospect> {
    return this.prospectsService.findAllByEmail(emailProspect); 
+  }
+
+  @Roles("Cdp","Admin")
+  @Get("by-keywords/:keyword")
+  findAllByKeywords(@Param("keyword") keyword: string) : Promise<Prospect[]> {
+    return this.prospectsService.findAllByKeywords(keyword);
   }
 }
