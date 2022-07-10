@@ -20,6 +20,17 @@ export class RemindersService {
     private prospectRepository: Repository<Prospect>
   ){}
   
+  async findAll() : Promise<Reminder[]> {
+    try {
+      return this.reminderRepository.find({
+        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.meetings", "prospect.phone", "prospect.website", "prospect.email"],
+      });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer la totalité des rappels", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async create(idPm: number, createReminderDto: CreateReminderDto, idProspect: number) : Promise<Reminder>{
     try {
     const pm = await this.pmRepository.findOne({
@@ -47,7 +58,7 @@ export class RemindersService {
   async findAllByCurrentPm(idPm: number) : Promise<Reminder[]>{
     try{
       return await this.reminderRepository.find({
-        relations: ["pm"],
+        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.meetings", "prospect.phone", "prospect.website", "prospect.email"],
         where: {
           pm: {
             id: idPm
@@ -63,7 +74,7 @@ export class RemindersService {
   async findAllByPm(pseudpPm: string) : Promise<Reminder[]> {
     try{
       return await this.reminderRepository.find({
-        relations: ["pm"],
+        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.meetings", "prospect.phone", "prospect.website", "prospect.email"],
         where: {
           pm: {
             pseudo: pseudpPm
@@ -79,7 +90,7 @@ export class RemindersService {
   async findAllByProspect(idProspect: number): Promise<Reminder[]> {
     try {
       return await this.reminderRepository.find({
-        relations: ["prospect"],
+        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.meetings", "prospect.phone", "prospect.website", "prospect.email"],
         where: {
           prospect: {
             id: idProspect

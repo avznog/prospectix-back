@@ -26,6 +26,12 @@ export class RemindersController {
   }
 
   @Roles("Cdp","Admin")
+  @Get()
+  findAll() : Promise<Reminder[]> {
+    return this.reminderService.findAll();
+  }
+
+  @Roles("Cdp","Admin")
   @Get("by-current-pm")
   findAllByCurrentPm(@Req() request: RequestWithPm) : Promise<Reminder[]>{
     request.pm = request.user as ProjectManager;
