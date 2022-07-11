@@ -7,6 +7,8 @@ import RequestWithPm from 'src/auth/interfaces/requestWithPm.interface';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { DeleteResult } from 'typeorm';
+import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 @Controller('reminders')
 @ApiTags("reminders")
 @UseGuards(JwtAuthGuard, RolesGuard)
