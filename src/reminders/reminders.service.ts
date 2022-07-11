@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
 import { InjectRepository} from "@nestjs/typeorm";
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { Reminder } from './entities/reminder.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
@@ -101,5 +101,9 @@ export class RemindersService {
       console.log(error)
       throw new HttpException("Impossible de trouver les rappels pour ce prospect", HttpStatus.BAD_REQUEST)
     }
+  }
+
+  async delete(idReminder: number) : Promise<DeleteResult> {
+    return this.reminderRepository.delete(idReminder);
   }
 }
