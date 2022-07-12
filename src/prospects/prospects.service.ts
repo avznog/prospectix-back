@@ -262,7 +262,7 @@ export class ProspectsService {
   
   async update(idProspect: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
     try {
-      return this.prospectRepository.update(idProspect, updateProspectDto);  
+      return await this.prospectRepository.update(idProspect, updateProspectDto);  
     } catch (error) {
       console.log(error)
       throw new HttpException("impossible de modifier le prospect",HttpStatus.INTERNAL_SERVER_ERROR)

@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
 import { InjectRepository} from "@nestjs/typeorm";
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Reminder } from './entities/reminder.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
@@ -22,7 +22,7 @@ export class RemindersService {
   
   async findAll() : Promise<Reminder[]> {
     try {
-      return this.reminderRepository.find({
+      return await this.reminderRepository.find({
         relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.meetings", "prospect.phone", "prospect.website", "prospect.email"],
       });
     } catch (error) {
@@ -104,6 +104,30 @@ export class RemindersService {
   }
 
   async delete(idReminder: number) : Promise<DeleteResult> {
-    return this.reminderRepository.delete(idReminder);
+    try {
+      return await this.reminderRepository.delete(idReminder);  
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de supprimer le rappel",HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
+
+  async markDone(idReminder: number) : Promise<UpdateResult> {
+    try {
+      return await this.reminderRepository.update(idReminder, { done: true });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de désactiver le rappel", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async markUnDone(idReminder: number) : Promise<UpdateResult> {
+    try {
+      return await this.reminderRepository.update(idReminder, { done : false })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de ractiver le rappel", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
 }

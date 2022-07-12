@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Req, UseGuards, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req, UseGuards, Delete, Patch } from '@nestjs/common';
 import { RemindersService } from './reminders.service';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { Reminder } from './entities/reminder.entity';
@@ -6,9 +6,10 @@ import { ApiTags } from '@nestjs/swagger';
 import RequestWithPm from 'src/auth/interfaces/requestWithPm.interface';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Roles } from 'src/auth/annotations/roles.decorator';
-import { DeleteResult } from 'typeorm';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { UpdateReminderDto } from './dto/update-reminder.dto';
 @Controller('reminders')
 @ApiTags("reminders")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -56,4 +57,15 @@ export class RemindersController {
     return this.reminderService.delete(id);
   }
 
+  @Roles("Cdp","Admin")
+  @Get("mark-done/:id")
+  markDone(@Param("id") id: number) : Promise<UpdateResult> {
+    return this.reminderService.markDone(id);
+  }
+
+  @Roles("Cdp","Admin")
+  @Get("mark-undone/:id")
+  markUndone(@Param("id") id: number) : Promise<UpdateResult> {
+    return this.reminderService.markUnDone(id);
+  }
 }

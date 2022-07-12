@@ -41,7 +41,7 @@ export class GoalsService {
 
   async findAllByCurrentPm(idPm: number) : Promise<Goal[]> {
     try {
-      return this.goalRepository.find({
+      return await this.goalRepository.find({
         relations: ["pm"],
         where: {
           pm: {

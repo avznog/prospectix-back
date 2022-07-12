@@ -38,4 +38,10 @@ export class CreateReminderDto {
     required: true
   })
   prospect: Prospect;
+
+  @ApiProperty({
+    description: "Propriété indiquant si le rappel est fait ou non",
+    required: true
+  })
+  done: boolean;
 }

@@ -52,4 +52,11 @@ export class Reminder extends BaseEntity {
     required: true
   })
   date: Date;
+
+  @Column()
+  @ApiProperty({
+    description: "Si le rappel est effectué ou non",
+    required: true
+  })
+  done: boolean;
 }
