@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
 import { InjectRepository} from "@nestjs/typeorm";
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
 import { Reminder } from './entities/reminder.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
@@ -129,5 +129,66 @@ export class RemindersService {
       throw new HttpException("Impossible de ractiver le rappel", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async findAllByKeyword(keyword: string) : Promise<Reminder[]> {
+    try {
+      return await this.reminderRepository.find({
+        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.meetings", "prospect.phone", "prospect.website", "prospect.email"],
+        where : [
+          {
+            prospect: {
+              companyName: Like(`%${keyword}%`),
+            }
+          },
+          {
+            prospect: {
+              city: {
+                name: Like(`%${keyword}%`),
+              }
+            }
+          },
+          {
+            prospect: {
+              activity: {
+                name: Like(`%${keyword}%`),
+              }
+            }
+          },
+          {
+            prospect: {
+              country: {
+                name: Like(`%${keyword}%`)
+              }
+            }
+          },
+          {
+            prospect: {
+              phone: {
+                number: Like(`%${keyword}%`)
+              }
+            }
+          },
+          {
+            prospect: {
+              website: {
+                website: Like(`%${keyword}%`)
+              }
+            }
+          },
+          {
+            prospect: {
+              email: {
+                email: Like(`%${keyword}%`)
+              }
+            }
+          }
+        ]
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer les rappels", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+  
 
 }

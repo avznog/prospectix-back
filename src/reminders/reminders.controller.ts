@@ -68,4 +68,10 @@ export class RemindersController {
   markUndone(@Param("id") id: number) : Promise<UpdateResult> {
     return this.reminderService.markUnDone(id);
   }
+
+  @Roles("Cdp","Admin")
+  @Get("by-keyword/:keyword")
+  findAllByKeyword(@Param("keyword") keyword: string) : Promise<Reminder[]> {
+    return this.reminderService.findAllByKeyword(keyword);
+  }
 }

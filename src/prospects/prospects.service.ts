@@ -217,7 +217,7 @@ export class ProspectsService {
     }
   }
 
-  async findAllByKeywords(keyword: string) {
+  async findAllByKeywords(keyword: string) : Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
         relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
