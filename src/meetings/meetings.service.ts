@@ -122,6 +122,26 @@ export class MeetingsService {
         relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email"],
         where: [
           {
+            pm: {
+              pseudo: Like(`%${keyword}%`),
+            }
+          },
+          {
+            pm: {
+              name: Like(`%${keyword}%`),
+            }
+          },
+          {
+            pm: {
+              firstname: Like(`%${keyword}%`),
+            }
+          },
+          {
+            pm: {
+              mail: Like(`%${keyword}%`),
+            }
+          },
+          {
             prospect: {
               companyName: Like(`%${keyword}%`),
             }
