@@ -27,4 +27,10 @@ export class CreateMeetingDto {
     required: true
   })
   date: Date;
+
+  @ApiProperty({
+    description: "Indique si le rendez-vous a été faits",
+    required: true
+  })
+  done: boolean;
 }

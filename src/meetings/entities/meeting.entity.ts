@@ -33,6 +33,13 @@ export class Meeting extends BaseEntity {
   })
   date: Date;
 
+  @Column()
+  @ApiProperty({
+    description: "Indique si le rendez-vous est fait ou non",
+    required: true
+  })
+  done: boolean;
+
   @ManyToOne(() => ProjectManager)
   @ApiProperty({
     description: "Chef de projet lié au rendez-vous",

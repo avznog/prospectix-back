@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
-import { Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { Meeting } from './entities/meeting.entity';
 
@@ -48,7 +48,7 @@ export class MeetingsService {
   async findAllByCurrentPm(idPm: number) : Promise<Meeting[]>{
     try {
       return await this.meetingRepository.find({
-        relations: ["pm"],
+        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email"],
         where: {
           pm: {
             id: idPm
@@ -64,7 +64,7 @@ export class MeetingsService {
   async findAllByProspect(idProspect: number) : Promise<Meeting[]> {
     try{
       return await this.meetingRepository.find({
-        relations: ["prospect"],
+        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email"],
         where: {
           prospect: {
             id: idProspect
@@ -76,6 +76,104 @@ export class MeetingsService {
       throw new HttpException("Impossible de récupérer les rendez-vous pour le prospect sélectionné", HttpStatus.BAD_REQUEST)
     }
     
+  }
+
+  async findAll() : Promise<Meeting[]> {
+    try {
+      return await this.meetingRepository.find({
+        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email"],
+      }); 
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer l'entièreté des rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async delete(idMeeting: number) : Promise<DeleteResult> {
+    try {
+      return await this.meetingRepository.delete(idMeeting);
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de supprimer le rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async markDone(idMeeting: number) : Promise<UpdateResult> {
+    try {
+      return await this.meetingRepository.update(idMeeting, { done: true });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException("Impossible de marquer le rendez-vous comme fait", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async markUndone(idMeeting: number) : Promise<UpdateResult> {
+    try {
+      return await this.meetingRepository.update(idMeeting, { done: false });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException("Impossible de marquer le rendez vous comme n'étant pas encore fait", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findAllByKeyword(keyword: string) : Promise<Meeting[]> {
+    try {
+      return await this.meetingRepository.find({
+        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email"],
+        where: [
+          {
+            prospect: {
+              companyName: Like(`%${keyword}%`),
+            }
+          },
+          {
+            prospect: {
+              city: {
+                name: Like(`%${keyword}%`),
+              }
+            }
+          },
+          {
+            prospect: {
+              activity: {
+                name: Like(`%${keyword}%`),
+              }
+            }
+          },
+          {
+            prospect: {
+              country: {
+                name: Like(`%${keyword}%`)
+              }
+            }
+          },
+          {
+            prospect: {
+              phone: {
+                number: Like(`%${keyword}%`)
+              }
+            }
+          },
+          {
+            prospect: {
+              website: {
+                website: Like(`%${keyword}%`)
+              }
+            }
+          },
+          {
+            prospect: {
+              email: {
+                email: Like(`%${keyword}%`)
+              }
+            }
+          }
+        ]
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer les rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
 }
