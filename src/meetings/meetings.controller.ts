@@ -57,7 +57,7 @@ export class MeetingsController {
   }
 
   @Roles("Cdp","Admin")
-  @Get("mark-undone")
+  @Get("mark-undone/:id")
   markUndone(@Param("id") idMeeting: number) : Promise<UpdateResult> {
     return this.meetingsService.markUndone(idMeeting);
   }
