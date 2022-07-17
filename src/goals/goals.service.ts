@@ -16,7 +16,7 @@ export class GoalsService {
     private readonly goalRepository: Repository<Goal>
   ) {}
 
-  async create(createGoalDto: CreateGoalDto, idPm: number) : Promise<Goal>{
+  async createForCurrentPm(createGoalDto: CreateGoalDto, idPm: number) : Promise<Goal>{
     try{
       const pm = await this.pmRepository.findOne({
         where: {
@@ -35,8 +35,29 @@ export class GoalsService {
     }
   }
 
+  async createForPm(createGoalDto: CreateGoalDto, pseudo: string) : Promise<Goal> {
+    try {
+      createGoalDto.pm = await this.pmRepository.findOne({
+        where: {
+          pseudo: pseudo
+        }
+      });
+      return await this.goalRepository.save(createGoalDto);
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de créer un objectif pour ce chef de projet", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async findAll() : Promise<Goal[]> {
-    return await this.goalRepository.find();
+    try {
+      return await this.goalRepository.find({
+        relations: ["pm"],
+      });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer tous les objectifs", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async findAllByCurrentPm(idPm: number) : Promise<Goal[]> {

@@ -18,10 +18,16 @@ export class GoalsController {
   constructor(private readonly goalsService: GoalsService) {}
 
   @Roles("Admin")
-  @Post()
-  create(@Body() createGoalDto: CreateGoalDto, @Req() request: RequestWithPm) : Promise<Goal> {
+  @Post("for-pm/:pseudo")
+  createForPm(@Body() createGoalDto: CreateGoalDto,@Param("pseudo") pseudo: string) : Promise<Goal> {
+    return this.goalsService.createForPm(createGoalDto, pseudo);
+  }
+
+  @Roles("Admin")
+  @Post("for-current-pm")
+  createForCurrentPm(@Body() createGoalDto: CreateGoalDto, @Req() request: RequestWithPm) : Promise<Goal> {
     request.pm = request.user as ProjectManager;
-    return this.goalsService.create(createGoalDto, request.pm.id);
+    return this.goalsService.createForCurrentPm(createGoalDto, request.pm.id);
   }
 
   @Roles("Cdp","Admin")
