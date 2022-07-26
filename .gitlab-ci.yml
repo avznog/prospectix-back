@@ -1,67 +1,77 @@
-image: docker:latest
-services: 
-  - docker:19.03-dind
-
-stages: 
+stages:
   - build
-  - release
+  - docker
   - deploy
 
-#BUILD
+#BUILD STAGE
+
 build-prod:
   stage: build
-  before_script:
-    - docker login -u $CI_DEPLOY_USERNAME -p $CI_DEPLOY_TOKEN $CI_REGISTRY
+  image: node:16.13-alpine
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - .yarn/
+      - yarn.lock
   script:
-    - docker build --tag $CI_REGISTRY_IMAGE:prod .
+    - yarn install
+    - yarn run build
+  artifacts:
+    paths:
+      - build/
   only:
-    - master 
+    - master
 
 build-staging:
   stage: build
+  image: node:16.13-alpine
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - .yarn/
+      - yarn.lock
+  script:
+    - yarn install
+    - yarn run build
+  artifacts:
+    paths:
+      - build/
+  only:
+    - staging
+
+# DOCKER STAGE
+docker-staging:
+  stage: docker
+  image: docker:latest
   before_script:
     - docker login -u $CI_DEPLOY_USERNAME -p $CI_DEPLOY_TOKEN $CI_REGISTRY
   script:
     - docker build --tag $CI_REGISTRY_IMAGE:staging .
+    - docker push $CI_REGISTRY_IMAGE:staging
+  dependencies:
+    - build-staging
   only:
     - staging
 
-#RELEASE
-release-prod:
-  stage: release
+docker-prod:
+  stage: docker
+  image: docker:latest
   before_script:
     - docker login -u $CI_DEPLOY_USERNAME -p $CI_DEPLOY_TOKEN $CI_REGISTRY
   script:
+    - docker build --tag $CI_REGISTRY_IMAGE:prod .
     - docker push $CI_REGISTRY_IMAGE:prod
+  dependencies:
+    - build-prod
   only:
     - master
 
-release-staging:
-  stage: release
-  before_script:
-    - docker login -u $CI_DEPLOY_USERNAME -p $CI_DEPLOY_TOKEN $CI_REGISTRY
-  script:
-    - docker push $CI_REGISTRY_IMAGE:staging
-  only:
-    - staging
-     
 
-#DEPLOY
-deploy-prod:
-  stage: deploy
-  before_script:
-    - "which ssh-agent || (apk update && apk add openssh-client bash curl)"
-    - mkdir -p ~/.ssh
-    - eval $(ssh-agent -s)
-    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-  script:
-    - /bin/sh -c "ssh-add <(echo \"$SSH_PRIVATE_KEY_PROD\")"
-    - export COMPOSE_HTTP_TIMEOUT=200
-    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml down --remove-orphans"
-    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml pull"
-    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml up -d"
-  only:
-    - master 
+#DEPLOY STAGE
 
 deploy-staging:
   stage: deploy
@@ -70,13 +80,33 @@ deploy-staging:
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    
   script:
-    - /bin/sh -c "ssh-add <(echo \"$SSH_PRIVATE_KEY_STAGING\")"
-    - echo "$API_STAGING_ENV" > api.env
-    - scp api.env root@$HOST_STAGING:~
+    - bash -c "ssh-add <(echo \"$SSH_PRIVATE_KEY_STAGING\")"
     - export COMPOSE_HTTP_TIMEOUT=200
     - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml down --remove-orphans"
     - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml pull"
     - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml up -d"
+  dependencies:
+    - build-staging
   only:
     - staging
+
+deploy-prod:
+  stage: deploy
+  before_script:
+    - "which ssh-agent || (apk update && apk add openssh-client bash curl)"
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    
+  script:
+    - bash -c "ssh-add <(echo \"$SSH_PRIVATE_KEY_PROD\")"
+    - export COMPOSE_HTTP_TIMEOUT=200
+    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml down --remove-orphans"
+    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml pull"
+    - ssh root@$HOST_PROD "docker-compose -f ~/docker-compose.yml up -d"
+  dependencies:
+    - build-prod
+  only:
+    - master
