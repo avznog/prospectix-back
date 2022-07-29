@@ -17,7 +17,7 @@ export class Website extends BaseEntity {
   })
   id: number;
 
-  @OneToOne(() => Prospect, (prospect) => prospect.website, { lazy: true })
+  @OneToOne(() => Prospect, (prospect) => prospect.website)
   prospect: Prospect;
 
   @Column()

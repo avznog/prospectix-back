@@ -31,7 +31,7 @@ export class City extends BaseEntity {
   })
   zipcode: number;
 
-  @OneToMany(() => Prospect, (prospect) => prospect.city, { lazy: true })
+  @OneToMany(() => Prospect, (prospect) => prospect.city)
   @ApiProperty({
     description: "Prospect correspondant à la ville",
     required: true

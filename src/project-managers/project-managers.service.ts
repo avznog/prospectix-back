@@ -102,7 +102,9 @@ export class ProjectManagersService {
 
   async findAll() : Promise<ProjectManager[]> {
     try {
-      return await this.pmRepository.find(); 
+      return await this.pmRepository.find({
+        relations: ["goals","meetings","reminders","sentEmails","bookmarks","events","bookmarks.prospect"]
+      }); 
     } catch (error) {
       console.log(error);
       throw new HttpException("Impossible de récupérer les project managers", HttpStatus.INTERNAL_SERVER_ERROR);

@@ -26,6 +26,6 @@ export class Phone extends BaseEntity {
   })
   number: string;
 
-  @OneToOne(() => Prospect, (prospect) => prospect.phone, { lazy: true })
+  @OneToOne(() => Prospect, (prospect) => prospect.phone)
   prospect: Prospect;
 }

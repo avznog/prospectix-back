@@ -28,12 +28,12 @@ export class Email extends BaseEntity {
   })
   email: string;
 
-  @OneToOne(() => Prospect, (prospect) => prospect.email, { lazy: true })
+  @OneToOne(() => Prospect, (prospect) => prospect.email)
   prospect: Prospect;
 
   @OneToOne(() => ProjectManager)
   pm: ProjectManager;
 
-  @OneToMany(() => SentEmail, (sentEmail) => sentEmail.email, { lazy: true })
+  @OneToMany(() => SentEmail, (sentEmail) => sentEmail.email)
   sentEmails: SentEmail[];
 }

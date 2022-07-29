@@ -11,7 +11,7 @@ import { Roles } from 'src/auth/annotations/roles.decorator';
 
 @Controller('prospects')
 @ApiTags('prospects')
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProspectsController {
   constructor(private readonly prospectsService: ProspectsService) {}
 
@@ -67,9 +67,9 @@ export class ProspectsController {
   }
 
   @Roles("Cdp","Admin")
-  @Get("by-bookmarks/:pmName")
-  findAllByBookmark(@Param("pmName") pmName: string) : Promise<Prospect[]> {
-    return this.prospectsService.findAllByBookmark(pmName);
+  @Get("by-bookmarks/:pmPseudo")
+  findAllByBookmark(@Param("pmPseudo") pmPseudo: string) : Promise<Prospect[]> {
+    return this.prospectsService.findAllByBookmark(pmPseudo);
   }
 
   @Roles("Cdp","Admin")

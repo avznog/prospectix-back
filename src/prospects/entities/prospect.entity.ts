@@ -88,28 +88,28 @@ export class Prospect extends BaseEntity {
   })
   website: Website;
 
-  @OneToMany(() => Meeting, (meeting) => meeting.prospect, { lazy: true })
+  @OneToMany(() => Meeting, (meeting) => meeting.prospect)
   @ApiProperty({
     description: "Rendez-vous du prospect",
     required: true
   })
   meetings: Meeting[];
 
-  @OneToMany(() => Reminder, (reminder) => reminder.prospect, { lazy: true })
+  @OneToMany(() => Reminder, (reminder) => reminder.prospect)
   @ApiProperty({
     description: "Rappels du prospect",
     required: true
   })
   reminders: Reminder[];
 
-  @OneToOne(() => Bookmark, (bookmark) => bookmark.prospect, { lazy: true })
+  @OneToOne(() => Bookmark, (bookmark) => bookmark.prospect)
   @ApiProperty({
     description: "Favoris du prospect",
     required: true
   })
   bookmarks: Bookmark[];
 
-  @OneToMany(() => Event, (event) => event.prospect, { lazy: true })
+  @OneToMany(() => Event, (event) => event.prospect)
   @ApiProperty({
     description: "Evènements du prospect",
     required: true

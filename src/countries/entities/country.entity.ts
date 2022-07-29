@@ -24,7 +24,7 @@ export class Country extends BaseEntity {
   })
   name: string;
 
-  @OneToMany(() => Prospect, (prospect) => prospect.country, { lazy: true })
+  @OneToMany(() => Prospect, (prospect) => prospect.country)
   @ApiProperty({
     description: "Prospect lié au pays",
     required: true

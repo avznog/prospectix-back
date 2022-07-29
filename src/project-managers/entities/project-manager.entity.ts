@@ -80,14 +80,14 @@ export class ProjectManager extends BaseEntity {
   })
   disabled: boolean;
 
-  @OneToMany(() => Goal, (goal) => goal.pm, { lazy: true })
+  @OneToMany(() => Goal, (goal) => goal.pm)
   @ApiProperty({
     description: "Objectifs du chef de projet",
     required: true
   })
   goals: Goal[];
 
-  @OneToMany(() => Meeting, (meeting) => meeting.pm, { lazy: true })
+  @OneToMany(() => Meeting, (meeting) => meeting.pm)
   @ApiProperty({
     description: "Rendez-vous du chef de projet",
     required: true
@@ -121,7 +121,7 @@ export class ProjectManager extends BaseEntity {
   })
   bookmarks: Bookmark[];
 
-  @OneToMany(() => Event, (event) => event.prospect, { lazy: true })
+  @OneToMany(() => Event, (event) => event.prospect)
   @ApiProperty({
     description: "Evènement du chef de projet",
     required: true

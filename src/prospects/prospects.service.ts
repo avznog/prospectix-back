@@ -53,7 +53,7 @@ export class ProspectsService {
   async findAll(): Promise<Prospect[]> {
     try{
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
       });
     } catch (error){
       console.log(error)
@@ -65,7 +65,7 @@ export class ProspectsService {
   async findOne(idProspect: number): Promise<Prospect> {
     try {
       const prospects = await this.prospectRepository.findOne({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
         where: {
           id: idProspect,
         },
@@ -83,7 +83,7 @@ export class ProspectsService {
     try {
       const activityNames = activityName.split(".");
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
         where: {
           activity: {
             name: In(activityNames)
@@ -102,7 +102,7 @@ export class ProspectsService {
     try {
       const cityNames = cityName.split(".");
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
         where: {
           city: {
             name: In(cityNames)
@@ -120,7 +120,7 @@ export class ProspectsService {
   async findAllByBookmark(pmPseudo: string): Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
         where :{
           bookmarks: {
             pm: {
@@ -140,7 +140,7 @@ export class ProspectsService {
   async findAllByPhone(phoneProspect: string): Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
         where: {
           phone: {
             number: Like(`%${phoneProspect}%`)
@@ -159,7 +159,7 @@ export class ProspectsService {
   async findAllByWebsite(websiteProspect: string): Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
         where: {
           website: {
             website: Like(`%${websiteProspect}%`)
@@ -178,7 +178,7 @@ export class ProspectsService {
   async findAllByAddress(addressProspect: string): Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
         where: {
           streetAddress: Like(`%${addressProspect}%`),
         },
@@ -201,7 +201,7 @@ export class ProspectsService {
       });
 
       return await this.prospectRepository.findOne({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
         where: {
           id: email.id,
         }
@@ -218,7 +218,7 @@ export class ProspectsService {
   async findAllByKeywords(keyword: string) : Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
         where : [
           {
             activity: {

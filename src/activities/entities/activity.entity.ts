@@ -24,7 +24,7 @@ export class Activity extends BaseEntity {
   })
   name: string;
 
-  @OneToMany(() => Prospect, (prospect) => prospect.activity, { lazy: true })
+  @OneToMany(() => Prospect, (prospect) => prospect.activity)
   @ApiProperty({
     description: "Prospect lié à l'activité",
     required: true
