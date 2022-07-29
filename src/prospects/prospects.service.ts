@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Like, Repository, UpdateResult } from 'typeorm';
+import { In, Like, Repository, UpdateResult } from 'typeorm';
 import { CreateProspectDto } from './dto/create-prospect.dto';
 import { UpdateProspectDto } from './dto/update-prospect.dto';
 import { Prospect } from './entities/prospect.entity';
@@ -81,11 +81,12 @@ export class ProspectsService {
 
   async findAllByActivity(activityName: string): Promise<Prospect[]> {
     try {
+      const activityNames = activityName.split(".");
       return await this.prospectRepository.find({
         relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
         where: {
           activity: {
-            name: Like(`%${activityName}%`)
+            name: In(activityNames)
           },
         },
       });
@@ -99,11 +100,12 @@ export class ProspectsService {
 
   async findAllByCity(cityName: string): Promise<Prospect[]> {
     try {
+      const cityNames = cityName.split(".");
       return await this.prospectRepository.find({
         relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
         where: {
           city: {
-            name: Like(`%${cityName}%`)
+            name: In(cityNames)
           }
         },
       });
@@ -115,22 +117,18 @@ export class ProspectsService {
     }
   }
 
-  async findAllByBookmark(pmName: string): Promise<Prospect[]> {
+  async findAllByBookmark(pmPseudo: string): Promise<Prospect[]> {
     try {
-      const prospects = await this.prospectRepository.find({
+      return await this.prospectRepository.find({
         relations: ["activity","city","country","events","meetings","phone","reminders","website", "email"],
-        where: {
+        where :{
           bookmarks: {
             pm: {
-              pseudo: Like(`%${pmName}%`)
-            },
-          },
-        },
+              pseudo: pmPseudo
+            }
+          }
+        }
       });
-
-      if(!prospects)
-        throw new HttpException("Ce prospect n'existe pas",HttpStatus.NOT_FOUND);
-      return prospects;
     } catch (error) {
       throw new HttpException(
         'Aucun prospect ajouté en favori pour ce Chef de Projet',
