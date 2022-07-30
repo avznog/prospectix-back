@@ -109,6 +109,13 @@ export class Prospect extends BaseEntity {
   })
   bookmarks: Bookmark[];
 
+  @Column()
+  @ApiProperty({
+    description: "Indique si le prospect est mis en favoris",
+    required: true
+  })
+  isBookmarked: boolean;
+
   @OneToMany(() => Event, (event) => event.prospect)
   @ApiProperty({
     description: "Evènements du prospect",
