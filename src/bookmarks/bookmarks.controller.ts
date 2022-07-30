@@ -25,4 +25,10 @@ export class BookmarksController {
   create(@Body() createBookmarkDto: CreateBookmarkDto) : Promise<Bookmark> {
     return this.bookmarksService.create(createBookmarkDto);
   }
+
+  @Roles("Cdp","Admin")
+  @Delete("by-prospect/:idProspect")
+  deleteByProspect(@Param("idProspect") idProspect: number) : Promise<DeleteResult> {
+    return this.bookmarksService.deleteByProspect(idProspect);
+  }
 }

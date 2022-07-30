@@ -72,6 +72,11 @@ export class CreateProspectDto {
   bookmarks: Bookmark[];
 
   @ApiProperty({
+    description: 'Indique si le prospect est mis en favoris'
+  })
+  isBookmarked: boolean;
+
+  @ApiProperty({
     description: 'Toutes les interactions CDP / Prospect',
   })
   events: Event[];

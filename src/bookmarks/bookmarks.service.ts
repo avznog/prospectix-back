@@ -13,7 +13,7 @@ export class BookmarksService {
 
   async delete(idBookmark: number) : Promise<DeleteResult> {
     try {
-      return this.bookmarkRepository.delete(idBookmark);
+      return await this.bookmarkRepository.delete(idBookmark);
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de supprimer le favoris",HttpStatus.INTERNAL_SERVER_ERROR);
@@ -26,6 +26,19 @@ export class BookmarksService {
     } catch(error) {
       console.log(error);
       throw new HttpException("Impossible de créer le favoris",HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async deleteByProspect(idProspect: number) : Promise<DeleteResult> {
+    try {
+      return await this.bookmarkRepository.delete({
+        prospect: {
+          id: idProspect
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException("Impossible de supprimer le favoris",HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
  }
