@@ -21,12 +21,13 @@ export class AuthController {
 
   @HttpCode(200)
   @Post("login")
-  async loginldap(@Body() loginPmDto: LoginPmDto, @Req() request: RequestWithPm) : Promise<Auth>{
+  async loginldap(@Body() loginPmDto: LoginPmDto, @Req() request: RequestWithPm) : Promise<{accessToken: string, refreshToken: string, pm: ProjectManager}>{
+    console.log(request)
     return await this.authService.login(loginPmDto, request);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post("logout")
+  @Get("logout")
   @HttpCode(200)
   logOut(@Req() request: RequestWithPm) : ProjectManager  {
     request.pm = request.user as ProjectManager;

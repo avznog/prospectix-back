@@ -23,22 +23,30 @@ export class AuthService {
     private readonly pmRepository: Repository<ProjectManager>
     ){}
 
-  public async login(loginPmDto: LoginPmDto, @Req() request: RequestWithPm) : Promise<ProjectManager> {
+  public async login(loginPmDto: LoginPmDto, @Req() request: RequestWithPm) : Promise<{ accessToken: string, refreshToken: string, pm: ProjectManager}> {
     const pm = await this.ldapService.authLdap(loginPmDto);
     if(!pm){
       throw new HttpException("Vos identifiants LDAP sont corrects, mais vous n'avez pas encore de compte Prospectix", HttpStatus.UNAUTHORIZED );
     }
     const user = new ProjectManagerDto()
     user.pseudo = loginPmDto.username;
-    const accessTokenCookie = this.getCookieWithJwtAccessToken(user.pseudo);
-    const {cookie: refreshTokenCookie,token: refreshToken} = this.getCookieWithJwtRefreshToken(user.pseudo);
+    const accessToken = this.getAccessToken(user.pseudo);
+    const refreshToken = this.getRefreshToken(user.pseudo);
+    // const accessTokenCookie = this.getCookieWithJwtAccessToken(user.pseudo);
+    // const {cookie: refreshTokenCookie,token: refreshToken} = this.getCookieWithJwtRefreshToken(user.pseudo);
     await this.pmService.setCurrentRefreshToken(refreshToken, user.pseudo);
-    request.res?.setHeader("Set-Cookie", [accessTokenCookie, refreshTokenCookie]);
-    return await this.pmRepository.findOne({
+    // request.res?.setHeader("Set-Cookie", [accessTokenCookie, refreshTokenCookie]);
+    const projectmanager =  await this.pmRepository.findOne({
       where: {
         pseudo : loginPmDto.username
       }
     });
+
+    return {
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      pm: projectmanager
+    }
   }
 
 
@@ -60,6 +68,19 @@ export class AuthService {
       "Authentication=; HttpOnly; Path=/; Max-Age=0",
       "Refresh=; HttpOnly; Path=/ Max-Age=0"
     ];
+  }
+
+  public getAccessToken(username: string): string {
+    const payload: TokenPayload = { username };
+    return this.jwtService.sign(payload);
+  }
+
+  public getRefreshToken(username: string) : string{
+    const payload: TokenPayload = { username };
+    return this.jwtService.sign(payload, {
+      secret: this.configService.get("JWT_REFRESH_TOKEN_SECRET"),
+      expiresIn: `${this.configService.get("JWT_REFRESH_TOKEN_EXPIRATION_TIME")}s`
+    });
   }
 
   public getCookieWithJwtAccessToken(username: string): string{
