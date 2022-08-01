@@ -265,7 +265,38 @@ export class ProspectsService {
       console.log(error)
       throw new HttpException("impossible de modifier le prospect",HttpStatus.INTERNAL_SERVER_ERROR)
     }
-    
+  }
+
+  async updateByCity(idProspect: number, cityName: string) : Promise<UpdateResult> {
+    try {
+      const updateProspectDto = new UpdateProspectDto()
+      const city = await this.cityRepository.findOne({
+        where: {
+          name: cityName
+        }
+      });
+      updateProspectDto.city = city;
+      return await this.prospectRepository.update(idProspect, updateProspectDto);  
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("impossible de modifier la ville du prospect",HttpStatus.INTERNAL_SERVER_ERROR)
+    } 
+  }
+
+  async updateByActivity(idProspect: number, activityName: string) : Promise<UpdateResult> {
+    try {
+      const updateProspectDto = new UpdateProspectDto()
+      const activity = await this.activityRepository.findOne({
+        where: {
+          name: activityName
+        }
+      });
+      updateProspectDto.activity = activity;
+      return await this.prospectRepository.update(idProspect, updateProspectDto);  
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("impossible de modifier le domaine d'acitvité du prospect",HttpStatus.INTERNAL_SERVER_ERROR)
+    } 
   }
 
   async disable(idProspect: number) : Promise<UpdateResult> {

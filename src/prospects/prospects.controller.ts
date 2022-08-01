@@ -11,7 +11,7 @@ import { Roles } from 'src/auth/annotations/roles.decorator';
 
 @Controller('prospects')
 @ApiTags('prospects')
-// @UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ProspectsController {
   constructor(private readonly prospectsService: ProspectsService) {}
 
@@ -40,6 +40,18 @@ export class ProspectsController {
     @Body() updateProspectDto: UpdateProspectDto,
   ) : Promise<UpdateResult>{
     return this.prospectsService.update(+id, updateProspectDto);
+  }
+
+  @Get('by-city/:id/:cityName')
+  @Roles("Cdp","Admin")
+  updateByCity(@Param('id') id: string, @Param("cityName") cityName: string) : Promise<UpdateResult>{
+    return this.prospectsService.updateByCity(+id, cityName);
+  }
+
+  @Get('by-activity/:id/:activityName')
+  @Roles("Cdp","Admin")
+  updateByActivity(@Param('id') id: string, @Param("activityName") activityName: string) : Promise<UpdateResult>{
+    return this.prospectsService.updateByActivity(+id, activityName);
   }
 
   @Roles("Cdp","Admin")
