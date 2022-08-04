@@ -27,66 +27,6 @@ export class ProjectManagersService {
     }
   }
 
-  async setCurrentRefreshToken(
-    refreshToken: string,
-    username: string,
-  ): Promise<UpdateResult> {
-    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-    const pmDto = new ProjectManagerDto();
-    pmDto.pseudo = username;
-    const pm = await this.pmRepository.findOne({
-      where: {
-        pseudo: pmDto.pseudo,
-      },
-    });
-
-    return await this.pmRepository.update(pm.id, {
-      currentHashedRefreshToken: currentHashedRefreshToken,
-    });
-  }
-
-  async getPmIfRefreshTokenMatches(
-    refreshToken: string,
-    username: string,
-  ): Promise<ProjectManager> {
-    const pm = await this.pmRepository.findOne({
-      where: {
-        pseudo: username,
-      },
-    });
-
-    if (!pm)
-      throw new HttpException(
-        "Aucun cdp n'existe avec ce nom d'utilisateur",
-        HttpStatus.NOT_FOUND,
-      );
-
-    const isRefreshtokenMatching = await bcrypt.compare(
-      refreshToken,
-      pm.currentHashedRefreshToken,
-    );
-
-    if (isRefreshtokenMatching) {
-      return pm;
-    }
-  }
-
-  async removeRefreshToken(username: string): Promise<UpdateResult> {
-    try {
-      const pm = await this.pmRepository.findOne({
-        where: {
-          pseudo: username,
-        },
-      });
-      return await this.pmRepository.update(pm.id, {
-        pseudo: username,
-      });
-    } catch (error) {
-      console.log(error);
-      throw new HttpException("Impossble de supprimer le refresh token", HttpStatus.BAD_REQUEST);
-    }
-  }
-
   async findByPayload(payload: TokenPayload): Promise<ProjectManager> {
     try {
       return await this.pmRepository.findOne({
