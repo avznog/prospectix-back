@@ -4,12 +4,6 @@ import { Prospect } from 'src/prospects/entities/prospect.entity';
 
 export class CreateReminderDto {
   @ApiProperty({
-    description: "Type du rappel",
-    required: true
-  })
-  type: string;
-
-  @ApiProperty({
     description: "Description du rappel",
     required: true
   })

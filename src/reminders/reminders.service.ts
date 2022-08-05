@@ -31,22 +31,9 @@ export class RemindersService {
     }
   }
 
-  async create(idPm: number, createReminderDto: CreateReminderDto, idProspect: number) : Promise<Reminder>{
+  async create(createReminderDto: CreateReminderDto) : Promise<Reminder>{
     try {
-    const pm = await this.pmRepository.findOne({
-      where: {
-        id: idPm
-      }
-    });
-
-    const prospect = await this.prospectRepository.findOne({
-      where: {
-        id: idProspect
-      }
-    });
-    createReminderDto.pm = pm;
-    createReminderDto.prospect = prospect;
-    return await this.reminderRepository.save(createReminderDto);
+      return await this.reminderRepository.save(createReminderDto);
       
     } catch (error) {
       console.log(error)

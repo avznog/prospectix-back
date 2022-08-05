@@ -12,18 +12,16 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
 @Controller('reminders')
 @ApiTags("reminders")
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 export class RemindersController {
   constructor(
     private readonly reminderService: RemindersService,
     ) {}
 
   @Roles("Cdp","Admin")
-  @Post(":idProspect")
-  create(@Body() createReminderDto: CreateReminderDto, @Param("idProspect") idProspect: number, @Req() request: RequestWithPm) : Promise<Reminder>{
-    request.pm = request.user as ProjectManager;
-    return this.reminderService.create(request.pm.id, createReminderDto, idProspect);
-
+  @Post()
+  create(@Body() createReminderDto: CreateReminderDto) : Promise<Reminder>{
+    return this.reminderService.create(createReminderDto);
   }
 
   @Roles("Cdp","Admin")
