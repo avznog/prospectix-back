@@ -25,10 +25,9 @@ export class MeetingsController {
   }
 
   @Roles("Cdp", "Admin")
-  @Post(":idProspect")
-  create(@Body() createMeetingDto: CreateMeetingDto, @Param("idProspect") idProspect: number, @Req() request: RequestWithPm) : Promise<Meeting> {
-    request.pm = request.user as ProjectManager;
-    return this.meetingsService.create(createMeetingDto, request.pm.id, idProspect);
+  @Post()
+  create(@Body() createMeetingDto: CreateMeetingDto) : Promise<Meeting> {
+    return this.meetingsService.create(createMeetingDto);
   }
 
   @Get("by-current-pm")

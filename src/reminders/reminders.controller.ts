@@ -12,7 +12,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
 @Controller('reminders')
 @ApiTags("reminders")
-// @UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class RemindersController {
   constructor(
     private readonly reminderService: RemindersService,

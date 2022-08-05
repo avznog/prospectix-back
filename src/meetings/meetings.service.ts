@@ -19,24 +19,8 @@ export class MeetingsService {
     private readonly pmRepository: Repository<ProjectManager>
   ){}
 
-  async create(createMeetingDto: CreateMeetingDto, idPm: number, idProspect: number) : Promise<Meeting> {
+  async create(createMeetingDto: CreateMeetingDto) : Promise<Meeting> {
     try {
-      const pm = await this.pmRepository.findOne({
-        where: {
-          id: idPm
-        }
-      });
-      if(!pm)
-        throw new HttpException("Impossible de créer le rendez-vous: Chef de projet introuvable", HttpStatus.BAD_REQUEST)
-      const prospect = await this.prospectRepository.findOne({
-        where: {
-          id: idProspect
-        }
-      });
-      if(!prospect)
-        throw new HttpException("Impossible de créer le rendez-vous: prospect introuvable", HttpStatus.BAD_REQUEST)
-      createMeetingDto.pm = pm;
-      createMeetingDto.prospect = prospect;
       return await this.meetingRepository.save(createMeetingDto);
     } catch (error) {
       console.log(error)
@@ -54,7 +38,7 @@ export class MeetingsService {
             id: idPm
           }
         }
-      })
+      });
     } catch (error) {
       console.log(error);
       throw new HttpException("Impossible de récupérer les rendez-vous pour le Chef de projet sélectionné", HttpStatus.BAD_REQUEST)
