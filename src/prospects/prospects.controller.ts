@@ -8,10 +8,11 @@ import { UpdateResult } from 'typeorm';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/annotations/roles.decorator';
+import { take } from 'rxjs';
 
 @Controller('prospects')
 @ApiTags('prospects')
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProspectsController {
   constructor(private readonly prospectsService: ProspectsService) {}
 
@@ -25,6 +26,12 @@ export class ProspectsController {
   @Get()
   findAll() : Promise<Prospect[]> {
     return this.prospectsService.findAll();
+  }
+
+  @Roles("Cdp","Admin")
+  @Get("find-all-and-count/:take/:skip")
+  findAllAndCount(@Param("take") take: number, @Param("skip") skip: number) {
+    return this.prospectsService.findAllAndCount(take, skip);
   }
 
   @Roles("Cdp","Admin")

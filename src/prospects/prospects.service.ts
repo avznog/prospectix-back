@@ -50,6 +50,18 @@ export class ProspectsService {
     return await this.prospectRepository.save(createProspectDto);
   }
 
+  async findAllAndCount(take: number, skip: number) {
+    try {
+      return await this.prospectRepository.findAndCount({
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
+        take: take,
+        skip: skip
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   async findAll(): Promise<Prospect[]> {
     try{
       return await this.prospectRepository.find({
