@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { In, Like, Repository, UpdateResult } from 'typeorm';
+import { In, ILike, Repository, UpdateResult } from 'typeorm';
 import { CreateProspectDto } from './dto/create-prospect.dto';
 import { UpdateProspectDto } from './dto/update-prospect.dto';
 import { Prospect } from './entities/prospect.entity';
@@ -54,61 +54,71 @@ export class ProspectsService {
     try {
     
       return await this.prospectRepository.find({
-        // relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
-        relations: ["city","activity","phone"],
-        where : 
-        // [
-          // 
-        //   {
-        //     activity: {
-        //       name: Like(`%${keyword}%`)
-        //     }
-        //   },
-        //   {
-        //     city: {
-        //       name: Like(`%${keyword}%`)
-        //     }
-        //   },
-        //   {
-        //     country: {
-        //       name: Like(`%${keyword}%`)
-        //     }
-        //   },
-        //   {
-        //     email: {
-        //       email: Like(`%${keyword}%`)
-        //     }
-        //   },
-        //   {
-        //     phone: {
-        //       number: Like(`%${keyword}%`)
-        //     }
-        //   },
-        //   {
-        //     website: {
-        //       website: Like(`${keyword}`)
-        //     }
-        //   }
-        // ]
-        //  &&
-        {
-          city: {
-            name: city  
+        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
+        where : [
+          { 
+            city: {
+              name: city
+            },
+            activity: {
+              name: activity
+            },
+            phone: {
+              number: ILike(`%${keyword}%`)
+            }
           },
-          activity: {
-            name: activity
+          { 
+            city: {
+              name: city
+            },
+            activity: {
+              name: activity
+            },
+            website: {
+              website: ILike(`%${keyword}%`)
+            }
+          },
+          { 
+            city: {
+              name: city
+            },
+            activity: {
+              name: activity
+            },
+            email: {
+              email: ILike(`%${keyword}%`)
+            }
+          },
+          { 
+            city: {
+              name: city
+            },
+            activity: {
+              name: activity
+            },
+            companyName: ILike(`%${keyword}%`)
+          },
+          { 
+            city: {
+              name: city
+            },
+            activity: {
+              name: activity
+            },
+            streetAddress: ILike(`%${keyword}%`)
+          },
+          { 
+            city: {
+              name: city
+            },
+            activity: {
+              name: activity
+            },
+            country: {
+              name: ILike(`%${keyword}%`)
+            }
           }
-        } && 
-        (
-          {
-          phone: {
-            number: Like(`%${keyword}%`)
-          },
-          streetAddress: Like(`%${keyword}%`)
-        }
-        )
-        
-        ,
+        ],
         take: take,
         skip: skip
       })
@@ -211,7 +221,7 @@ export class ProspectsService {
         relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
         where: {
           phone: {
-            number: Like(`%${phoneProspect}%`)
+            number: ILike(`%${phoneProspect}%`)
           }
         }
       })
@@ -230,7 +240,7 @@ export class ProspectsService {
         relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
         where: {
           website: {
-            website: Like(`%${websiteProspect}%`)
+            website: ILike(`%${websiteProspect}%`)
           },
         },
       });
@@ -248,7 +258,7 @@ export class ProspectsService {
       return await this.prospectRepository.find({
         relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
         where: {
-          streetAddress: Like(`%${addressProspect}%`),
+          streetAddress: ILike(`%${addressProspect}%`),
         },
       });
     } catch (error) {
@@ -290,32 +300,32 @@ export class ProspectsService {
         where : [
           {
             activity: {
-              name: Like(`%${keyword}%`)
+              name: ILike(`%${keyword}%`)
             }
           },
           {
             city: {
-              name: Like(`%${keyword}%`)
+              name: ILike(`%${keyword}%`)
             }
           },
           {
             country: {
-              name: Like(`%${keyword}%`)
+              name: ILike(`%${keyword}%`)
             }
           },
           {
             email: {
-              email: Like(`%${keyword}%`)
+              email: ILike(`%${keyword}%`)
             }
           },
           {
             phone: {
-              number: Like(`%${keyword}%`)
+              number: ILike(`%${keyword}%`)
             }
           },
           {
             website: {
-              website: Like(`${keyword}`)
+              website: ILike(`${keyword}`)
             }
           }
         ]

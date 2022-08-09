@@ -12,7 +12,7 @@ import { take } from 'rxjs';
 
 @Controller('prospects')
 @ApiTags('prospects')
- @UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ProspectsController {
   constructor(private readonly prospectsService: ProspectsService) {}
 
@@ -31,7 +31,6 @@ export class ProspectsController {
   @Roles("Cdp","Admin")
   @Get("find-all-and-count")
   findAllAndCount(@Query("take") take: number, @Query("skip") skip: number, @Query("keyword") keyword: string, @Query("city") city: string, @Query("activity") activity: string) {
-    console.log(keyword)
     return this.prospectsService.findAllAndCount(keyword, city, activity, take, skip);
   }
 
