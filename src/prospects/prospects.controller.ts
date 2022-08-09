@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query } from '@nestjs/common';
 import { ProspectsService } from './prospects.service';
 import { CreateProspectDto } from './dto/create-prospect.dto';
 import { UpdateProspectDto } from './dto/update-prospect.dto';
@@ -12,7 +12,7 @@ import { take } from 'rxjs';
 
 @Controller('prospects')
 @ApiTags('prospects')
-// @UseGuards(JwtAuthGuard, RolesGuard)
+ @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProspectsController {
   constructor(private readonly prospectsService: ProspectsService) {}
 
@@ -29,9 +29,10 @@ export class ProspectsController {
   }
 
   @Roles("Cdp","Admin")
-  @Get("find-all-and-count/:take/:skip")
-  findAllAndCount(@Param("take") take: number, @Param("skip") skip: number) {
-    return this.prospectsService.findAllAndCount(take, skip);
+  @Get("find-all-and-count")
+  findAllAndCount(@Query("take") take: number, @Query("skip") skip: number, @Query("keyword") keyword: string, @Query("city") city: string, @Query("activity") activity: string) {
+    console.log(keyword)
+    return this.prospectsService.findAllAndCount(keyword, city, activity, take, skip);
   }
 
   @Roles("Cdp","Admin")

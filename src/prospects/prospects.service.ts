@@ -50,15 +50,71 @@ export class ProspectsService {
     return await this.prospectRepository.save(createProspectDto);
   }
 
-  async findAllAndCount(take: number, skip: number) {
+  async findAllAndCount(keyword: string, city: string, activity: string, take: number, skip: number) : Promise<Prospect[]> {
     try {
-      return await this.prospectRepository.findAndCount({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
+    
+      return await this.prospectRepository.find({
+        // relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
+        relations: ["city","activity","phone"],
+        where : 
+        // [
+          // 
+        //   {
+        //     activity: {
+        //       name: Like(`%${keyword}%`)
+        //     }
+        //   },
+        //   {
+        //     city: {
+        //       name: Like(`%${keyword}%`)
+        //     }
+        //   },
+        //   {
+        //     country: {
+        //       name: Like(`%${keyword}%`)
+        //     }
+        //   },
+        //   {
+        //     email: {
+        //       email: Like(`%${keyword}%`)
+        //     }
+        //   },
+        //   {
+        //     phone: {
+        //       number: Like(`%${keyword}%`)
+        //     }
+        //   },
+        //   {
+        //     website: {
+        //       website: Like(`${keyword}`)
+        //     }
+        //   }
+        // ]
+        //  &&
+        {
+          city: {
+            name: city  
+          },
+          activity: {
+            name: activity
+          }
+        } && 
+        (
+          {
+          phone: {
+            number: Like(`%${keyword}%`)
+          },
+          streetAddress: Like(`%${keyword}%`)
+        }
+        )
+        
+        ,
         take: take,
         skip: skip
       })
     } catch (error) {
       console.log(error)
+      throw new HttpException("Impossible de récupérer les prospects", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
