@@ -32,7 +32,7 @@ export class ProspectsService {
     return await this.prospectRepository.save(createProspectDto);
   }
 
-  async findAllAndCount(keyword: string, city: string, activity: string, take: number, skip: number) : Promise<Prospect[]> {
+  async findAllPaginated(keyword: string, city: string, activity: string, take: number, skip: number) : Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
         relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],

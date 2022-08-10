@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Req, UseGuards, Delete, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req, UseGuards, Delete, Patch, Query } from '@nestjs/common';
 import { RemindersService } from './reminders.service';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { Reminder } from './entities/reminder.entity';
@@ -71,5 +71,22 @@ export class RemindersController {
   @Get("by-keyword/:keyword")
   findAllByKeyword(@Param("keyword") keyword: string) : Promise<Reminder[]> {
     return this.reminderService.findAllByKeyword(keyword);
+  }
+
+  @Roles("Cdp","Admin")
+  @Get("find-all-paginated")
+  findAllPaginated(
+
+    @Query("take") take: number,
+    @Query("skip") skip: number,
+    @Query("priority") priority: number,
+    @Query("orderByPriority") orderByPriority: string,
+    @Query("done") done: string,
+    @Query("date") date: string,
+    @Query("oldOrNew") oldOrNew: string,
+    @Query("keyword") keyword: string
+
+    ) : Promise<Reminder[]> {
+    return this.reminderService.findAllPaginated(take, skip, priority, orderByPriority, done, date, oldOrNew, keyword);
   }
 }

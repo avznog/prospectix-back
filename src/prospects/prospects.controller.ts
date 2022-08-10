@@ -22,9 +22,9 @@ export class ProspectsController {
   }
 
   @Roles("Cdp","Admin")
-  @Get("find-all-and-count")
-  findAllAndCount(@Query("take") take: number, @Query("skip") skip: number, @Query("keyword") keyword: string, @Query("city") city: string, @Query("activity") activity: string) {
-    return this.prospectsService.findAllAndCount(keyword, city, activity, take, skip);
+  @Get("find-all-paginated")
+  findAllPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("keyword") keyword: string, @Query("city") city: string, @Query("activity") activity: string) {
+    return this.prospectsService.findAllPaginated(keyword, city, activity, take, skip);
   }
 
   @Roles("Cdp","Admin")

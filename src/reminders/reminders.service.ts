@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
 import { InjectRepository} from "@nestjs/typeorm";
-import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, ILike, LessThan, Like, MoreThan, Repository, UpdateResult } from 'typeorm';
 import { Reminder } from './entities/reminder.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
@@ -197,5 +197,135 @@ export class RemindersService {
     }
   }
   
-
+  async findAllPaginated(take: number, skip: number, priority: number, orderByPriority: string, done: string, date: string, oldOrNew: string, keyword: string) : Promise<Reminder[]> {
+    // take : can be absent / number
+    // skip : can be absent / number 
+    // priority : can be absent / number => NOT ""
+    // orderByPriority : can be absent / can be "" / "true" or "false"
+    // done : can NOT be absent / "true" or "false"
+    // date : can be absent / string of the date / can be ""
+    // oldOrNew : can NOT be absent / "old" or "new" / can NOT be ""
+    // keyword : can NOT be "" / can NOT be absent / any string
+    try {
+      return await this.reminderRepository.find({
+        relations: ["prospect","prospect.phone","prospect.email", "prospect.activity"],
+        where: [  
+          date && {
+            priority: priority,
+            done: done == "true" ? true : false,
+            date: new Date(date),
+            pm: {
+              pseudo: ILike(`%${keyword}%`)
+            }
+          },
+         date && {
+          priority: priority,
+          done: done == "true" ? true : false,
+          date: new Date(date),
+          prospect: [
+            {
+              phone: {
+                number: ILike(`%${keyword}%`)
+              }
+            },
+            {
+              email: {
+                email: ILike(`%${keyword}%`)
+              }
+            },
+            {
+              website: {
+                website: ILike(`%${keyword}%`)
+              }
+            },
+            {
+              city: {
+                name: ILike(`%${keyword}%`)
+              }
+            },
+            {
+              country: {
+                name: ILike(`%${keyword}%`)
+              }
+            },
+            {
+              activity: {
+                name: ILike(`%${keyword}%`)
+              }
+            },{
+              companyName: ILike(`%${keyword}%`)
+            },
+            {
+              streetAddress: ILike(`%${keyword}%`)
+            },
+          ]
+        },
+        !date && {
+          priority: priority,
+          done: done == "true" ? true : false,
+          date: oldOrNew == "old" ?  LessThan(new Date()) : MoreThan(new Date()),
+          pm: {
+            pseudo: ILike(`%${keyword}%`)
+          }
+        },
+        !date && {
+          priority: priority,
+          done: done == "true" ? true : false,
+          date: oldOrNew == "old" ?  LessThan(new Date()) : MoreThan(new Date()),
+          prospect: [
+            {
+              phone: {
+                number: ILike(`%${keyword}%`)
+              }
+            },
+            {
+              email: {
+                email: ILike(`%${keyword}%`)
+              }
+            },
+            {
+              website: {
+                website: ILike(`%${keyword}%`)
+              }
+            },
+            {
+              city: {
+                name: ILike(`%${keyword}%`)
+              }
+            },
+            {
+              country: {
+                name: ILike(`%${keyword}%`)
+              }
+            },
+            {
+              activity: {
+                name: ILike(`%${keyword}%`)
+              }
+            },{
+              companyName: ILike(`%${keyword}%`)
+            },
+            {
+              streetAddress: ILike(`%${keyword}%`)
+            },
+          ]
+        }
+      ],
+        take: take,
+        skip: skip,
+        order: (
+          orderByPriority == "true" && {
+          'priority': 'DESC'
+        }
+        ) || (
+          orderByPriority == "false" && {
+          'id': 'ASC'
+        }
+        )
+      });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer les rappels", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
 }
