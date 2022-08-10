@@ -116,86 +116,6 @@ export class RemindersService {
       throw new HttpException("Impossible de ractiver le rappel", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
-  async findAllByKeyword(keyword: string) : Promise<Reminder[]> {
-    try {
-      return await this.reminderRepository.find({
-        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.meetings", "prospect.phone", "prospect.website", "prospect.email"],
-        where : [
-          {
-            pm: {
-              pseudo: Like(`%${keyword}%`),
-            }
-          },
-          {
-            pm: {
-              name: Like(`%${keyword}%`),
-            }
-          },
-          {
-            pm: {
-              firstname: Like(`%${keyword}%`),
-            }
-          },
-          {
-            pm: {
-              mail: Like(`%${keyword}%`),
-            }
-          },
-          {
-            prospect: {
-              companyName: Like(`%${keyword}%`),
-            }
-          },
-          {
-            prospect: {
-              city: {
-                name: Like(`%${keyword}%`),
-              }
-            }
-          },
-          {
-            prospect: {
-              activity: {
-                name: Like(`%${keyword}%`),
-              }
-            }
-          },
-          {
-            prospect: {
-              country: {
-                name: Like(`%${keyword}%`)
-              }
-            }
-          },
-          {
-            prospect: {
-              phone: {
-                number: Like(`%${keyword}%`)
-              }
-            }
-          },
-          {
-            prospect: {
-              website: {
-                website: Like(`%${keyword}%`)
-              }
-            }
-          },
-          {
-            prospect: {
-              email: {
-                email: Like(`%${keyword}%`)
-              }
-            }
-          }
-        ]
-      })
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de récupérer les rappels", HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-  }
   
   async findAllPaginated(take: number, skip: number, priority: number, orderByPriority: string, done: string, date: string, oldOrNew: string, keyword: string) : Promise<Reminder[]> {
     // take : can be absent / number
@@ -208,7 +128,7 @@ export class RemindersService {
     // keyword : can NOT be "" / can be absent / any string
     try {
       return await this.reminderRepository.find({
-        relations: ["prospect","prospect.phone","prospect.email", "prospect.activity"],
+        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.activity"],
         where: [  
           date && {
             priority: priority,
