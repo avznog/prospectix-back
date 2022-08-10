@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query } from '@nestjs/common';
 import { ProspectsService } from './prospects.service';
 import { CreateProspectDto } from './dto/create-prospect.dto';
 import { UpdateProspectDto } from './dto/update-prospect.dto';
@@ -22,9 +22,9 @@ export class ProspectsController {
   }
 
   @Roles("Cdp","Admin")
-  @Get()
-  findAll() : Promise<Prospect[]> {
-    return this.prospectsService.findAll();
+  @Get("find-all-paginated")
+  findAllPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("keyword") keyword: string, @Query("city") city: string, @Query("activity") activity: string) {
+    return this.prospectsService.findAllPaginated(keyword, city, activity, take, skip);
   }
 
   @Roles("Cdp","Admin")
@@ -67,50 +67,8 @@ export class ProspectsController {
   }
 
   @Roles("Cdp","Admin")
-  @Get("by-activity/:activityName")
-  findAllByActivity(@Param("activityName") activityName: string) : Promise<Prospect[]> {
-    return this.prospectsService.findAllByActivity(activityName);
-  }
-
-  @Roles("Cdp","Admin")
-  @Get("by-city/:cityName")
-  findAllByCity(@Param("cityName") cityName: string) : Promise<Prospect[]> {
-    return this.prospectsService.findAllByCity(cityName);
-  }
-
-  @Roles("Cdp","Admin")
   @Get("by-bookmarks/:pmPseudo")
   findAllByBookmark(@Param("pmPseudo") pmPseudo: string) : Promise<Prospect[]> {
     return this.prospectsService.findAllByBookmark(pmPseudo);
-  }
-
-  @Roles("Cdp","Admin")
-  @Get("by-phone/:phoneProspect")
-  findAllByPhone(@Param("phoneProspect") phoneProspect: string) : Promise<Prospect[]> {
-    return this.prospectsService.findAllByPhone(phoneProspect);
-  }
-
-  @Roles("Cdp","Admin")
-  @Get("by-website/:websiteProspect")
-  findAllByWebsite(@Param("websiteProspect") websiteProspect: string) : Promise<Prospect[]> {
-    return this.prospectsService.findAllByWebsite(websiteProspect);
-  }
-  
-  @Roles("Cdp","Admin")
-  @Get("by-address/:addressProspect")
-  findAllByAddress(@Param("addressProspect") addressProspect: string) : Promise<Prospect[]> {
-    return this.prospectsService.findAllByAddress(addressProspect);
-  }
-
-  @Roles("Cdp","Admin")
-  @Get("by-email/:emailProspect")
-  findAllByMail(@Param("emailProspect") emailProspect: string) : Promise<Prospect> {
-   return this.prospectsService.findAllByEmail(emailProspect); 
-  }
-
-  @Roles("Cdp","Admin")
-  @Get("by-keywords/:keyword")
-  findAllByKeywords(@Param("keyword") keyword: string) : Promise<Prospect[]> {
-    return this.prospectsService.findAllByKeywords(keyword);
   }
 }

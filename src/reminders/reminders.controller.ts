@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Req, UseGuards, Delete, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req, UseGuards, Delete, Query } from '@nestjs/common';
 import { RemindersService } from './reminders.service';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { Reminder } from './entities/reminder.entity';
@@ -9,7 +9,6 @@ import { Roles } from 'src/auth/annotations/roles.decorator';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { UpdateReminderDto } from './dto/update-reminder.dto';
 @Controller('reminders')
 @ApiTags("reminders")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -68,8 +67,19 @@ export class RemindersController {
   }
 
   @Roles("Cdp","Admin")
-  @Get("by-keyword/:keyword")
-  findAllByKeyword(@Param("keyword") keyword: string) : Promise<Reminder[]> {
-    return this.reminderService.findAllByKeyword(keyword);
+  @Get("find-all-paginated")
+  findAllPaginated(
+
+    @Query("take") take: number,
+    @Query("skip") skip: number,
+    @Query("priority") priority: number,
+    @Query("orderByPriority") orderByPriority: string,
+    @Query("done") done: string,
+    @Query("date") date: string,
+    @Query("oldOrNew") oldOrNew: string,
+    @Query("keyword") keyword: string
+
+    ) : Promise<Reminder[]> {
+    return this.reminderService.findAllPaginated(take, skip, priority, orderByPriority, done, date, oldOrNew, keyword);
   }
 }
