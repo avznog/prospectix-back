@@ -205,7 +205,7 @@ export class RemindersService {
     // done : can NOT be absent / "true" or "false"
     // date : can be absent / string of the date / can be ""
     // oldOrNew : can NOT be absent / "old" or "new" / can NOT be ""
-    // keyword : can NOT be "" / can NOT be absent / any string
+    // keyword : can NOT be "" / can be absent / any string
     try {
       return await this.reminderRepository.find({
         relations: ["prospect","prospect.phone","prospect.email", "prospect.activity"],
