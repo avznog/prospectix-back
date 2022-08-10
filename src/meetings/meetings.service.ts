@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MeetingType } from 'src/constants/meeting.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
 import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
@@ -174,6 +175,24 @@ export class MeetingsService {
           }
         ]
       })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer les rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findAllPaginated(take: number, skip: number, done: string, date: string, oldOrNew: string, keyword: string, type: string) : Promise<Meeting[]>{
+    try {
+      return await this.meetingRepository.find({
+        // relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email"],
+        where: [
+          {
+            type: type as MeetingType
+          }
+        ],
+        take: take,
+        skip: skip
+      });
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récupérer les rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);

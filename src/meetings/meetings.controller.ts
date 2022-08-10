@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Req, UseGuards, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req, UseGuards, Delete, Query } from '@nestjs/common';
 import { MeetingsService } from './meetings.service';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { Meeting } from './entities/meeting.entity';
@@ -65,5 +65,19 @@ export class MeetingsController {
   @Get("by-keyword/:keyword")
   findAllByKeyword(@Param("keyword") keyword: string) : Promise<Meeting[]> {
     return this.meetingsService.findAllByKeyword(keyword);
+  }
+
+  @Roles("Cdp","Admin")
+  @Get("find-all-paginated")
+  findAllPaginated(
+    @Query("take") take: number,
+    @Query("skip") skip: number,
+    @Query("keyword") keyword: string,
+    @Query("done") done: string,
+    @Query("date") date: string,
+    @Query("oldOrNew") oldOrNew: string,
+    @Query("type") type: string
+  ) : Promise<Meeting[]> {
+    return this.meetingsService.findAllPaginated(take, skip, keyword, done, date, oldOrNew, type);
   }
 }
