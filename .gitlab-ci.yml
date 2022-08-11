@@ -16,11 +16,11 @@ build-prod:
       - .yarn/
       - yarn.lock
   script:
-    - yarn install
+    - yarn install --immutable
     - yarn run build
   artifacts:
     paths:
-      - build/
+      - dist/
   only:
     - master
 
@@ -35,11 +35,11 @@ build-staging:
       - .yarn/
       - yarn.lock
   script:
-    - yarn install
+    - yarn install --immutable
     - yarn run build
   artifacts:
     paths:
-      - build/
+      - dist/
   only:
     - staging
 
