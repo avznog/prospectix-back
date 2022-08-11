@@ -118,14 +118,6 @@ export class RemindersService {
   }
   
   async findAllPaginated(take: number, skip: number, priority: number, orderByPriority: string, done: string, date: string, oldOrNew: string, keyword: string) : Promise<Reminder[]> {
-    // take : can be absent / number
-    // skip : can be absent / number 
-    // priority : can be absent / number => NOT ""
-    // orderByPriority : can be absent / can be "" / "true" or "false"
-    // done : can NOT be absent / "true" or "false"
-    // date : can be absent / string of the date / can be ""
-    // oldOrNew : can NOT be absent / "old" or "new" / can NOT be ""
-    // keyword : can NOT be "" / can be absent / any string
     try {
       return await this.reminderRepository.find({
         relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.activity"],

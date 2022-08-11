@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MeetingType } from 'src/constants/meeting.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
-import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, ILike, LessThan, Like, MoreThan, Repository, UpdateResult } from 'typeorm';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { Meeting } from './entities/meeting.entity';
 
@@ -101,94 +101,99 @@ export class MeetingsService {
     }
   }
 
-  async findAllByKeyword(keyword: string) : Promise<Meeting[]> {
+  async findAllPaginated(take: number, skip: number, done: string, date: string, oldOrNew: string, keyword: string, type: string) : Promise<Meeting[]>{
     try {
       return await this.meetingRepository.find({
         relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email"],
         where: [
-          {
-            pm: {
-              pseudo: Like(`%${keyword}%`),
-            }
+          
+          // WITH DATE 
+          // Meeting has a type
+          type != "" && {
+            type: type as MeetingType,
+            done: done == "true" ? true : false,
+            date: date ? new Date(date) : oldOrNew == "old" ? LessThan(new Date()) : MoreThan(new Date()),
+            prospect: [
+              {
+                phone: {
+                  number: ILike(`%${keyword}%`)
+                }
+              },
+              {
+                email: {
+                  email: ILike(`%${keyword}%`)
+                }
+              },
+              {
+                website: {
+                  website: ILike(`%${keyword}%`)
+                }
+              },
+              {
+                city: {
+                  name: ILike(`%${keyword}%`)
+                }
+              },
+              {
+                country: {
+                  name: ILike(`%${keyword}%`)
+                }
+              },
+              {
+                activity: {
+                  name: ILike(`%${keyword}%`)
+                }
+              },{
+                companyName: ILike(`%${keyword}%`)
+              },
+              {
+                streetAddress: ILike(`%${keyword}%`)
+              },
+            ]
           },
-          {
-            pm: {
-              name: Like(`%${keyword}%`),
-            }
-          },
-          {
-            pm: {
-              firstname: Like(`%${keyword}%`),
-            }
-          },
-          {
-            pm: {
-              mail: Like(`%${keyword}%`),
-            }
-          },
-          {
-            prospect: {
-              companyName: Like(`%${keyword}%`),
-            }
-          },
-          {
-            prospect: {
-              city: {
-                name: Like(`%${keyword}%`),
-              }
-            }
-          },
-          {
-            prospect: {
-              activity: {
-                name: Like(`%${keyword}%`),
-              }
-            }
-          },
-          {
-            prospect: {
-              country: {
-                name: Like(`%${keyword}%`)
-              }
-            }
-          },
-          {
-            prospect: {
-              phone: {
-                number: Like(`%${keyword}%`)
-              }
-            }
-          },
-          {
-            prospect: {
-              website: {
-                website: Like(`%${keyword}%`)
-              }
-            }
-          },
-          {
-            prospect: {
-              email: {
-                email: Like(`%${keyword}%`)
-              }
-            }
-          }
-        ]
-      })
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de récupérer les rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
 
-  async findAllPaginated(take: number, skip: number, done: string, date: string, oldOrNew: string, keyword: string, type: string) : Promise<Meeting[]>{
-    try {
-      return await this.meetingRepository.find({
-        // relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email"],
-        where: [
-          {
-            type: type as MeetingType
-          }
+          // All meetings
+          type == "" && {
+            done: done == "true" ? true : false,
+            date: date ? new Date(date) : oldOrNew == "old" ? LessThan(new Date()) : MoreThan(new Date()),
+            prospect: [
+              {
+                phone: {
+                  number: ILike(`%${keyword}%`)
+                }
+              },
+              {
+                email: {
+                  email: ILike(`%${keyword}%`)
+                }
+              },
+              {
+                website: {
+                  website: ILike(`%${keyword}%`)
+                }
+              },
+              {
+                city: {
+                  name: ILike(`%${keyword}%`)
+                }
+              },
+              {
+                country: {
+                  name: ILike(`%${keyword}%`)
+                }
+              },
+              {
+                activity: {
+                  name: ILike(`%${keyword}%`)
+                }
+              },{
+                companyName: ILike(`%${keyword}%`)
+              },
+              {
+                streetAddress: ILike(`%${keyword}%`)
+              },
+            ]
+          },
         ],
         take: take,
         skip: skip

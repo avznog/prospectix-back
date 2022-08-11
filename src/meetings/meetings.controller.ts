@@ -62,12 +62,6 @@ export class MeetingsController {
   }
 
   @Roles("Cdp","Admin")
-  @Get("by-keyword/:keyword")
-  findAllByKeyword(@Param("keyword") keyword: string) : Promise<Meeting[]> {
-    return this.meetingsService.findAllByKeyword(keyword);
-  }
-
-  @Roles("Cdp","Admin")
   @Get("find-all-paginated")
   findAllPaginated(
     @Query("take") take: number,
@@ -77,7 +71,7 @@ export class MeetingsController {
     @Query("date") date: string,
     @Query("oldOrNew") oldOrNew: string,
     @Query("type") type: string
-  ) : Promise<Meeting[]> {
-    return this.meetingsService.findAllPaginated(take, skip, keyword, done, date, oldOrNew, type);
+  ) : Promise<Meeting[]> {  
+    return this.meetingsService.findAllPaginated(take, skip, done, date, oldOrNew, keyword, type);
   }
 }
