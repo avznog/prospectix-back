@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
@@ -30,5 +30,11 @@ export class BookmarksController {
   @Delete("by-prospect/:idProspect")
   deleteByProspect(@Param("idProspect") idProspect: number) : Promise<DeleteResult> {
     return this.bookmarksService.deleteByProspect(idProspect);
+  }
+
+  @Roles("Cdp","Admin")
+  @Get("")
+  findAll() {
+    return this.bookmarksService.findAll()
   }
 }
