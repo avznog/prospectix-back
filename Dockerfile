@@ -3,7 +3,7 @@ FROM node:alpine
 # COPY package.json yarn.lock /usr/src/app/
 # RUN yarn
 # COPY . .
-COPY dist/prospectix-back/ ./dist
+COPY dist/ ./dist
 # RUN yarn build
 # CMD ["yarn","start"]
 # COPY dist/prospectix-back/ /usr/share/nginx/html
