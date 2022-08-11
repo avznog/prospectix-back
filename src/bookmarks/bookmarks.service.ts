@@ -41,4 +41,15 @@ export class BookmarksService {
       throw new HttpException("Impossible de supprimer le favoris",HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async findAll() : Promise<Bookmark[]> {
+    try {
+      return await this.bookmarkRepository.find({
+        relations: ["pm","prospect"]
+      });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer tous les favoris", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
  }

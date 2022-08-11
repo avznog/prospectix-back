@@ -23,8 +23,14 @@ export class ProspectsController {
 
   @Roles("Cdp","Admin")
   @Get("find-all-paginated")
-  findAllPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("keyword") keyword: string, @Query("city") city: string, @Query("activity") activity: string) {
+  findAllPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("keyword") keyword: string, @Query("city") city: string, @Query("activity") activity: string) : Promise<Prospect[]> {
     return this.prospectsService.findAllPaginated(keyword, city, activity, take, skip);
+  }
+
+  @Roles("Cdp","Admin")
+  @Get("find-all-bookmarks-paginated")
+  findAllBookmarksPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("pseudo") pseudo: string, @Query("activity") activity: string, @Query("city") city: string, @Query("keyword") keyword: string) : Promise<Prospect[]> {
+    return this.prospectsService.findAllBookmarksPaginated(take, skip, pseudo, activity, city, keyword);
   }
 
   @Roles("Cdp","Admin")
