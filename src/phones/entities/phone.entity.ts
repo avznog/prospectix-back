@@ -1,12 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prospect } from 'src/prospects/entities/prospect.entity';
 import {
   BaseEntity,
   Column,
   Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -25,7 +21,4 @@ export class Phone extends BaseEntity {
     required: true
   })
   number: string;
-
-  @OneToOne(() => Prospect, (prospect) => prospect.phone)
-  prospect: Prospect;
 }

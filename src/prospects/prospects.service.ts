@@ -6,7 +6,6 @@ import { Prospect } from './entities/prospect.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { City } from 'src/cities/entities/city.entity';
 import { Activity } from 'src/activities/entities/activity.entity';
-
 @Injectable()
 export class ProspectsService {
   constructor(
@@ -22,14 +21,12 @@ export class ProspectsService {
   ) {}
 
   async create(createProspectDto: CreateProspectDto) {
-    const prospect = await this.prospectRepository.findOne({
-      where: {
-        companyName: createProspectDto.companyName,
-      },
-    });
-    if (!prospect)
-      throw new HttpException("Ce prospect n'existe pas", HttpStatus.NOT_FOUND);
-    return await this.prospectRepository.save(createProspectDto);
+    try {
+      return await this.prospectRepository.save(createProspectDto);
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de créer le prospect", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async findAllBookmarksPaginated(take: number, skip: number, pseudo: string, activity: string, city: string, keyword: string) : Promise<Prospect[]> {

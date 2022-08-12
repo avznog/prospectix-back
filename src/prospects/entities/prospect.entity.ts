@@ -36,7 +36,7 @@ export class Prospect extends BaseEntity {
   })
   companyName: string;
 
-  @ManyToOne(() => Activity)
+  @ManyToOne(() => Activity, { cascade: ["insert"] })
   @ApiProperty({
     description: "Secteur d'activité du prospect",
     required: true
@@ -50,21 +50,21 @@ export class Prospect extends BaseEntity {
   })
   streetAddress: string;
 
-  @ManyToOne(() => City)
+  @ManyToOne(() => City, { cascade: ["insert"] })
   @ApiProperty({
     description: "Ville du prospect",
     required: true
   })
   city: City;
 
-  @ManyToOne(() => Country)
+  @ManyToOne(() => Country, { cascade: ["insert"] })
   @ApiProperty({
     description: "Pays du prospect",
     required: true
   })
   country: Country;
 
-  @OneToOne(() => Phone)
+  @OneToOne(() => Phone, { cascade: ["insert"] })
   @JoinColumn()
   @ApiProperty({
     description: "Numéro de téléphone du prospect",
@@ -72,7 +72,7 @@ export class Prospect extends BaseEntity {
   })
   phone: Phone;
 
-  @OneToOne(() => Email)
+  @OneToOne(() => Email, { cascade: ["insert"] })
   @JoinColumn()
   @ApiProperty({
     description: "Email du prospect",
@@ -80,7 +80,7 @@ export class Prospect extends BaseEntity {
   })
   email: Email;
 
-  @OneToOne(() => Website)
+  @OneToOne(() => Website, { cascade: ["insert"] })
   @JoinColumn()
   @ApiProperty({
     description: "Site internet du prospect",

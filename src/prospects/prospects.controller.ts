@@ -16,7 +16,7 @@ export class ProspectsController {
   constructor(private readonly prospectsService: ProspectsService) {}
 
   @Roles("Cdp","Admin")
-  @Post()
+  @Post("create")
   create(@Body() createProspectDto: CreateProspectDto) : Promise<Prospect> {
     return this.prospectsService.create(createProspectDto);
   }
