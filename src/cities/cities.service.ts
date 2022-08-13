@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { City } from './entities/city.entity';
@@ -11,6 +11,11 @@ export class CitiesService {
   ) {}
 
   async findAll() : Promise<City[]> {
-    return await this.cityRepository.find();
+    try {
+      return await this.cityRepository.find();
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récuprérer les villes", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 }
