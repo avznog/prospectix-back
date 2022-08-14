@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Get, Delete, Param, Patch } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Delete, Param, Patch, Query } from '@nestjs/common';
 import { ProjectManagersService } from './project-managers.service';
 import { CreateProjectManagerDto } from './dto/create-project-manager.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -25,6 +25,12 @@ export class ProjectManagersController {
   @Roles("Admin","Cdp")
   findAll() : Promise<ProjectManager[]> {
     return this.pmService.findAll();
+  }
+
+  @Get("find-all-paginated")
+  @Roles("Cdp","Admin")
+  findAllPaginated(@Query("take") take: number, @Query("skip") skip: number) : Promise<ProjectManager[]> {
+    return this.pmService.findAllPaginated(take, skip);
   }
 
   @Patch(":id")

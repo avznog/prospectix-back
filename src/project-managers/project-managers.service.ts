@@ -137,4 +137,20 @@ export class ProjectManagersService {
       throw new HttpException("Impossible d'activer l'utilisateur", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async findAllPaginated(take: number, skip: number) : Promise<ProjectManager[]> {
+    try {
+      return await this.pmRepository.find({
+        relations: ["goals","meetings","reminders","sentEmails","bookmarks","events","bookmarks.prospect"],
+        take: take,
+        skip: skip,
+        order: {
+          id: "asc"
+        }
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de réupérer les project managers demandés", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
 }
