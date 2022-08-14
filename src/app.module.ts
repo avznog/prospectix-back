@@ -77,5 +77,5 @@ import { WebsitesModule } from './websites/websites.module';
   ],
   controllers: [AppController],
   providers: [AppService],
-})
+}) 
 export class AppModule {}
