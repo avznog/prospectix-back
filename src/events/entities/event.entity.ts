@@ -35,15 +35,22 @@ export class Event extends BaseEntity {
 
   @Column()
   @ApiProperty({
-    description: "Type d'évènement",
+    description: "description de l'évènement",
     required: true
   })
-  event: EventType;
+  description: string;
 
   @Column()
   @ApiProperty({
     description: "Date de création de l'évènement",
     required: true
   })
-  creationDate: Date;
+  date: Date;
+
+  @Column()
+  @ApiProperty({
+    description: "Type de l'évènement",
+    required: true
+  })
+  type: EventType.CREATION;
 }
