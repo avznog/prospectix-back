@@ -19,14 +19,6 @@ export class CreateEventDto {
   @ApiProperty({
     description: "Description de l'évènement",
     required: true,
-    enum: {
-      REMINDER: "REMINDER",
-      MEETINGS: "MEETINGS",
-      BOOKMARKS: "BOOKMARKS",
-      CREATION: "CREATION",
-      NEGATIVE_ANSWER: "NEGATIVE_ANSWER",
-      NO_ANSWER: "NO_ANSWER"
-    }
   })
   description: string;
 
@@ -40,12 +32,17 @@ export class CreateEventDto {
     description: "Type de l'évènement",
     required: true,
     enum: {
-      REMINDER: "REMINDER",
-      MEETINGS: "MEETINGS",
-      BOOKMARKS: "BOOKMARKS",
-      CREATION: "CREATION",
-      NEGATIVE_ANSWER: "NEGATIVE_ANSWER",
-      NO_ANSWER: "NO_ANSWER"
+      ADD_REMINDER: "ADD_REMINDER",
+    DONE_REMINDER: "DONE_REMINDER",
+    DELETE_REMINDER: "DELETE_REMINDER",
+    ADD_MEETING: "ADD_MEETING",
+    DONE_MEETING: "DONE_MEETING",
+    DELETE_MEETING: "DELETE_MEETING",
+    ADD_BOOKMARKS: "ADD_BOOKMARKS",
+    DELETE_BOOKMARKS: "DELETE_BOOKMARKS",
+    CREATION: "CREATION",
+    NEGATIVE_ANSWER: "NEGATIVE_ANSWER",
+    NO_ANSWER: "NO_ANSWER"
     }
   })
   type: EventType.CREATION

@@ -29,6 +29,9 @@ export class EventsService {
           prospect: {
             id: prospectId
           }
+        },
+        order: {
+          date: "asc"
         }
       });
     } catch (error) {
