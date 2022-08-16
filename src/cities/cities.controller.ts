@@ -4,6 +4,7 @@ import { get } from 'http';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { RolesType } from 'src/auth/role.type';
 import { CitiesService } from './cities.service';
 import { City } from './entities/city.entity';
 
@@ -13,7 +14,7 @@ import { City } from './entities/city.entity';
 export class CitiesController {
   constructor(private readonly citiesService: CitiesService) {}
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get()
   findAll() : Promise<City[]> {
     return this.citiesService.findAll();

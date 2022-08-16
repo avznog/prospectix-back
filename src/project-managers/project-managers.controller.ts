@@ -8,6 +8,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
+import { RolesType } from 'src/auth/role.type';
 
 @Controller('project-managers')
 @ApiTags('project-managers')
@@ -16,37 +17,37 @@ export class ProjectManagersController {
   constructor(private readonly pmService: ProjectManagersService) {}
 
   @Post()
-  @Roles("Admin")
+  @Roles(RolesType.ADMIN)
   create(@Body() createProjectManagerDto: CreateProjectManagerDto) : Promise<ProjectManager> {
     return this.pmService.create(createProjectManagerDto);
   }
 
   @Get("findAll")
-  @Roles("Admin","Cdp")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   findAll() : Promise<ProjectManager[]> {
     return this.pmService.findAll();
   }
 
   @Get("find-all-paginated")
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   findAllPaginated(@Query("take") take: number, @Query("skip") skip: number) : Promise<ProjectManager[]> {
     return this.pmService.findAllPaginated(take, skip);
   }
 
   @Patch(":id")
-  @Roles("Admin")
+  @Roles(RolesType.ADMIN)
   update(@Param("id") id: number, @Body() updateProjectManagerDto: UpdateProjectManagerDto) : Promise<UpdateResult> {
     return this.pmService.update(id, updateProjectManagerDto);
   }
 
   @Patch("disable/:id")
-  @Roles("Admin")
+  @Roles(RolesType.ADMIN)
   disable(@Param("id") id: number) : Promise<UpdateResult> {
     return this.pmService.disable(id);
   }
 
   @Patch("enable/:id")
-  @Roles("Admin")
+  @Roles(RolesType.ADMIN)
   enable(@Param("id") id : number) : Promise<UpdateResult> {
     return this.pmService.enable(id);
   }

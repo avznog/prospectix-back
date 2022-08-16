@@ -3,6 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { RolesType } from 'src/auth/role.type';
 import { ActivitiesService } from './activities.service';
 import { Activity } from './entities/activity.entity';
 
@@ -12,7 +13,7 @@ import { Activity } from './entities/activity.entity';
 export class ActivitiesController {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get()
   findAll() : Promise<Activity[]> {
     return this.activitiesService.findAll();

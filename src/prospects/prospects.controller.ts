@@ -8,6 +8,7 @@ import { UpdateResult } from 'typeorm';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/annotations/roles.decorator';
+import { RolesType } from 'src/auth/role.type';
 
 @Controller('prospects')
 @ApiTags('prospects')
@@ -15,32 +16,32 @@ import { Roles } from 'src/auth/annotations/roles.decorator';
 export class ProspectsController {
   constructor(private readonly prospectsService: ProspectsService) {}
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post("create")
   create(@Body() createProspectDto: CreateProspectDto) : Promise<Prospect> {
     return this.prospectsService.create(createProspectDto);
   }
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
   findAllPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("keyword") keyword: string, @Query("city") city: string, @Query("activity") activity: string) : Promise<Prospect[]> {
     return this.prospectsService.findAllPaginated(keyword, city, activity, take, skip);
   }
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-bookmarks-paginated")
   findAllBookmarksPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("pseudo") pseudo: string, @Query("activity") activity: string, @Query("city") city: string, @Query("keyword") keyword: string) : Promise<Prospect[]> {
     return this.prospectsService.findAllBookmarksPaginated(take, skip, pseudo, activity, city, keyword);
   }
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get('findOne/:id')
   findOne(@Param('id') id: string) : Promise<Prospect> {
     return this.prospectsService.findOne(+id);
   }
 
   @Patch(':id')
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   update(
     @Param('id') id: string,
     @Body() updateProspectDto: UpdateProspectDto,
@@ -49,30 +50,30 @@ export class ProspectsController {
   }
 
   @Get('by-city/:id/:cityName')
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   updateByCity(@Param('id') id: string, @Param("cityName") cityName: string) : Promise<UpdateResult>{
     return this.prospectsService.updateByCity(+id, cityName);
   }
 
   @Get('by-activity/:id/:activityName')
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   updateByActivity(@Param('id') id: string, @Param("activityName") activityName: string) : Promise<UpdateResult>{
     return this.prospectsService.updateByActivity(+id, activityName);
   }
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get('disable/:id')
   remove(@Param('id') id: number) : Promise<UpdateResult>{
     return this.prospectsService.disable(id);
   }
 
-  @Roles("Admin")
+  @Roles(RolesType.ADMIN)
   @Get("enable/:id")
   enable(@Param("id") id: number) : Promise<UpdateResult> {
     return this.prospectsService.enable(id);
   }
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("by-bookmarks/:pmPseudo")
   findAllByBookmark(@Param("pmPseudo") pmPseudo: string) : Promise<Prospect[]> {
     return this.prospectsService.findAllByBookmark(pmPseudo);

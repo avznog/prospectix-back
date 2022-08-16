@@ -6,6 +6,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { UpdateResult } from 'typeorm';
 import { UpdatePhoneDto } from './dto/update-phone.dto';
+import { RolesType } from 'src/auth/role.type';
 
 @Controller('phones')
 @ApiTags("phones")
@@ -13,7 +14,7 @@ import { UpdatePhoneDto } from './dto/update-phone.dto';
 export class PhonesController {
   constructor(private readonly phonesService: PhonesService) {}
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Patch(":id")
   update(@Param("id") idPhone: number, @Body() updatePhoneDto: UpdatePhoneDto) : Promise<UpdateResult> {
     return this.phonesService.update(idPhone, updatePhoneDto);
