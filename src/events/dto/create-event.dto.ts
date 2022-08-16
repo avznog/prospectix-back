@@ -17,21 +17,33 @@ export class CreateEventDto {
   prospect: Prospect;
 
   @ApiProperty({
-    description: "Evènement",
+    description: "Description de l'évènement",
     required: true,
-    enum: {
-      NOANSWER: "NOANSWER",
-      MEETING: "MEETING",
-      RECALL: "RECALL",
-      REJECTION: "REJECTION",
-      NA: "NA"
-    }
   })
-  event: EventType;
+  description: string;
 
   @ApiProperty({
-    description: "Date de création de l'évènement",
+    description: "Date de l'évènement",
     required: true
   })
-  creationDate: Date;
+  date: Date;
+
+  @ApiProperty({
+    description: "Type de l'évènement",
+    required: true,
+    enum: {
+      ADD_REMINDER: "ADD_REMINDER",
+    DONE_REMINDER: "DONE_REMINDER",
+    DELETE_REMINDER: "DELETE_REMINDER",
+    ADD_MEETING: "ADD_MEETING",
+    DONE_MEETING: "DONE_MEETING",
+    DELETE_MEETING: "DELETE_MEETING",
+    ADD_BOOKMARKS: "ADD_BOOKMARKS",
+    DELETE_BOOKMARKS: "DELETE_BOOKMARKS",
+    CREATION: "CREATION",
+    NEGATIVE_ANSWER: "NEGATIVE_ANSWER",
+    NO_ANSWER: "NO_ANSWER"
+    }
+  })
+  type: EventType.CREATION
 }
