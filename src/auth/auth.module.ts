@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local.strategy';
-import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { JwtStrategy } from './jwt.strategy';
 import { JwtRefreshTokenStrategy } from './jwt-refresh-token.strategy';
@@ -18,11 +17,8 @@ import { ProjectManagersService } from 'src/project-managers/project-managers.se
   imports: [
     TypeOrmModule.forFeature([ProjectManager, Auth]),
     PassportModule,
-    ConfigModule,
     JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: async () => ({
         secret: process.env.JWT_ACCESS_TOKEN_SECRET,
         signOptions: {
           expiresIn: `${process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME}s`,

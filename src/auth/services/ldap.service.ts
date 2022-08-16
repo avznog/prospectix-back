@@ -15,7 +15,7 @@ export class LdapService {
   async authLdap(loginPmDto: LoginPmDto): Promise<boolean> {
     const options = {
       ldapOpts: {
-        url: "ldap://ipa.juniorisep.com",
+        url: "ldap://192.168.0.5",
       },
       userDn: `uid=${loginPmDto.username},cn=users,cn=accounts,dc=ipa,dc=juniorisep,dc=com`,
       userPassword: loginPmDto.password,
@@ -38,6 +38,7 @@ export class LdapService {
           pseudo: loginPmDto.username
         }
       });
+      console.log(oldPm, loginPmDto.username)
       
       if(!oldPm){
         return false;
@@ -45,7 +46,7 @@ export class LdapService {
       else{
         return true;
       }
-    } catch (error) {
+    } catch (error) { 
       console.log(error);
       throw new HttpException("Impossible de se connecter au serveur LDAP : invalid credentials", HttpStatus.FORBIDDEN)
     }

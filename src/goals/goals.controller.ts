@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Param, Req, UseGuards, Patch, Delete } fro
 import { GoalsService } from './goals.service';
 import { CreateGoalDto } from './dto/create-goal.dto';
 import { ApiTags } from '@nestjs/swagger';
-import RequestWithPm from 'src/auth/interfaces/requestWithPm.interface';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Goal } from './entities/goal.entity';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
@@ -10,6 +9,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { UpdateGoalDto } from './dto/update-goal.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import { RolesType } from 'src/auth/role.type';
 
 @Controller('goals')
@@ -26,9 +26,8 @@ export class GoalsController {
 
   @Roles(RolesType.ADMIN)
   @Post("for-current-pm")
-  createForCurrentPm(@Body() createGoalDto: CreateGoalDto, @Req() request: RequestWithPm) : Promise<Goal> {
-    request.pm = request.user as ProjectManager;
-    return this.goalsService.createForCurrentPm(createGoalDto, request.pm.id);
+  createForCurrentPm(@Body() createGoalDto: CreateGoalDto, @CurrentUser() user) : Promise<Goal> {
+    return this.goalsService.createForCurrentPm(createGoalDto, user.id);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
@@ -39,9 +38,8 @@ export class GoalsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN) 
   @Get("by-current-pm")
-  findAllByCurrentPm(@Req() request: RequestWithPm) : Promise<Goal[]> {
-    request.pm = request.user as ProjectManager;
-    return this.goalsService.findAllByCurrentPm(request.pm.id);
+  findAllByCurrentPm(@CurrentUser() user) : Promise<Goal[]> {
+    return this.goalsService.findAllByCurrentPm(user.id);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
@@ -52,9 +50,8 @@ export class GoalsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("by-title-and-current-pm/:title")
-  findAllByTitleAndCurrentPm(@Param("title") title: string, @Req() request: RequestWithPm) : Promise<Goal[]> {
-    request.pm = request.user as ProjectManager;
-    return this.goalsService.findAllByTitleAndCurrentPm(title, request.pm.pseudo);
+  findAllByTitleAndCurrentPm(@Param("title") title: string, @CurrentUser() user) : Promise<Goal[]> {
+    return this.goalsService.findAllByTitleAndCurrentPm(title, user.pseudo);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)

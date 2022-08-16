@@ -36,7 +36,7 @@ import { GoalsModule } from './goals/goals.module';
 import { PhonesModule } from './phones/phones.module';
 import { SentEmailsModule } from './sent-emails/sent-emails.module';
 import { WebsitesModule } from './websites/websites.module';
-
+console.log(process.env.POSTGRES_HOST)
 @Module({
   imports: [
     AuthModule,
@@ -55,25 +55,24 @@ import { WebsitesModule } from './websites/websites.module';
     PhonesModule,
     SentEmailsModule,
     WebsitesModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.POSTGRES_HOST || "localhost",
-      port: +process.env.POSTGRES_PORT,
-      username: process.env.POSTGRES_USER || "postgres",
-      password: process.env.POSTGRES_PASSWORD || "postgres",
-      database: 'prospectix2',
-      // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
-      synchronize: true,
-      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website],
-    }),
     ConfigModule.forRoot({
-      envFilePath: './api.env',
       validationSchema: Joi.object({
         JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
         JWT_ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().required(),
         JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
         JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
       }),
+    }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.POSTGRES_HOST || "localhost",
+      port: +process.env.POSTGRES_PORT,
+      username: process.env.POSTGRES_USER || "postgres",
+      password: process.env.POSTGRES_PASSWORD || "postgres",
+      database: process.env.POSTGRES_DATABASE ?? 'prospectix2',
+      // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
+      synchronize: true,
+      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website],
     }),
   ],
   controllers: [AppController],

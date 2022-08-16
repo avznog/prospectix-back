@@ -1,6 +1,5 @@
-import { HttpException, HttpStatus, Injectable, Req, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from "@nestjs/jwt";
-import { ConfigService } from "@nestjs/config";
 import TokenPayload from '../interfaces/tokenPayload.interface';
 import { LoginPmDto } from '../dto/login-project-manager.dto';
 import { LdapService } from './ldap.service';
@@ -12,7 +11,6 @@ import { ProjectManager } from 'src/project-managers/entities/project-manager.en
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
     private readonly ldapService: LdapService,
   ) { }
 
@@ -21,7 +19,7 @@ export class AuthService {
   }
 
   public refreshToken(refreshToken: string){
-    const payload = this.decodeTokenWithSecurity<TokenPayload>(refreshToken, this.configService.get("JWT_REFRESH_TOKEN_SECRET"))
+    const payload = this.decodeTokenWithSecurity<TokenPayload>(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET)
     return this.getAccessToken(payload.username)
   }
 
@@ -35,16 +33,16 @@ export class AuthService {
   public getAccessToken(username: string): string {
     const payload: TokenPayload = { username };
     return this.jwtService.sign(payload, {
-      secret: this.configService.get("JWT_ACCESS_TOKEN_SECRET"),
-      expiresIn: `${this.configService.get("JWT_ACCESS_TOKEN_EXPIRATION_TIME")}s`
+      secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+      expiresIn: `${process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME}s`
     });
   }
 
-  public getRefreshToken(username: string) : string{
+  public getRefreshToken(username: string) : string {
     const payload: TokenPayload = { username };
     return this.jwtService.sign(payload, {
-      secret: this.configService.get("JWT_REFRESH_TOKEN_SECRET"),
-      expiresIn: `${this.configService.get("JWT_REFRESH_TOKEN_EXPIRATION_TIME")}s`
+      secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+      expiresIn: `${process.env.JWT_REFRESH_TOKEN_EXPIRATION_TIME}s`
     });
   }
 

@@ -6,9 +6,10 @@ import { ProjectManager } from './entities/project-manager.entity';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/annotations/roles.decorator';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { UpdateResult } from 'typeorm';
 import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
 import { RolesType } from 'src/auth/role.type';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
 
 @Controller('project-managers')
 @ApiTags('project-managers')
@@ -26,6 +27,12 @@ export class ProjectManagersController {
   @Roles(RolesType.CDP, RolesType.ADMIN)
   findAll() : Promise<ProjectManager[]> {
     return this.pmService.findAll();
+  }
+
+  @Get("me")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  me(@CurrentUser() user: ProjectManager) : ProjectManager {
+    return user;
   }
 
   @Get("find-all-paginated")

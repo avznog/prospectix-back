@@ -5,7 +5,6 @@ import JwtRefreshGuard from './guards/jwt-refresh.guard';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginPmDto } from './dto/login-project-manager.dto';
 import { Request, Response } from 'express';
-import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 @ApiTags("auth")
@@ -13,23 +12,29 @@ import { ConfigService } from '@nestjs/config';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly configService: ConfigService,
   ) {}
 
   @HttpCode(200)
   @Post("login")
-  async loginldap(@Body() loginPmDto: LoginPmDto, @Res() response: Response) {
+  async loginldap(@Body() loginPmDto: LoginPmDto, @Res({ passthrough: true }) response: Response) {
     if(!await this.authService.login(loginPmDto))
       throw new HttpException(
         "Vos identifiants LDAP sont corrects, mais vous n'avez pas encore de compte Prospectix",
         HttpStatus.UNAUTHORIZED
       );
 
+    console.log("done")
+
     response.cookie("refresh-token", this.authService.getRefreshToken(loginPmDto.username), {
-      expires: new Date(Date.now() + (+this.configService.get("JWT_ACCESS_TOKEN_EXPIRATION_TIME")) * 1000),
+      expires: new Date(Date.now() + (+process.env.JWT_REFRESH_TOKEN_EXPIRATION_TIME) * 1000),
       httpOnly: true,
     })
 
+
+    console.log("do")
+    console.log("signed", this.authService.getAccessToken(loginPmDto.username))
+    console.log("done")
+    
     return {
       accessToken: this.authService.getAccessToken(loginPmDto.username)
     }
@@ -38,7 +43,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get("logout")
   @HttpCode(200)
-  logOut(@Res() response: Response)  {
+  logOut(@Res({ passthrough: true }) response: Response)  {
     response.cookie("refresh-token", "", {
       expires: new Date("1999"),
       httpOnly: true,
@@ -47,7 +52,7 @@ export class AuthController {
 
   @UseGuards(JwtRefreshGuard)
   @Get("refresh")
-  refresh(@Req() request: Request, @Res() response: Response) {
+  refresh(@Req() request: Request) {
     const refreshToken = request.cookies["refresh-token"]
     if(typeof refreshToken == "string")
       throw new UnauthorizedException("no refresh token")
