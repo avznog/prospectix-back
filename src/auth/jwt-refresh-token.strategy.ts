@@ -20,7 +20,6 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, "jwt-ref
   }
 
   async validate(request: Request, payload: TokenPayload) : Promise<ProjectManager>{
-    console.log("[Auth] JWT Refresh acquired :", payload)
     return this.pmService.findByPayload(payload)
   }
 }

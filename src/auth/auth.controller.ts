@@ -23,24 +23,17 @@ export class AuthController {
         HttpStatus.UNAUTHORIZED
       );
 
-    console.log("done")
-
     response.cookie("refresh-token", this.authService.getRefreshToken(loginPmDto.username), {
       expires: new Date(Date.now() + (+process.env.JWT_REFRESH_TOKEN_EXPIRATION_TIME) * 1000),
       httpOnly: true,
+      path: "/auth/refresh"
     })
 
-
-    console.log("do")
-    console.log("signed", this.authService.getAccessToken(loginPmDto.username))
-    console.log("done")
-    
     return {
       accessToken: this.authService.getAccessToken(loginPmDto.username)
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get("logout")
   @HttpCode(200)
   logOut(@Res({ passthrough: true }) response: Response)  {
@@ -54,7 +47,7 @@ export class AuthController {
   @Get("refresh")
   refresh(@Req() request: Request) {
     const refreshToken = request.cookies["refresh-token"]
-    if(typeof refreshToken == "string")
+    if(typeof refreshToken != "string")
       throw new UnauthorizedException("no refresh token")
 
     const accessToken = this.authService.refreshToken(refreshToken)
