@@ -36,7 +36,7 @@ import { GoalsModule } from './goals/goals.module';
 import { PhonesModule } from './phones/phones.module';
 import { SentEmailsModule } from './sent-emails/sent-emails.module';
 import { WebsitesModule } from './websites/websites.module';
-console.log(process.env.POSTGRES_HOST)
+console.log(process.env.BASE_URL)
 @Module({
   imports: [
     AuthModule,

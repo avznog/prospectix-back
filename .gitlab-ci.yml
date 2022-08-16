@@ -83,6 +83,8 @@ deploy-staging:
     
   script:
     - bash -c "ssh-add <(echo \"$SSH_PRIVATE_KEY_STAGING\")"
+    - echo "$API_STAGING_ENV" > api.env
+    - scp api.env root@$HOST_STAGING:~
     - export COMPOSE_HTTP_TIMEOUT=200
     - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml down --remove-orphans"
     - ssh root@$HOST_STAGING "docker-compose -f ~/docker-compose.yml pull"
