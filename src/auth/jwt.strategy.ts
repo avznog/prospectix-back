@@ -1,32 +1,28 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
-import { ConfigService } from "@nestjs/config";
 import { Request } from "express";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import TokenPayload from "./interfaces/tokenPayload.interface";
-import { AuthService } from "./services/auth.service";
 import { ProjectManagerDto } from "src/project-managers/dto/project-manager.dto";
+import { ProjectManagersService } from "src/project-managers/project-managers.service";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly configService: ConfigService,
-    private readonly authService: AuthService
+    private readonly pmService: ProjectManagersService
   ){
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([(request: Request) => {
-        return request?.cookies?.Authentication;
-      }]),
-      secretOrKey: configService.get("JWT_ACCESS_TOKEN_SECRET")
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: process.env.JWT_ACCESS_TOKEN_SECRET,
+      passReqToCallback: true,
     });
   }
   
-  async validate(payload: TokenPayload) : Promise<ProjectManagerDto>{
-    const user = await this.authService.validatePm(payload);
-    if (!user) {
+  async validate(request: Request, payload: TokenPayload) : Promise<ProjectManagerDto>{
+    const user = await this.pmService.findByPayload(payload);
+    if (!user)
       throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
-    }
+    request.user = user
     return user;
   }
-
 }

@@ -1,14 +1,10 @@
-import {Controller,Post,Body,Req,HttpCode,UseGuards,Get,ClassSerializerInterceptor,UseInterceptors} from '@nestjs/common';
+import {Controller,Post,Body,Req,HttpCode,UseGuards,Get,ClassSerializerInterceptor,UseInterceptors, Res, UnauthorizedException, HttpException, HttpStatus} from '@nestjs/common';
 import { AuthService } from './services/auth.service';
 import JwtAuthGuard from './guards/jwt-auth.guard';
 import JwtRefreshGuard from './guards/jwt-refresh.guard';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginPmDto } from './dto/login-project-manager.dto';
-import { ProjectManagersService } from 'src/project-managers/project-managers.service';
-import RequestWithPm from './interfaces/requestWithPm.interface';
-import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { Auth } from './entities/auth.entity';
-
+import { Request, Response } from 'express';
 
 @Controller('auth')
 @ApiTags("auth")
@@ -16,39 +12,48 @@ import { Auth } from './entities/auth.entity';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly pmService: ProjectManagersService
-    ) {}
+  ) {}
 
   @HttpCode(200)
   @Post("login")
-  async loginldap(@Body() loginPmDto: LoginPmDto, @Req() request: RequestWithPm) : Promise<Auth>{
-    return await this.authService.login(loginPmDto, request);
+  async loginldap(@Body() loginPmDto: LoginPmDto, @Res({ passthrough: true }) response: Response) {
+    if(!await this.authService.login(loginPmDto))
+      throw new HttpException(
+        "Vos identifiants LDAP sont corrects, mais vous n'avez pas encore de compte Prospectix",
+        HttpStatus.UNAUTHORIZED
+      );
+
+    response.cookie("refresh-token", this.authService.getRefreshToken(loginPmDto.username), {
+      expires: new Date(Date.now() + (+process.env.JWT_REFRESH_TOKEN_EXPIRATION_TIME) * 1000),
+      httpOnly: true,
+      path: "/auth/refresh"
+    })
+
+    return {
+      accessToken: this.authService.getAccessToken(loginPmDto.username)
+    }
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post("logout")
+  @Get("logout")
   @HttpCode(200)
-  logOut(@Req() request: RequestWithPm) : ProjectManager  {
-    request.pm = request.user as ProjectManager;
-    this.pmService.removeRefreshToken(request.pm.pseudo);
-    request.res.setHeader('Set-Cookie', this.authService.getCookiesForLogOut());
-    return request.pm;
+  logOut(@Res({ passthrough: true }) response: Response)  {
+    response.cookie("refresh-token", "", {
+      expires: new Date("1999"),
+      httpOnly: true,
+    })
   }
 
   @UseGuards(JwtRefreshGuard)
   @Get("refresh")
-  refresh(@Req() request: RequestWithPm) : ProjectManager{
-    const pm = request.user as ProjectManager;
-    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(pm.pseudo)
-    request.res.setHeader("Set-Cookie",accessTokenCookie);
-    
-    return request.pm;
-  }
+  refresh(@Req() request: Request) {
+    const refreshToken = request.cookies["refresh-token"]
+    if(typeof refreshToken != "string")
+      throw new UnauthorizedException("no refresh token")
 
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  authenticate(@Req() request: RequestWithPm) {
-      const user = request.pm;
-      return user;
+    const accessToken = this.authService.refreshToken(refreshToken)
+
+    return {
+      accessToken,
+    }
   }
 }

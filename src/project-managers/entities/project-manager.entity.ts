@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { Event } from 'src/events/entities/event.entity';
 import { Goal } from 'src/goals/entities/goal.entity';
@@ -37,14 +36,6 @@ export class ProjectManager extends BaseEntity {
   })
   admin: boolean;
 
-  @Column({ nullable: true })
-  @Exclude()
-  @ApiProperty({
-    description: "Refresh token en place du chef de projet",
-    required: true
-  })
-  currentHashedRefreshToken?: string;
-  
   @Column()
   @ApiProperty({
     description: "Nom du chef de projet",

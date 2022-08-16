@@ -3,13 +3,13 @@ import { MeetingsService } from './meetings.service';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { Meeting } from './entities/meeting.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import RequestWithPm from 'src/auth/interfaces/requestWithPm.interface';
 import { ApiTags } from '@nestjs/swagger';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { RolesType } from 'src/auth/role.type';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
 
 @Controller('meetings')
 @ApiTags("meetings")
@@ -33,9 +33,8 @@ export class MeetingsController {
 
   @Get("by-current-pm")
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  findAllByCurrentPm(@Req() request: RequestWithPm) : Promise<Meeting[]>{
-    request.pm = request.user as ProjectManager;
-    return this.meetingsService.findAllByCurrentPm(request.pm.id);
+  findAllByCurrentPm(@CurrentUser() user) : Promise<Meeting[]>{
+    return this.meetingsService.findAllByCurrentPm(user.id);
   }
 
   @Get("by-prospect/:idProspect")
