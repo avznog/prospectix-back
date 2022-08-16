@@ -6,6 +6,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { Event } from './entities/event.entity';
 import { CreateEventDto } from './dto/create-event.dto';
+import { RolesType } from 'src/auth/role.type';
 
 @Controller('events')
 @ApiTags("events")
@@ -13,13 +14,13 @@ import { CreateEventDto } from './dto/create-event.dto';
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post("create")
   create(@Body() createEventDto: CreateEventDto) : Promise<Event> {
     return this.eventsService.create(createEventDto);
   }
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-by-prospect")
   findAllByProspect(@Query("prospectId") prospectId: number) : Promise<Event[]> {
     return this.eventsService.findAllByProspect(prospectId);
