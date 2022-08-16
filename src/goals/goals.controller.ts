@@ -10,6 +10,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { UpdateGoalDto } from './dto/update-goal.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { RolesType } from 'src/auth/role.type';
 
 @Controller('goals')
 @ApiTags("goals")
@@ -17,58 +18,58 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 export class GoalsController {
   constructor(private readonly goalsService: GoalsService) {}
 
-  @Roles("Admin")
+  @Roles(RolesType.ADMIN)
   @Post("for-pm/:pseudo")
   createForPm(@Body() createGoalDto: CreateGoalDto,@Param("pseudo") pseudo: string) : Promise<Goal> {
     return this.goalsService.createForPm(createGoalDto, pseudo);
   }
 
-  @Roles("Admin")
+  @Roles(RolesType.ADMIN)
   @Post("for-current-pm")
   createForCurrentPm(@Body() createGoalDto: CreateGoalDto, @Req() request: RequestWithPm) : Promise<Goal> {
     request.pm = request.user as ProjectManager;
     return this.goalsService.createForCurrentPm(createGoalDto, request.pm.id);
   }
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get()
   findAll() : Promise<Goal[]> {
     return this.goalsService.findAll();
   }
 
-  @Roles("Cdp","Admin") 
+  @Roles(RolesType.CDP, RolesType.ADMIN) 
   @Get("by-current-pm")
   findAllByCurrentPm(@Req() request: RequestWithPm) : Promise<Goal[]> {
     request.pm = request.user as ProjectManager;
     return this.goalsService.findAllByCurrentPm(request.pm.id);
   }
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("by-pm/:pseudoPm")
   findAllByPm(@Param("pseudoPm") pseudoPm: string ) : Promise<Goal[]> {
     return this.goalsService.findAllByPm(pseudoPm);
   }
 
-  @Roles("Cdp", "Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("by-title-and-current-pm/:title")
   findAllByTitleAndCurrentPm(@Param("title") title: string, @Req() request: RequestWithPm) : Promise<Goal[]> {
     request.pm = request.user as ProjectManager;
     return this.goalsService.findAllByTitleAndCurrentPm(title, request.pm.pseudo);
   }
 
-  @Roles("Cdp", "Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("by-title-and-pm/:title/:pseudoPm")
   findAllByTitleAndPm(@Param("title") title: string, @Param("pseudoPm") pseudoPm: string) : Promise<Goal[]> {
     return this.goalsService.findAllByTitleAndPm(title, pseudoPm);
   }
 
-  @Roles("Admin")
+  @Roles(RolesType.ADMIN)
   @Patch(":id")
   update(@Param("id") id: number, @Body() updateGoalDto: UpdateGoalDto) : Promise<UpdateResult> {
     return this.goalsService.update(id, updateGoalDto);
   }
 
-  @Roles("Admin")
+  @Roles(RolesType.ADMIN)
   @Delete(":id")
   delete(@Param("id") id: number) : Promise<DeleteResult> {
     return this.goalsService.delete(+id);

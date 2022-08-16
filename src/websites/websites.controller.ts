@@ -6,6 +6,7 @@ import { UpdateWebsiteDto } from './dto/update-website.dto';
 import { UpdateResult } from 'typeorm';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { RolesType } from 'src/auth/role.type';
 
 @Controller('websites')
 @ApiTags("websites")
@@ -13,7 +14,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 export class WebsitesController {
   constructor(private readonly websitesService: WebsitesService) {}
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Patch(":id")
   update(@Param("id") idWebsite: number, @Body() updateWebsiteDto: UpdateWebsiteDto) : Promise<UpdateResult> {
     return this.websitesService.update(idWebsite, updateWebsiteDto);

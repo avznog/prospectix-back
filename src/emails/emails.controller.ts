@@ -6,6 +6,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { UpdateEmailDto } from './dto/update-email.dto';
 import { UpdateResult } from 'typeorm';
+import { RolesType } from 'src/auth/role.type';
 
 @Controller('emails')
 @ApiTags("emails")
@@ -13,7 +14,7 @@ import { UpdateResult } from 'typeorm';
 export class EmailsController {
   constructor(private readonly emailsService: EmailsService) {}
 
-  @Roles("Cdp","Admin")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Patch(":id")
   update(@Param("id") idEmail: number, @Body() updateEmailDto: UpdateEmailDto) : Promise<UpdateResult> {
     return this.emailsService.update(idEmail, updateEmailDto);
