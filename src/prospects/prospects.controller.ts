@@ -66,10 +66,4 @@ export class ProspectsController {
   enable(@Param("id") id: number) : Promise<UpdateResult> {
     return this.prospectsService.enable(id);
   }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("by-bookmarks/:pmPseudo")
-  findAllByBookmark(@Param("pmPseudo") pmPseudo: string) : Promise<Prospect[]> {
-    return this.prospectsService.findAllByBookmark(pmPseudo);
-  }
 }

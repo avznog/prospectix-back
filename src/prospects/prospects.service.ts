@@ -129,26 +129,6 @@ export class ProspectsService {
     }
   }
 
-  async findAllByBookmark(pmPseudo: string): Promise<Prospect[]> {
-    try {
-      return await this.prospectRepository.find({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
-        where :{
-          bookmarks: {
-            pm: {
-              pseudo: pmPseudo
-            }
-          }
-        }
-      });
-    } catch (error) {
-      throw new HttpException(
-        'Aucun prospect ajouté en favori pour ce Chef de Projet',
-        HttpStatus.NOT_FOUND,
-      );
-    }
-  }
-
   async update(idProspect: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
     try {
       return await this.prospectRepository.update(idProspect, updateProspectDto);  
