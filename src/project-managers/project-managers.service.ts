@@ -43,7 +43,10 @@ export class ProjectManagersService {
   async findAll() : Promise<ProjectManager[]> {
     try {
       return await this.pmRepository.find({
-        relations: ["goals","meetings","reminders","sentEmails","bookmarks","events","bookmarks.prospect"]
+        relations: ["goals","meetings","reminders","sentEmails","bookmarks","events","bookmarks.prospect"],
+        where: {
+          disabled: false
+        }
       }); 
     } catch (error) {
       console.log(error);
