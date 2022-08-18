@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, ILike, Like, Repository, UpdateResult } from 'typeorm';
 import { CreateGoalDto } from './dto/create-goal.dto';
 import { UpdateGoalDto } from './dto/update-goal.dto';
 import { Goal } from './entities/goal.entity';
@@ -57,6 +57,32 @@ export class GoalsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récupérer tous les objectifs", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findAllPaginated(take: number, skip: number, pseudo: string, keyword: string) : Promise<Goal[]> {
+    try {
+      return await this.goalRepository.find({
+        relations: ["pm"],
+        where: [
+          {
+            title: ILike(`%${keyword}%`),
+            pm: {
+              pseudo: ILike(`%${pseudo}%`),
+            }
+          }
+        ],
+        take: take,
+        skip: skip,
+        order: {
+          pm: {
+            pseudo: "asc"
+          }
+        }
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de trouver les objectifs", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

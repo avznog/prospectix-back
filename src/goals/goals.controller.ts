@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Body, Param, Req, UseGuards, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Patch, Delete, Query } from '@nestjs/common';
 import { GoalsService } from './goals.service';
 import { CreateGoalDto } from './dto/create-goal.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Goal } from './entities/goal.entity';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -34,6 +33,12 @@ export class GoalsController {
   @Get()
   findAll() : Promise<Goal[]> {
     return this.goalsService.findAll();
+  }
+
+  @Roles(RolesType.CDP,  RolesType.ADMIN)
+  @Get("find-all-paginated")
+  findAllPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("pseudo") pseudo: string, @Query("keyword") keyword: string) : Promise<Goal[]> {
+    return this.goalsService.findAllPaginated(take, skip, pseudo, keyword);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN) 
