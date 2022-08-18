@@ -38,4 +38,10 @@ export class BookmarksController {
   findAll() {
     return this.bookmarksService.findAll()
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("find-all-paginated")
+  findAllPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("pseudo") pseudo: string, @Query("activity") activity: string, @Query("city") city: string, @Query("keyword") keyword: string) {
+    return this.bookmarksService.findAllPaginated(take, skip, pseudo, activity, city, keyword);
+  }
 }

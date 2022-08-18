@@ -29,12 +29,6 @@ export class ProspectsController {
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("find-all-bookmarks-paginated")
-  findAllBookmarksPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("pseudo") pseudo: string, @Query("activity") activity: string, @Query("city") city: string, @Query("keyword") keyword: string) : Promise<Prospect[]> {
-    return this.prospectsService.findAllBookmarksPaginated(take, skip, pseudo, activity, city, keyword);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get('findOne/:id')
   findOne(@Param('id') id: string) : Promise<Prospect> {
     return this.prospectsService.findOne(+id);
