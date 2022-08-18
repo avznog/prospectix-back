@@ -31,10 +31,10 @@ export class RemindersService {
     }
   }
 
-  async create(createReminderDto: CreateReminderDto) : Promise<Reminder>{
+  async create(createReminderDto: CreateReminderDto, user: ProjectManager) : Promise<Reminder>{
     try {
+      createReminderDto.pm = user;
       return await this.reminderRepository.save(createReminderDto);
-      
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de créer un rappel pour cet utilisateur", HttpStatus.BAD_REQUEST)

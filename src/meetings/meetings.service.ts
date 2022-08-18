@@ -20,8 +20,9 @@ export class MeetingsService {
     private readonly pmRepository: Repository<ProjectManager>
   ){}
 
-  async create(createMeetingDto: CreateMeetingDto) : Promise<Meeting> {
+  async create(createMeetingDto: CreateMeetingDto, user: ProjectManager) : Promise<Meeting> {
     try {
+      createMeetingDto.pm = user;
       return await this.meetingRepository.save(createMeetingDto);
     } catch (error) {
       console.log(error)

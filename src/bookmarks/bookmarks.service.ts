@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { DeleteResult, ILike, Repository } from 'typeorm';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { Bookmark } from './entities/bookmark.entity';
@@ -20,8 +21,9 @@ export class BookmarksService {
     }
   }
 
-  async create(createBookmarkDto: CreateBookmarkDto) : Promise<Bookmark> {
+  async create(createBookmarkDto: CreateBookmarkDto, user: ProjectManager) : Promise<Bookmark> {
     try{
+      createBookmarkDto.pm = user;
       return await this.bookmarkRepository.save(createBookmarkDto);
     } catch(error) {
       console.log(error);

@@ -27,8 +27,8 @@ export class MeetingsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post()
-  create(@Body() createMeetingDto: CreateMeetingDto) : Promise<Meeting> {
-    return this.meetingsService.create(createMeetingDto);
+  create(@Body() createMeetingDto: CreateMeetingDto, @CurrentUser() user) : Promise<Meeting> {
+    return this.meetingsService.create(createMeetingDto, user);
   }
 
   @Get("by-current-pm")

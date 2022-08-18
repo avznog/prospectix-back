@@ -7,6 +7,7 @@ import { Roles } from 'src/auth/annotations/roles.decorator';
 import { Event } from './entities/event.entity';
 import { CreateEventDto } from './dto/create-event.dto';
 import { RolesType } from 'src/auth/role.type';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
 
 @Controller('events')
 @ApiTags("events")
@@ -16,8 +17,8 @@ export class EventsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post("create")
-  create(@Body() createEventDto: CreateEventDto) : Promise<Event> {
-    return this.eventsService.create(createEventDto);
+  create(@Body() createEventDto: CreateEventDto, @CurrentUser() user) : Promise<Event> {
+    return this.eventsService.create(createEventDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)

@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
@@ -23,8 +24,8 @@ export class BookmarksController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post()
-  create(@Body() createBookmarkDto: CreateBookmarkDto) : Promise<Bookmark> {
-    return this.bookmarksService.create(createBookmarkDto);
+  create(@Body() createBookmarkDto: CreateBookmarkDto, @CurrentUser() user) : Promise<Bookmark> {
+    return this.bookmarksService.create(createBookmarkDto, user.id);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)

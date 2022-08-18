@@ -19,8 +19,8 @@ export class RemindersController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post()
-  create(@Body() createReminderDto: CreateReminderDto) : Promise<Reminder>{
-    return this.reminderService.create(createReminderDto);
+  create(@Body() createReminderDto: CreateReminderDto, @CurrentUser() user) : Promise<Reminder>{
+    return this.reminderService.create(createReminderDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
