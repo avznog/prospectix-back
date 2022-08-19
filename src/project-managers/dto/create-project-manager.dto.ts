@@ -43,4 +43,10 @@ export class CreateProjectManagerDto {
     required: true
   })
   disabled: boolean;
+
+  @ApiProperty({
+    description: "Email du chef de projet",
+    required: true
+  })
+  mail: string;
 }

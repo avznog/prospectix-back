@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Repository } from 'typeorm';
 import { CreateEventDto } from './dto/create-event.dto';
 import { Event } from './entities/event.entity';
@@ -12,8 +13,9 @@ export class EventsService {
     private readonly eventRepository: Repository<Event>
   ) {}
 
-  async create(createEventDto: CreateEventDto) : Promise<Event> {
+  async create(createEventDto: CreateEventDto, user: ProjectManager) : Promise<Event> {
     try {
+      createEventDto.pm = user;
       return this.eventRepository.save(createEventDto);
     } catch (error) {
       console.log(error)

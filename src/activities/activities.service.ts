@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateActivityDto } from './dto/create-activity.dto';
 import { Activity } from './entities/activity.entity';
 
 @Injectable()
@@ -16,6 +17,15 @@ export class ActivitiesService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de trouver toutes les activités", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async create(createActivityDto: CreateActivityDto) : Promise<Activity> {
+    try {
+      return await this.activityRepository.save(createActivityDto);
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de créer l'activité", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

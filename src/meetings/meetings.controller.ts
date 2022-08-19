@@ -10,6 +10,7 @@ import { Roles } from 'src/auth/annotations/roles.decorator';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { RolesType } from 'src/auth/role.type';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
+import { ResearchParamsMeetingsDto } from './dto/research-parmas-meetings.dto';
 
 @Controller('meetings')
 @ApiTags("meetings")
@@ -27,8 +28,8 @@ export class MeetingsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post()
-  create(@Body() createMeetingDto: CreateMeetingDto) : Promise<Meeting> {
-    return this.meetingsService.create(createMeetingDto);
+  create(@Body() createMeetingDto: CreateMeetingDto, @CurrentUser() user) : Promise<Meeting> {
+    return this.meetingsService.create(createMeetingDto, user);
   }
 
   @Get("by-current-pm")
@@ -63,15 +64,7 @@ export class MeetingsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(
-    @Query("take") take: number,
-    @Query("skip") skip: number,
-    @Query("keyword") keyword: string,
-    @Query("done") done: string,
-    @Query("date") date: string,
-    @Query("oldOrNew") oldOrNew: string,
-    @Query("type") type: string
-  ) : Promise<Meeting[]> {  
-    return this.meetingsService.findAllPaginated(take, skip, done, date, oldOrNew, keyword, type);
+  findAllPaginated(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto) : Promise<Meeting[]> {  
+    return this.meetingsService.findAllPaginated(researchParamsMeetingsDto);
   }
 }

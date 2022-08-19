@@ -9,6 +9,7 @@ import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { RolesType } from 'src/auth/role.type';
+import { ResearchParamsProspectDto } from './dto/research-params-prospect.dto';
 
 @Controller('prospects')
 @ApiTags('prospects')
@@ -24,14 +25,9 @@ export class ProspectsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("keyword") keyword: string, @Query("city") city: string, @Query("activity") activity: string) : Promise<Prospect[]> {
-    return this.prospectsService.findAllPaginated(keyword, city, activity, take, skip);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("find-all-bookmarks-paginated")
-  findAllBookmarksPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("pseudo") pseudo: string, @Query("activity") activity: string, @Query("city") city: string, @Query("keyword") keyword: string) : Promise<Prospect[]> {
-    return this.prospectsService.findAllBookmarksPaginated(take, skip, pseudo, activity, city, keyword);
+    findAllPaginated(@Query() researchParamsProspectDto: ResearchParamsProspectDto) : Promise<Prospect[]> {
+      console.log(researchParamsProspectDto)
+    return this.prospectsService.findAllPaginated(researchParamsProspectDto);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
@@ -71,11 +67,5 @@ export class ProspectsController {
   @Get("enable/:id")
   enable(@Param("id") id: number) : Promise<UpdateResult> {
     return this.prospectsService.enable(id);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("by-bookmarks/:pmPseudo")
-  findAllByBookmark(@Param("pmPseudo") pmPseudo: string) : Promise<Prospect[]> {
-    return this.prospectsService.findAllByBookmark(pmPseudo);
   }
 }

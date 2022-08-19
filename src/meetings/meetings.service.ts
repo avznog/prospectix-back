@@ -5,6 +5,7 @@ import { ProjectManager } from 'src/project-managers/entities/project-manager.en
 import { Prospect } from 'src/prospects/entities/prospect.entity';
 import { DeleteResult, ILike, LessThan, Like, MoreThan, Repository, UpdateResult } from 'typeorm';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
+import { ResearchParamsMeetingsDto } from './dto/research-parmas-meetings.dto';
 import { Meeting } from './entities/meeting.entity';
 
 @Injectable()
@@ -20,8 +21,9 @@ export class MeetingsService {
     private readonly pmRepository: Repository<ProjectManager>
   ){}
 
-  async create(createMeetingDto: CreateMeetingDto) : Promise<Meeting> {
+  async create(createMeetingDto: CreateMeetingDto, user: ProjectManager) : Promise<Meeting> {
     try {
+      createMeetingDto.pm = user;
       return await this.meetingRepository.save(createMeetingDto);
     } catch (error) {
       console.log(error)
@@ -101,102 +103,99 @@ export class MeetingsService {
     }
   }
 
-  async findAllPaginated(take: number, skip: number, done: string, date: string, oldOrNew: string, keyword: string, type: string) : Promise<Meeting[]>{
+  async findAllPaginated(researchParamsMeetingsDto: ResearchParamsMeetingsDto) : Promise<Meeting[]>{
     try {
       return await this.meetingRepository.find({
         relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email"],
         where: [
-          
-          // WITH DATE 
-          // Meeting has a type
-          type != "" && {
-            type: type as MeetingType,
-            done: done == "true" ? true : false,
-            date: date ? new Date(date) : oldOrNew == "old" ? LessThan(new Date()) : MoreThan(new Date()),
+          researchParamsMeetingsDto.type != "" && {
+            type: researchParamsMeetingsDto.type as MeetingType,
+            done: researchParamsMeetingsDto.done == "true" ? true : false,
+            date: researchParamsMeetingsDto.date ? new Date(researchParamsMeetingsDto.date) : researchParamsMeetingsDto.oldOrNew == "old" ? LessThan(new Date()) : MoreThan(new Date()),
             prospect: [
               {
                 phone: {
-                  number: ILike(`%${keyword}%`)
+                  number: ILike(`%${researchParamsMeetingsDto.keyword}%`)
                 }
               },
               {
                 email: {
-                  email: ILike(`%${keyword}%`)
+                  email: ILike(`%${researchParamsMeetingsDto.keyword}%`)
                 }
               },
               {
                 website: {
-                  website: ILike(`%${keyword}%`)
+                  website: ILike(`%${researchParamsMeetingsDto.keyword}%`)
                 }
               },
               {
                 city: {
-                  name: ILike(`%${keyword}%`)
+                  name: ILike(`%${researchParamsMeetingsDto.keyword}%`)
                 }
               },
               {
                 country: {
-                  name: ILike(`%${keyword}%`)
+                  name: ILike(`%${researchParamsMeetingsDto.keyword}%`)
                 }
               },
               {
                 activity: {
-                  name: ILike(`%${keyword}%`)
+                  name: ILike(`%${researchParamsMeetingsDto.keyword}%`)
                 }
               },{
-                companyName: ILike(`%${keyword}%`)
+                companyName: ILike(`%${researchParamsMeetingsDto.keyword}%`)
               },
               {
-                streetAddress: ILike(`%${keyword}%`)
+                streetAddress: ILike(`%${researchParamsMeetingsDto.keyword}%`)
               },
             ]
           },
 
           // All meetings
-          type == "" && {
-            done: done == "true" ? true : false,
-            date: date ? new Date(date) : oldOrNew == "old" ? LessThan(new Date()) : MoreThan(new Date()),
+          researchParamsMeetingsDto.type == "" && {
+            done: researchParamsMeetingsDto.done == "true" ? true : false,
+            date: researchParamsMeetingsDto.date ? new Date(researchParamsMeetingsDto.date) : researchParamsMeetingsDto.oldOrNew == "old" ? LessThan(new Date()) : MoreThan(new Date()),
             prospect: [
               {
                 phone: {
-                  number: ILike(`%${keyword}%`)
+                  number: ILike(`%${researchParamsMeetingsDto.keyword}%`)
                 }
               },
               {
                 email: {
-                  email: ILike(`%${keyword}%`)
+                  email: ILike(`%${researchParamsMeetingsDto.keyword}%`)
                 }
               },
               {
                 website: {
-                  website: ILike(`%${keyword}%`)
+                  website: ILike(`%${researchParamsMeetingsDto.keyword}%`)
                 }
               },
               {
                 city: {
-                  name: ILike(`%${keyword}%`)
+                  name: ILike(`%${researchParamsMeetingsDto.keyword}%`)
                 }
               },
               {
                 country: {
-                  name: ILike(`%${keyword}%`)
+                  name: ILike(`%${researchParamsMeetingsDto.keyword}%`)
                 }
               },
               {
                 activity: {
-                  name: ILike(`%${keyword}%`)
+                  name: ILike(`%${researchParamsMeetingsDto.keyword}%`)
                 }
               },{
-                companyName: ILike(`%${keyword}%`)
+                companyName: ILike(`%${researchParamsMeetingsDto.keyword}%`)
               },
               {
-                streetAddress: ILike(`%${keyword}%`)
+                streetAddress: ILike(`%${researchParamsMeetingsDto.keyword}%`)
               },
             ]
           },
         ],
-        take: take,
-        skip: skip
+        take: researchParamsMeetingsDto.take,
+        skip: researchParamsMeetingsDto.skip
       });
     } catch (error) {
       console.log(error)

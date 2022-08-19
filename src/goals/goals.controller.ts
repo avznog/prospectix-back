@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Body, Param, Req, UseGuards, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Patch, Delete, Query } from '@nestjs/common';
 import { GoalsService } from './goals.service';
 import { CreateGoalDto } from './dto/create-goal.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Goal } from './entities/goal.entity';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -11,6 +10,7 @@ import { UpdateGoalDto } from './dto/update-goal.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import { RolesType } from 'src/auth/role.type';
+import { ResearchParamsGoalsDto } from './dto/research-params-goals.dto';
 
 @Controller('goals')
 @ApiTags("goals")
@@ -34,6 +34,12 @@ export class GoalsController {
   @Get()
   findAll() : Promise<Goal[]> {
     return this.goalsService.findAll();
+  }
+
+  @Roles(RolesType.CDP,  RolesType.ADMIN)
+  @Get("find-all-paginated")
+  findAllPaginated(@Query() researchParamsGoalsDto: ResearchParamsGoalsDto) : Promise<Goal[]> {
+    return this.goalsService.findAllPaginated(researchParamsGoalsDto);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN) 

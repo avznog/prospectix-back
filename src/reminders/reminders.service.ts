@@ -6,6 +6,7 @@ import { DeleteResult, ILike, LessThan, Like, MoreThan, Repository, UpdateResult
 import { Reminder } from './entities/reminder.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
+import { ResearchParamsRemindersDto } from './dto/research-params-reminders.dto';
 
 @Injectable()
 export class RemindersService {
@@ -31,10 +32,10 @@ export class RemindersService {
     }
   }
 
-  async create(createReminderDto: CreateReminderDto) : Promise<Reminder>{
+  async create(createReminderDto: CreateReminderDto, user: ProjectManager) : Promise<Reminder>{
     try {
+      createReminderDto.pm = user;
       return await this.reminderRepository.save(createReminderDto);
-      
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de créer un rappel pour cet utilisateur", HttpStatus.BAD_REQUEST)
@@ -117,120 +118,120 @@ export class RemindersService {
     }
   }
   
-  async findAllPaginated(take: number, skip: number, priority: number, orderByPriority: string, done: string, date: string, oldOrNew: string, keyword: string) : Promise<Reminder[]> {
+  async findAllPaginated(researchParamsRemindersDto: ResearchParamsRemindersDto) : Promise<Reminder[]> {
     try {
       return await this.reminderRepository.find({
         relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.activity"],
         where: [  
-          date && {
-            priority: priority,
-            done: done == "true" ? true : false,
-            date: new Date(date),
+          researchParamsRemindersDto.date && {
+            priority: ((researchParamsRemindersDto.priority == 0) && (1 || 2 || 3) )|| researchParamsRemindersDto.priority,
+            done: researchParamsRemindersDto.done == "true" ? true : false,
+            date: new Date(researchParamsRemindersDto.date),
             pm: {
-              pseudo: ILike(`%${keyword}%`)
+              pseudo: ILike(`%${researchParamsRemindersDto.keyword}%`)
             }
           },
-         date && {
-          priority: priority,
-          done: done == "true" ? true : false,
-          date: new Date(date),
+          researchParamsRemindersDto.date && {
+            priority: ((researchParamsRemindersDto.priority == 0) && (1 || 2 || 3) )|| researchParamsRemindersDto.priority,
+          done: researchParamsRemindersDto.done == "true" ? true : false,
+          date: new Date(researchParamsRemindersDto.date),
           prospect: [
             {
               phone: {
-                number: ILike(`%${keyword}%`)
+                number: ILike(`%${researchParamsRemindersDto.keyword}%`)
               }
             },
             {
               email: {
-                email: ILike(`%${keyword}%`)
+                email: ILike(`%${researchParamsRemindersDto.keyword}%`)
               }
             },
             {
               website: {
-                website: ILike(`%${keyword}%`)
+                website: ILike(`%${researchParamsRemindersDto.keyword}%`)
               }
             },
             {
               city: {
-                name: ILike(`%${keyword}%`)
+                name: ILike(`%${researchParamsRemindersDto.keyword}%`)
               }
             },
             {
               country: {
-                name: ILike(`%${keyword}%`)
+                name: ILike(`%${researchParamsRemindersDto.keyword}%`)
               }
             },
             {
               activity: {
-                name: ILike(`%${keyword}%`)
+                name: ILike(`%${researchParamsRemindersDto.keyword}%`)
               }
             },{
-              companyName: ILike(`%${keyword}%`)
+              companyName: ILike(`%${researchParamsRemindersDto.keyword}%`)
             },
             {
-              streetAddress: ILike(`%${keyword}%`)
+              streetAddress: ILike(`%${researchParamsRemindersDto.keyword}%`)
             },
           ]
         },
-        !date && {
-          priority: priority,
-          done: done == "true" ? true : false,
-          date: oldOrNew == "old" ?  LessThan(new Date()) : MoreThan(new Date()),
+        !researchParamsRemindersDto.date && {
+          priority: ((researchParamsRemindersDto.priority == 0) && (1 || 2 || 3) )|| researchParamsRemindersDto.priority,
+          done: researchParamsRemindersDto.done == "true" ? true : false,
+          date: researchParamsRemindersDto.oldOrNew == "old" ?  LessThan(new Date()) : MoreThan(new Date()),
           pm: {
-            pseudo: ILike(`%${keyword}%`)
+            pseudo: ILike(`%${researchParamsRemindersDto.keyword}%`)
           }
         },
-        !date && {
-          priority: priority,
-          done: done == "true" ? true : false,
-          date: oldOrNew == "old" ?  LessThan(new Date()) : MoreThan(new Date()),
+        !researchParamsRemindersDto.date && {
+          priority: ((researchParamsRemindersDto.priority == 0 && 1) || (1 || 2 || 3) )|| researchParamsRemindersDto.priority,
+          done: researchParamsRemindersDto.done == "true" ? true : false,
+          date: researchParamsRemindersDto.oldOrNew == "old" ?  LessThan(new Date()) : MoreThan(new Date()),
           prospect: [
             {
               phone: {
-                number: ILike(`%${keyword}%`)
+                number: ILike(`%${researchParamsRemindersDto.keyword}%`)
               }
             },
             {
               email: {
-                email: ILike(`%${keyword}%`)
+                email: ILike(`%${researchParamsRemindersDto.keyword}%`)
               }
             },
             {
               website: {
-                website: ILike(`%${keyword}%`)
+                website: ILike(`%${researchParamsRemindersDto.keyword}%`)
               }
             },
             {
               city: {
-                name: ILike(`%${keyword}%`)
+                name: ILike(`%${researchParamsRemindersDto.keyword}%`)
               }
             },
             {
               country: {
-                name: ILike(`%${keyword}%`)
+                name: ILike(`%${researchParamsRemindersDto.keyword}%`)
               }
             },
             {
               activity: {
-                name: ILike(`%${keyword}%`)
+                name: ILike(`%${researchParamsRemindersDto.keyword}%`)
               }
             },{
-              companyName: ILike(`%${keyword}%`)
+              companyName: ILike(`%${researchParamsRemindersDto.keyword}%`)
             },
             {
-              streetAddress: ILike(`%${keyword}%`)
+              streetAddress: ILike(`%${researchParamsRemindersDto.keyword}%`)
             },
           ]
         }
       ],
-        take: take,
-        skip: skip,
+        take: researchParamsRemindersDto.take,
+        skip: researchParamsRemindersDto.skip,
         order: (
-          orderByPriority == "true" && {
+          researchParamsRemindersDto.orderByPriority == "true" && {
           'priority': 'DESC'
         }
         ) || (
-          orderByPriority == "false" && {
+          researchParamsRemindersDto.orderByPriority == "false" && {
           'id': 'ASC'
         }
         )

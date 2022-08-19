@@ -1,10 +1,11 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
 import { CountriesService } from './countries.service';
+import { CreateCountryDto } from './dto/create-country.dto';
 import { Country } from './entities/country.entity';
 
 @Controller('countries')
@@ -17,5 +18,11 @@ export class CountriesController {
   @Get()
   findAll() : Promise<Country[]> {
     return this.countriesService.findAll();
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Post("add")
+  create(@Body() createCountryDto: CreateCountryDto) : Promise<Country> {
+    return this.countriesService.create(createCountryDto);
   }
 }
