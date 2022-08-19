@@ -9,6 +9,7 @@ import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { RolesType } from 'src/auth/role.type';
+import { ResearchParamsProspectDto } from './dto/research-params-prospect.dto';
 
 @Controller('prospects')
 @ApiTags('prospects')
@@ -24,8 +25,9 @@ export class ProspectsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("keyword") keyword: string, @Query("city") city: string, @Query("activity") activity: string) : Promise<Prospect[]> {
-    return this.prospectsService.findAllPaginated(keyword, city, activity, take, skip);
+    findAllPaginated(@Query() researchParamsProspectDto: ResearchParamsProspectDto) : Promise<Prospect[]> {
+      console.log(researchParamsProspectDto)
+    return this.prospectsService.findAllPaginated(researchParamsProspectDto);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)

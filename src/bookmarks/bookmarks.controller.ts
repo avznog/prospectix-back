@@ -8,6 +8,7 @@ import { RolesType } from 'src/auth/role.type';
 import { DeleteResult } from 'typeorm';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
+import { ResearchParamsBookmarksDto } from './dto/research-params-bookmarks.dto';
 import { Bookmark } from './entities/bookmark.entity';
 
 @Controller('bookmarks')
@@ -42,7 +43,7 @@ export class BookmarksController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("pseudo") pseudo: string, @Query("activity") activity: string, @Query("city") city: string, @Query("keyword") keyword: string) {
-    return this.bookmarksService.findAllPaginated(take, skip, pseudo, activity, city, keyword);
+  findAllPaginated(@Query() researchParamsBookmarksDto: ResearchParamsBookmarksDto) {
+    return this.bookmarksService.findAllPaginated(researchParamsBookmarksDto);
   }
 }

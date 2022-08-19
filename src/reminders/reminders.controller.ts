@@ -9,6 +9,7 @@ import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
+import { ResearchParamsRemindersDto } from './dto/research-params-reminders.dto';
 @Controller('reminders')
 @ApiTags("reminders")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -67,16 +68,7 @@ export class RemindersController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(
-    @Query("take") take: number,
-    @Query("skip") skip: number,
-    @Query("priority") priority: number,
-    @Query("orderByPriority") orderByPriority: string,
-    @Query("done") done: string,
-    @Query("date") date: string,
-    @Query("oldOrNew") oldOrNew: string,
-    @Query("keyword") keyword: string
-  ) : Promise<Reminder[]> {
-    return this.reminderService.findAllPaginated(take, skip, priority, orderByPriority, done, date, oldOrNew, keyword);
+  findAllPaginated(@Query() researchParamsRemindersDto: ResearchParamsRemindersDto) : Promise<Reminder[]> {
+    return this.reminderService.findAllPaginated(researchParamsRemindersDto);
   }
 }

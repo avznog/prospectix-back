@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import TokenPayload from 'src/auth/interfaces/tokenPayload.interface';
 import { CreateProjectManagerDto } from './dto/create-project-manager.dto';
 import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
+import { ResearchParamsProjectManagersDto } from './dto/research-params-project-managers.dto';
 
 @Injectable()
 export class ProjectManagersService {
@@ -81,12 +82,12 @@ export class ProjectManagersService {
     }
   }
 
-  async findAllPaginated(take: number, skip: number) : Promise<ProjectManager[]> {
+  async findAllPaginated(researchParamsProjectManagersDto: ResearchParamsProjectManagersDto) : Promise<ProjectManager[]> {
     try {
       return await this.pmRepository.find({
         relations: ["goals","meetings","reminders","sentEmails","bookmarks","events","bookmarks.prospect"],
-        take: take,
-        skip: skip,
+        take: researchParamsProjectManagersDto.take,
+        skip: researchParamsProjectManagersDto.skip,
         order: {
           id: "asc"
         }

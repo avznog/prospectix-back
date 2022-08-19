@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { DeleteResult, ILike, Like, Repository, UpdateResult } from 'typeorm';
 import { CreateGoalDto } from './dto/create-goal.dto';
+import { ResearchParamsGoalsDto } from './dto/research-params-goals.dto';
 import { UpdateGoalDto } from './dto/update-goal.dto';
 import { Goal } from './entities/goal.entity';
 
@@ -60,20 +61,20 @@ export class GoalsService {
     }
   }
 
-  async findAllPaginated(take: number, skip: number, pseudo: string, keyword: string) : Promise<Goal[]> {
+  async findAllPaginated(researchParamsGoalsDto: ResearchParamsGoalsDto) : Promise<Goal[]> {
     try {
       return await this.goalRepository.find({
         relations: ["pm"],
         where: [
           {
-            title: ILike(`%${keyword}%`),
+            title: ILike(`%${researchParamsGoalsDto.keyword}%`),
             pm: {
-              pseudo: ILike(`%${pseudo}%`),
+              pseudo: ILike(`%${researchParamsGoalsDto.pseudo}%`),
             }
           }
         ],
-        take: take,
-        skip: skip,
+        take: researchParamsGoalsDto.take,
+        skip: researchParamsGoalsDto.skip,
         order: {
           pm: {
             pseudo: "asc"

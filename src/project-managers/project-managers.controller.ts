@@ -10,6 +10,7 @@ import { UpdateResult } from 'typeorm';
 import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
 import { RolesType } from 'src/auth/role.type';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
+import { ResearchParamsProjectManagersDto } from './dto/research-params-project-managers.dto';
 
 @Controller('project-managers')
 @ApiTags('project-managers')
@@ -37,8 +38,8 @@ export class ProjectManagersController {
 
   @Get("find-all-paginated")
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  findAllPaginated(@Query("take") take: number, @Query("skip") skip: number) : Promise<ProjectManager[]> {
-    return this.pmService.findAllPaginated(take, skip);
+  findAllPaginated(@Query() researchParamsProjectManagersDto: ResearchParamsProjectManagersDto) : Promise<ProjectManager[]> {
+    return this.pmService.findAllPaginated(researchParamsProjectManagersDto);
   }
 
   @Patch(":id")

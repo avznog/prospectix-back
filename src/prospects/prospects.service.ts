@@ -6,6 +6,7 @@ import { Prospect } from './entities/prospect.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { City } from 'src/cities/entities/city.entity';
 import { Activity } from 'src/activities/entities/activity.entity';
+import { ResearchParamsProspectDto } from './dto/research-params-prospect.dto';
 @Injectable()
 export class ProspectsService {
   constructor(
@@ -29,7 +30,7 @@ export class ProspectsService {
     }
   }
 
-  async findAllPaginated(keyword: string, city: string, activity: string, take: number, skip: number) : Promise<Prospect[]> {
+  async findAllPaginated(researchParamsProspectDto: ResearchParamsProspectDto) : Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
         relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
@@ -37,74 +38,74 @@ export class ProspectsService {
           { 
             disabled: false,
             city: {
-              name: city
+              name: researchParamsProspectDto.city
             },
             activity: {
-              name: activity
+              name: researchParamsProspectDto.activity
             },
             phone: {
-              number: ILike(`%${keyword}%`)
+              number: ILike(`%${researchParamsProspectDto.keyword}%`)
             }
           },
           { 
             disabled: false,
             city: {
-              name: city
+              name: researchParamsProspectDto.city
             },
             activity: {
-              name: activity
+              name: researchParamsProspectDto.activity
             },
             website: {
-              website: ILike(`%${keyword}%`)
+              website: ILike(`%${researchParamsProspectDto.keyword}%`)
             }
           },
           { 
             disabled: false,
             city: {
-              name: city
+              name: researchParamsProspectDto.city
             },
             activity: {
-              name: activity
+              name: researchParamsProspectDto.activity
             },
             email: {
-              email: ILike(`%${keyword}%`)
+              email: ILike(`%${researchParamsProspectDto.keyword}%`)
             }
           },
           { 
             disabled: false,
             city: {
-              name: city
+              name: researchParamsProspectDto.city
             },
             activity: {
-              name: activity
+              name: researchParamsProspectDto.activity
             },
-            companyName: ILike(`%${keyword}%`)
+            companyName: ILike(`%${researchParamsProspectDto.keyword}%`)
           },
           { 
             disabled: false,
             city: {
-              name: city
+              name: researchParamsProspectDto.city
             },
             activity: {
-              name: activity
+              name: researchParamsProspectDto.activity
             },
-            streetAddress: ILike(`%${keyword}%`)
+            streetAddress: ILike(`%${researchParamsProspectDto.keyword}%`)
           },
           { 
             disabled: false,
             city: {
-              name: city
+              name: researchParamsProspectDto.city
             },
             activity: {
-              name: activity
+              name: researchParamsProspectDto.activity
             },
             country: {
-              name: ILike(`%${keyword}%`)
+              name: ILike(`%${researchParamsProspectDto.keyword}%`)
             }
           }
         ],
-        take: take,
-        skip: skip
+        take: researchParamsProspectDto.take,
+        skip: researchParamsProspectDto.skip
       })
     } catch (error) {
       console.log(error)

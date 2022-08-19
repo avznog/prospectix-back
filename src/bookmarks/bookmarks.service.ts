@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { DeleteResult, ILike, Repository } from 'typeorm';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
+import { ResearchParamsBookmarksDto } from './dto/research-params-bookmarks.dto';
 import { Bookmark } from './entities/bookmark.entity';
 
 @Injectable()
@@ -55,7 +56,7 @@ export class BookmarksService {
     }
   }
 
-  async findAllPaginated(take: number, skip: number, pseudo: string, activity: string, city: string, keyword: string) : Promise<Bookmark[]> {
+  async findAllPaginated(researchParamsBookmarksDto: ResearchParamsBookmarksDto) : Promise<Bookmark[]> {
     try {
       return await this.bookmarkRepository.find({
         relations: ["prospect", "pm","prospect.activity","prospect.city","prospect.country","prospect.events","prospect.meetings","prospect.phone","prospect.reminders","prospect.website", "prospect.email"],
@@ -64,209 +65,103 @@ export class BookmarksService {
             prospect: {
               disabled: false,
               city: {
-                name: city
+                name: researchParamsBookmarksDto.city
               },
               activity: {
-                name: activity
+                name: researchParamsBookmarksDto.activity
               },
               phone: {
-                number: ILike(`%${keyword}%`)
+                number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
               }
             },
             pm: {
-              pseudo: ILike(`%${pseudo}%`)
+              pseudo: ILike(`%${researchParamsBookmarksDto.pseudo}%`)
             },
           },
           {
             prospect: {
               disabled: false,
               city: {
-                name: city
+                name: researchParamsBookmarksDto.city
               },
               activity: {
-                name: activity
+                name: researchParamsBookmarksDto.activity
               },
               email: {
-                email: ILike(`%${keyword}%`)
+                email: ILike(`%${researchParamsBookmarksDto.keyword}%`)
               }
             },
             pm: {
-              pseudo: ILike(`%${pseudo}%`)
+              pseudo: ILike(`%${researchParamsBookmarksDto.pseudo}%`)
             },
           },
           {
             prospect: {
               disabled: false,
               city: {
-                name: city
+                name: researchParamsBookmarksDto.city
               },
               activity: {
-                name: activity
+                name: researchParamsBookmarksDto.activity
               },
               website: {
-                website: ILike(`%${keyword}%`)
+                website: ILike(`%${researchParamsBookmarksDto.keyword}%`)
               }
             },
             pm: {
-              pseudo: ILike(`%${pseudo}%`)
+              pseudo: ILike(`%${researchParamsBookmarksDto.pseudo}%`)
             },
           },
           {
             prospect: {
               disabled: false,
               city: {
-                name: city
+                name: researchParamsBookmarksDto.city
               },
               activity: {
-                name: activity
+                name: researchParamsBookmarksDto.activity
               },
-              companyName: ILike(`%${keyword}%`)
+              companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`)
             },
             pm: {
-              pseudo: ILike(`%${pseudo}%`)
+              pseudo: ILike(`%${researchParamsBookmarksDto.pseudo}%`)
             },
           },
           {
             prospect: {
               disabled: false,
               city: {
-                name: city
+                name: researchParamsBookmarksDto.city
               },
               activity: {
-                name: activity
+                name: researchParamsBookmarksDto.activity
               },
-              streetAddress: ILike(`%${keyword}%`)
+              streetAddress: ILike(`%${researchParamsBookmarksDto.keyword}%`)
             },
             pm: {
-              pseudo: ILike(`%${pseudo}%`)
+              pseudo: ILike(`%${researchParamsBookmarksDto.pseudo}%`)
             },
           },
           {
             prospect: {
               disabled: false,
               city: {
-                name: city
+                name: researchParamsBookmarksDto.city
               },
               activity: {
-                name: activity
+                name: researchParamsBookmarksDto.activity
               },
               country: {
-                name: ILike(`%${keyword}%`)
+                name: ILike(`%${researchParamsBookmarksDto.keyword}%`)
               }
             },
             pm: {
-              pseudo: ILike(`%${pseudo}%`)
+              pseudo: ILike(`%${researchParamsBookmarksDto.pseudo}%`)
             },
           }
         ],
-        take: take,
-        skip: skip
-      //   where: {
-      //       pm: {
-      //         pseudo: ILike(`%${pseudo}%`)
-      //       }
-      //   } && [
-      //     { 
-      //       disabled: false,
-      //       city: {
-      //         name: city
-      //       },
-      //       activity: {
-      //         name: activity
-      //       },
-      //       phone: {
-      //         number: ILike(`%${keyword}%`)
-      //       },
-      //       bookmarks: {
-      //         pm: {
-      //           pseudo: ILike(`%${pseudo}%`)
-      //         }
-      //       }
-      //     },
-          // { 
-          //   disabled: false,
-          //   city: {
-          //     name: city
-          //   },
-          //   activity: {
-          //     name: activity
-          //   },
-          //   website: {
-      //         website: ILike(`%${keyword}%`)
-      //       },
-      //       bookmarks: {
-      //         pm: {
-      //           pseudo: ILike(`%${pseudo}%`)
-      //         }
-      //       }
-      //     },
-      //     { 
-      //       disabled: false,
-      //       city: {
-      //         name: city
-      //       },
-      //       activity: {
-      //         name: activity
-      //       },
-      //       email: {
-      //         email: ILike(`%${keyword}%`)
-      //       },
-      //       bookmarks: {
-      //         pm: {
-      //           pseudo: ILike(`%${pseudo}%`)
-      //         }
-      //       }
-      //     },
-      //     { 
-      //       disabled: false,
-      //       city: {
-      //         name: city
-      //       },
-      //       activity: {
-      //         name: activity
-      //       },
-      //       companyName: ILike(`%${keyword}%`),
-      //       bookmarks: {
-      //         pm: {
-      //           pseudo: ILike(`%${pseudo}%`)
-      //         }
-      //       }
-      //     },
-      //     { 
-      //       disabled: false,
-      //       city: {
-      //         name: city
-      //       },
-      //       activity: {
-      //         name: activity
-      //       },
-      //       streetAddress: ILike(`%${keyword}%`),
-      //       bookmarks: {
-      //         pm: {
-      //           pseudo: ILike(`%${pseudo}%`)
-      //         }
-      //       }
-      //     },
-      //     { 
-      //       disabled: false,
-      //       city: {
-      //         name: city
-      //       },
-      //       activity: {
-      //         name: activity
-      //       },
-      //       country: {
-      //         name: ILike(`%${keyword}%`)
-      //       },
-      //       bookmarks: {
-      //         pm: {
-      //           pseudo: ILike(`%${pseudo}%`)
-      //         }
-      //       }
-      //     }
-      //   ],
-      //   take: take,
-      //   skip: skip
+        take: researchParamsBookmarksDto.take,
+        skip: researchParamsBookmarksDto.skip
       }
       );
     } catch (error) {

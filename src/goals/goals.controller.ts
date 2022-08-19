@@ -10,6 +10,7 @@ import { UpdateGoalDto } from './dto/update-goal.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import { RolesType } from 'src/auth/role.type';
+import { ResearchParamsGoalsDto } from './dto/research-params-goals.dto';
 
 @Controller('goals')
 @ApiTags("goals")
@@ -37,8 +38,8 @@ export class GoalsController {
 
   @Roles(RolesType.CDP,  RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query("take") take: number, @Query("skip") skip: number, @Query("pseudo") pseudo: string, @Query("keyword") keyword: string) : Promise<Goal[]> {
-    return this.goalsService.findAllPaginated(take, skip, pseudo, keyword);
+  findAllPaginated(@Query() researchParamsGoalsDto: ResearchParamsGoalsDto) : Promise<Goal[]> {
+    return this.goalsService.findAllPaginated(researchParamsGoalsDto);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN) 
