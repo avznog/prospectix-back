@@ -1,10 +1,9 @@
-import { Strategy } from "passport-local";
-import { PassportStrategy } from "@nestjs/passport";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { AuthService } from "./services/auth.service";
-import TokenPayload from "./interfaces/tokenPayload.interface";
+import { PassportStrategy } from "@nestjs/passport";
+import { Strategy } from "passport-local";
 import { ProjectManagerDto } from "src/project-managers/dto/project-manager.dto";
 import { ProjectManagersService } from "src/project-managers/project-managers.service";
+import TokenPayload from "./interfaces/tokenPayload.interface";
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy){

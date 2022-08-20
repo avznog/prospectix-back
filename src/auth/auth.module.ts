@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './local.strategy';
 import { JwtModule } from "@nestjs/jwt";
-import { JwtStrategy } from './jwt.strategy';
-import { JwtRefreshTokenStrategy } from './jwt-refresh-token.strategy';
-import { LdapService } from './services/ldap.service';
-import { AuthService } from './services/auth.service';
+import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { Auth } from './entities/auth.entity';
 import { ProjectManagersService } from 'src/project-managers/project-managers.service';
+import { AuthController } from './auth.controller';
+import { Auth } from './entities/auth.entity';
+import { JwtRefreshTokenStrategy } from './jwt-refresh-token.strategy';
+import { JwtStrategy } from './jwt.strategy';
+import { LocalStrategy } from './local.strategy';
+import { AuthService } from './services/auth.service';
+import { LdapService } from './services/ldap.service';
 
 
 @Module({

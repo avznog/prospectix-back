@@ -1,11 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from "@nestjs/jwt";
-import TokenPayload from '../interfaces/tokenPayload.interface';
 import { LoginPmDto } from '../dto/login-project-manager.dto';
+import TokenPayload from '../interfaces/tokenPayload.interface';
 import { LdapService } from './ldap.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 
 @Injectable()
 export class AuthService {

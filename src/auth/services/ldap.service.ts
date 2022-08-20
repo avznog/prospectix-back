@@ -35,7 +35,7 @@ export class LdapService {
 
       const oldPm = await this.pmRepository.findOne({
         where: {
-          pseudo: loginPmDto.username
+          pseudo: loginPmDto.username,
         }
       });
       console.log(oldPm, loginPmDto.username)
@@ -44,11 +44,15 @@ export class LdapService {
         return false;
       }
       else{
+        if(oldPm.disabled)
+          throw 0
         return true;
       }
     } catch (error) { 
+      if (error == 0)
+        throw new HttpException("Impossible de se connecter: votre compte a été désactivé", HttpStatus.FORBIDDEN);
       console.log(error);
       throw new HttpException("Impossible de se connecter au serveur LDAP : invalid credentials", HttpStatus.FORBIDDEN)
-    }
+    } 
   }
 }
