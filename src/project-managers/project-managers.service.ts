@@ -1,13 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
-import { ProjectManagerDto } from './dto/project-manager.dto';
-import { ProjectManager } from './entities/project-manager.entity';
-import * as bcrypt from 'bcrypt';
 import TokenPayload from 'src/auth/interfaces/tokenPayload.interface';
+import { Repository, UpdateResult } from 'typeorm';
 import { CreateProjectManagerDto } from './dto/create-project-manager.dto';
-import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
 import { ResearchParamsProjectManagersDto } from './dto/research-params-project-managers.dto';
+import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
+import { ProjectManager } from './entities/project-manager.entity';
 
 @Injectable()
 export class ProjectManagersService {

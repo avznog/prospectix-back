@@ -1,13 +1,13 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
-import { EventsService } from './events.service';
 import { ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auth/annotations/roles.decorator';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/annotations/roles.decorator';
-import { Event } from './entities/event.entity';
-import { CreateEventDto } from './dto/create-event.dto';
 import { RolesType } from 'src/auth/role.type';
-import { CurrentUser } from 'src/auth/decorators/current-user.model';
+import { CreateEventDto } from './dto/create-event.dto';
+import { Event } from './entities/event.entity';
+import { EventsService } from './events.service';
 
 @Controller('events')
 @ApiTags("events")

@@ -13,15 +13,6 @@ export class BookmarksService {
     private readonly bookmarkRepository: Repository<Bookmark>
   ) { }
 
-  async delete(idBookmark: number) : Promise<DeleteResult> {
-    try {
-      return await this.bookmarkRepository.delete(idBookmark);
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de supprimer le favoris",HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
   async create(createBookmarkDto: CreateBookmarkDto, user: ProjectManager) : Promise<Bookmark> {
     try{
       createBookmarkDto.pm = user;
@@ -42,17 +33,6 @@ export class BookmarksService {
     } catch (error) {
       console.log(error);
       throw new HttpException("Impossible de supprimer le favoris",HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  async findAll() : Promise<Bookmark[]> {
-    try {
-      return await this.bookmarkRepository.find({
-        relations: ["pm","prospect"]
-      });
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de récupérer tous les favoris", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 

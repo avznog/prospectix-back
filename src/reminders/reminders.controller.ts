@@ -1,15 +1,15 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Delete, Query } from '@nestjs/common';
-import { RemindersService } from './reminders.service';
-import { CreateReminderDto } from './dto/create-reminder.dto';
-import { Reminder } from './entities/reminder.entity';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CurrentUser } from 'src/auth/decorators/current-user.model';
+import { DeleteResult, UpdateResult } from 'typeorm';
+import { CreateReminderDto } from './dto/create-reminder.dto';
 import { ResearchParamsRemindersDto } from './dto/research-params-reminders.dto';
+import { Reminder } from './entities/reminder.entity';
+import { RemindersService } from './reminders.service';
 @Controller('reminders')
 @ApiTags("reminders")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -22,24 +22,6 @@ export class RemindersController {
   @Post()
   create(@Body() createReminderDto: CreateReminderDto, @CurrentUser() user) : Promise<Reminder>{
     return this.reminderService.create(createReminderDto, user);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get()
-  findAll() : Promise<Reminder[]> {
-    return this.reminderService.findAll();
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("by-current-pm")
-  findAllByCurrentPm(@CurrentUser() user) : Promise<Reminder[]>{
-    return this.reminderService.findAllByCurrentPm(user.id);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("by-pm/:pseudoPm")
-  findAllByPm(@Param("pseudoPm") pseudoPm: string) : Promise<Reminder[]> {
-    return this.reminderService.findAllByPm(pseudoPm);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
@@ -58,12 +40,6 @@ export class RemindersController {
   @Get("mark-done/:id")
   markDone(@Param("id") id: number) : Promise<UpdateResult> {
     return this.reminderService.markDone(id);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("mark-undone/:id")
-  markUndone(@Param("id") id: number) : Promise<UpdateResult> {
-    return this.reminderService.markUnDone(id);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)

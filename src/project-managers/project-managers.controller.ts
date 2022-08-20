@@ -1,16 +1,16 @@
-import { Controller, Post, Body, UseGuards, Get, Delete, Param, Patch, Query } from '@nestjs/common';
-import { ProjectManagersService } from './project-managers.service';
-import { CreateProjectManagerDto } from './dto/create-project-manager.dto';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { ProjectManager } from './entities/project-manager.entity';
+import { Roles } from 'src/auth/annotations/roles.decorator';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/annotations/roles.decorator';
-import { UpdateResult } from 'typeorm';
-import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
 import { RolesType } from 'src/auth/role.type';
-import { CurrentUser } from 'src/auth/decorators/current-user.model';
+import { UpdateResult } from 'typeorm';
+import { CreateProjectManagerDto } from './dto/create-project-manager.dto';
 import { ResearchParamsProjectManagersDto } from './dto/research-params-project-managers.dto';
+import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
+import { ProjectManager } from './entities/project-manager.entity';
+import { ProjectManagersService } from './project-managers.service';
 
 @Controller('project-managers')
 @ApiTags('project-managers')

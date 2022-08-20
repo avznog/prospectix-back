@@ -2,8 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MeetingType } from 'src/constants/meeting.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { Prospect } from 'src/prospects/entities/prospect.entity';
-import { DeleteResult, ILike, LessThan, Like, MoreThan, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, ILike, LessThan, MoreThan, Repository, UpdateResult } from 'typeorm';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { ResearchParamsMeetingsDto } from './dto/research-parmas-meetings.dto';
 import { Meeting } from './entities/meeting.entity';
@@ -12,13 +11,7 @@ import { Meeting } from './entities/meeting.entity';
 export class MeetingsService {
   constructor(
     @InjectRepository(Meeting)
-    private readonly meetingRepository: Repository<Meeting>,
-
-    @InjectRepository(Prospect)
-    private readonly prospectRepository: Repository<Prospect>,
-
-    @InjectRepository(ProjectManager)
-    private readonly pmRepository: Repository<ProjectManager>
+    private readonly meetingRepository: Repository<Meeting>
   ){}
 
   async create(createMeetingDto: CreateMeetingDto, user: ProjectManager) : Promise<Meeting> {
@@ -29,52 +22,8 @@ export class MeetingsService {
       console.log(error)
       throw new HttpException("Impossible de créer le rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR)
     }
-    
   }
 
-  async findAllByCurrentPm(idPm: number) : Promise<Meeting[]>{
-    try {
-      return await this.meetingRepository.find({
-        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email"],
-        where: {
-          pm: {
-            id: idPm
-          }
-        }
-      });
-    } catch (error) {
-      console.log(error);
-      throw new HttpException("Impossible de récupérer les rendez-vous pour le Chef de projet sélectionné", HttpStatus.BAD_REQUEST)
-    }
-  }
-
-  async findAllByProspect(idProspect: number) : Promise<Meeting[]> {
-    try{
-      return await this.meetingRepository.find({
-        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email"],
-        where: {
-          prospect: {
-            id: idProspect
-          }
-        }
-      });
-    }catch (error) {
-      console.log(error);
-      throw new HttpException("Impossible de récupérer les rendez-vous pour le prospect sélectionné", HttpStatus.BAD_REQUEST)
-    }
-    
-  }
-
-  async findAll() : Promise<Meeting[]> {
-    try {
-      return await this.meetingRepository.find({
-        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email"],
-      }); 
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de récupérer l'entièreté des rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
 
   async delete(idMeeting: number) : Promise<DeleteResult> {
     try {

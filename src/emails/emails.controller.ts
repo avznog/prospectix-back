@@ -1,12 +1,12 @@
 import { Body, Controller, Param, Patch, UseGuards } from '@nestjs/common';
-import { EmailsService } from './emails.service';
 import { ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auth/annotations/roles.decorator';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/annotations/roles.decorator';
-import { UpdateEmailDto } from './dto/update-email.dto';
-import { UpdateResult } from 'typeorm';
 import { RolesType } from 'src/auth/role.type';
+import { UpdateResult } from 'typeorm';
+import { UpdateEmailDto } from './dto/update-email.dto';
+import { EmailsService } from './emails.service';
 
 @Controller('emails')
 @ApiTags("emails")

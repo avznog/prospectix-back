@@ -1,12 +1,12 @@
 import { Body, Controller, Param, Patch, UseGuards } from '@nestjs/common';
-import { PhonesService } from './phones.service';
 import { ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auth/annotations/roles.decorator';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/annotations/roles.decorator';
+import { RolesType } from 'src/auth/role.type';
 import { UpdateResult } from 'typeorm';
 import { UpdatePhoneDto } from './dto/update-phone.dto';
-import { RolesType } from 'src/auth/role.type';
+import { PhonesService } from './phones.service';
 
 @Controller('phones')
 @ApiTags("phones")

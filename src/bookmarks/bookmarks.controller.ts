@@ -16,12 +16,6 @@ import { Bookmark } from './entities/bookmark.entity';
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class BookmarksController {
   constructor(private readonly bookmarksService: BookmarksService) {}
-  
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Delete(":id")
-  delete(@Param("id") idBookmark: number) : Promise<DeleteResult> {
-    return this.bookmarksService.delete(idBookmark);
-  }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post()
@@ -33,12 +27,6 @@ export class BookmarksController {
   @Delete("by-prospect/:idProspect")
   deleteByProspect(@Param("idProspect") idProspect: number) : Promise<DeleteResult> {
     return this.bookmarksService.deleteByProspect(idProspect);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("")
-  findAll() {
-    return this.bookmarksService.findAll()
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)

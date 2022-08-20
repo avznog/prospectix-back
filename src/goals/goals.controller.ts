@@ -1,16 +1,16 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Patch, Delete, Query } from '@nestjs/common';
-import { GoalsService } from './goals.service';
-import { CreateGoalDto } from './dto/create-goal.dto';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Goal } from './entities/goal.entity';
+import { Roles } from 'src/auth/annotations/roles.decorator';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/annotations/roles.decorator';
-import { UpdateGoalDto } from './dto/update-goal.dto';
-import { DeleteResult, UpdateResult } from 'typeorm';
-import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import { RolesType } from 'src/auth/role.type';
+import { DeleteResult, UpdateResult } from 'typeorm';
+import { CreateGoalDto } from './dto/create-goal.dto';
 import { ResearchParamsGoalsDto } from './dto/research-params-goals.dto';
+import { UpdateGoalDto } from './dto/update-goal.dto';
+import { Goal } from './entities/goal.entity';
+import { GoalsService } from './goals.service';
 
 @Controller('goals')
 @ApiTags("goals")
@@ -21,6 +21,7 @@ export class GoalsController {
   @Roles(RolesType.ADMIN)
   @Post("for-pm/:pseudo")
   createForPm(@Body() createGoalDto: CreateGoalDto,@Param("pseudo") pseudo: string) : Promise<Goal> {
+    console.log(pseudo)
     return this.goalsService.createForPm(createGoalDto, pseudo);
   }
 
@@ -30,40 +31,10 @@ export class GoalsController {
     return this.goalsService.createForCurrentPm(createGoalDto, user.id);
   }
 
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get()
-  findAll() : Promise<Goal[]> {
-    return this.goalsService.findAll();
-  }
-
   @Roles(RolesType.CDP,  RolesType.ADMIN)
   @Get("find-all-paginated")
   findAllPaginated(@Query() researchParamsGoalsDto: ResearchParamsGoalsDto) : Promise<Goal[]> {
     return this.goalsService.findAllPaginated(researchParamsGoalsDto);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN) 
-  @Get("by-current-pm")
-  findAllByCurrentPm(@CurrentUser() user) : Promise<Goal[]> {
-    return this.goalsService.findAllByCurrentPm(user.id);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("by-pm/:pseudoPm")
-  findAllByPm(@Param("pseudoPm") pseudoPm: string ) : Promise<Goal[]> {
-    return this.goalsService.findAllByPm(pseudoPm);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("by-title-and-current-pm/:title")
-  findAllByTitleAndCurrentPm(@Param("title") title: string, @CurrentUser() user) : Promise<Goal[]> {
-    return this.goalsService.findAllByTitleAndCurrentPm(title, user.pseudo);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("by-title-and-pm/:title/:pseudoPm")
-  findAllByTitleAndPm(@Param("title") title: string, @Param("pseudoPm") pseudoPm: string) : Promise<Goal[]> {
-    return this.goalsService.findAllByTitleAndPm(title, pseudoPm);
   }
 
   @Roles(RolesType.ADMIN)

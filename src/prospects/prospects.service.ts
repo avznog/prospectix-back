@@ -1,12 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { In, ILike, Repository, UpdateResult } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Activity } from 'src/activities/entities/activity.entity';
+import { City } from 'src/cities/entities/city.entity';
+import { ILike, Repository, UpdateResult } from 'typeorm';
 import { CreateProspectDto } from './dto/create-prospect.dto';
+import { ResearchParamsProspectDto } from './dto/research-params-prospect.dto';
 import { UpdateProspectDto } from './dto/update-prospect.dto';
 import { Prospect } from './entities/prospect.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { City } from 'src/cities/entities/city.entity';
-import { Activity } from 'src/activities/entities/activity.entity';
-import { ResearchParamsProspectDto } from './dto/research-params-prospect.dto';
 @Injectable()
 export class ProspectsService {
   constructor(
@@ -110,23 +110,6 @@ export class ProspectsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récupérer les prospects", HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-  }
-
-  async findOne(idProspect: number): Promise<Prospect> {
-    try {
-      const prospects = await this.prospectRepository.findOne({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
-        where: {
-          id: idProspect,
-        },
-      });
-      if(!prospects)
-         throw new HttpException("Ce prospect n'existe pas",HttpStatus.NOT_FOUND);
-      return prospects;
-    } catch (error) {
-      console.log(error)
-      throw new HttpException(`Impossible de trouver le prospect pour l'id ${idProspect}`,HttpStatus.NOT_FOUND)
     }
   }
 
