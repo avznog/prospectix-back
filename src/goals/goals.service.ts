@@ -38,7 +38,6 @@ export class GoalsService {
 
   async createForPm(createGoalDto: CreateGoalDto, pseudo: string) : Promise<Goal> {
     try {
-      console.log(pseudo)
       createGoalDto.pm = await this.pmRepository.findOne({
         where: {
           pseudo: pseudo

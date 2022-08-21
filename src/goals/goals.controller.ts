@@ -21,7 +21,6 @@ export class GoalsController {
   @Roles(RolesType.ADMIN)
   @Post("for-pm/:pseudo")
   createForPm(@Body() createGoalDto: CreateGoalDto,@Param("pseudo") pseudo: string) : Promise<Goal> {
-    console.log(pseudo)
     return this.goalsService.createForPm(createGoalDto, pseudo);
   }
 

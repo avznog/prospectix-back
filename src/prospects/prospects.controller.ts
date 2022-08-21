@@ -26,7 +26,6 @@ export class ProspectsController {
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
     findAllPaginated(@Query() researchParamsProspectDto: ResearchParamsProspectDto) : Promise<Prospect[]> {
-      console.log(researchParamsProspectDto)
     return this.prospectsService.findAllPaginated(researchParamsProspectDto);
   }
 
@@ -36,7 +35,6 @@ export class ProspectsController {
     @Param('id') id: string,
     @Body() updateProspectDto: UpdateProspectDto,
   ) : Promise<UpdateResult>{
-    console.log(updateProspectDto)
     return this.prospectsService.update(+id, updateProspectDto);
   }
 
