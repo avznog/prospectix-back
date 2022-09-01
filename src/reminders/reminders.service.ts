@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from "@nestjs/typeorm";
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { DeleteResult, ILike, LessThan, MoreThan, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, ILike, In, LessThan, MoreThan, Repository, UpdateResult } from 'typeorm';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { ResearchParamsRemindersDto } from './dto/research-params-reminders.dto';
 import { Reminder } from './entities/reminder.entity';
@@ -66,15 +66,27 @@ export class RemindersService {
         relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.activity","prospect.city","prospect.country"],
         where: [  
           researchParamsRemindersDto.date && {
-            priority: ((researchParamsRemindersDto.priority == 0) && (1 || 2 || 3) )|| researchParamsRemindersDto.priority,
+
             done: researchParamsRemindersDto.done == "true" ? true : false,
             date: new Date(researchParamsRemindersDto.date),
             pm: {
               pseudo: ILike(`%${researchParamsRemindersDto.keyword}%`)
             }
-          },
+          } && (
+           ( 
+            researchParamsRemindersDto.priority != 0 && 
+              {
+                priority: researchParamsRemindersDto.priority
+              }
+          ) || 
+          (
+            researchParamsRemindersDto.priority == 0 && {
+              priority: In([1,2,3])
+            }
+          )
+          ),
           researchParamsRemindersDto.date && {
-            priority: ((researchParamsRemindersDto.priority == 0) && (1 || 2 || 3) )|| researchParamsRemindersDto.priority,
+            
           done: researchParamsRemindersDto.done == "true" ? true : false,
           date: new Date(researchParamsRemindersDto.date),
           prospect: [
@@ -114,17 +126,43 @@ export class RemindersService {
               streetAddress: ILike(`%${researchParamsRemindersDto.keyword}%`)
             },
           ]
-        },
+        }  && (
+          ( 
+           researchParamsRemindersDto.priority != 0 && 
+             {
+               priority: researchParamsRemindersDto.priority
+             }
+         ) || 
+         (
+           researchParamsRemindersDto.priority == 0 && {
+             priority: In([1,2,3])
+           }
+         )
+         )
+
+         ,
         !researchParamsRemindersDto.date && {
-          priority: ((researchParamsRemindersDto.priority == 0) && (1 || 2 || 3) )|| researchParamsRemindersDto.priority,
+          
           done: researchParamsRemindersDto.done == "true" ? true : false,
           date: researchParamsRemindersDto.oldOrNew == "old" ?  LessThan(new Date()) : MoreThan(new Date()),
           pm: {
             pseudo: ILike(`%${researchParamsRemindersDto.keyword}%`)
           }
-        },
+        }  && (
+          ( 
+           researchParamsRemindersDto.priority != 0 && 
+             {
+               priority: researchParamsRemindersDto.priority
+             }
+         ) || 
+         (
+           researchParamsRemindersDto.priority == 0 && {
+             priority: In([1,2,3])
+           }
+         )
+        ),
         !researchParamsRemindersDto.date && {
-          priority: ((researchParamsRemindersDto.priority == 0 && 1) || (1 || 2 || 3) )|| researchParamsRemindersDto.priority,
+          
           done: researchParamsRemindersDto.done == "true" ? true : false,
           date: researchParamsRemindersDto.oldOrNew == "old" ?  LessThan(new Date()) : MoreThan(new Date()),
           prospect: [
@@ -164,7 +202,19 @@ export class RemindersService {
               streetAddress: ILike(`%${researchParamsRemindersDto.keyword}%`)
             },
           ]
-        }
+        }  && (
+          ( 
+           researchParamsRemindersDto.priority != 0 && 
+             {
+               priority: researchParamsRemindersDto.priority
+             }
+         ) || 
+         (
+           researchParamsRemindersDto.priority == 0 && {
+             priority: In([1,2,3])
+           }
+         )
+        )
       ],
         take: researchParamsRemindersDto.take,
         skip: researchParamsRemindersDto.skip,
@@ -174,7 +224,7 @@ export class RemindersService {
         }
         ) || (
           researchParamsRemindersDto.orderByPriority == "false" && {
-          'id': 'ASC'
+          date: 'desc'
         }
         )
       });
