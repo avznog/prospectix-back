@@ -17,6 +17,12 @@ import { ProspectsService } from './prospects.service';
 export class ProspectsController {
   constructor(private readonly prospectsService: ProspectsService) {}
 
+  @Roles(RolesType.ADMIN)
+  @Get("create-from-scrapper")
+  createFromScrapper() {
+    return this.prospectsService.createFromScrapper();
+  }
+
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post("create")
   create(@Body() createProspectDto: CreateProspectDto) : Promise<Prospect> {

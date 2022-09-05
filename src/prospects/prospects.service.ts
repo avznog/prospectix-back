@@ -2,7 +2,15 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { City } from 'src/cities/entities/city.entity';
+import { EventType } from 'src/constants/event.type';
+import { Country } from 'src/countries/entities/country.entity';
+import { Email } from 'src/emails/entities/email.entity';
+import { Event } from 'src/events/entities/event.entity';
+import { Phone } from 'src/phones/entities/phone.entity';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { Website } from 'src/websites/entities/website.entity';
 import { ILike, Repository, UpdateResult } from 'typeorm';
+import prospectsScrapped from "../../prospectsScrapped.json";
 import { CreateProspectDto } from './dto/create-prospect.dto';
 import { ResearchParamsProspectDto } from './dto/research-params-prospect.dto';
 import { UpdateProspectDto } from './dto/update-prospect.dto';
@@ -19,7 +27,141 @@ export class ProspectsService {
     @InjectRepository(City)
     private readonly cityRepository: Repository<City>,
 
+    @InjectRepository(Country)
+    private readonly countryRepository: Repository<Country>,
+
+    @InjectRepository(ProjectManager)
+    private readonly pmRepository: Repository<ProjectManager>,
+
+    @InjectRepository(Event)
+    private readonly eventRepository: Repository<Event>
+
   ) {}
+
+  async createFromScrapper() {
+    
+    const createProspectDto = new CreateProspectDto;
+    let count = 0;
+    for(let prospect of prospectsScrapped) {
+
+      // default values
+      createProspectDto.comment = "";
+      createProspectDto.disabled = false;
+      createProspectDto.nbNo = 0;
+      createProspectDto.isBookmarked = false;
+
+      // Basic informations
+      createProspectDto.companyName = prospect.name;
+      createProspectDto.website = new Website;
+      createProspectDto.website.website = prospect.website ?? "";
+      createProspectDto.email = new Email;
+      createProspectDto.email.email = "";
+      createProspectDto.phone = new Phone;
+      createProspectDto.phone.number = prospect.phone.phone ? prospect.phone.phone : prospect.phone.mobile ? prospect.phone.mobile : "";
+      createProspectDto.streetAddress = prospect.location.split(/\d{5}/)[0];
+      let activity = prospect.domain;
+
+      // France country by default
+      createProspectDto.country = await this.countryRepository.findOne({
+        where: {
+          name: "France"
+        }
+      });
+
+
+      // spliting location => zipcode and city
+      let zipcode: number | RegExpMatchArray = prospect.location.match(/\d{5}/);
+      let city = prospect.location.split(/\d{5}/)[1];
+
+
+      // City affectation
+      if(city){
+        city = city.charAt(1).toUpperCase() + city.slice(2).toLowerCase();
+      }
+      let c: City;
+      if(city && zipcode) {
+        c = await this.cityRepository.findOne({
+          where: {
+            name: city,
+            zipcode: +zipcode[0]
+          }
+        });
+      } else if (city && !zipcode) {
+        c = await this.cityRepository.findOne({
+          where: {
+            name: city
+          }
+        });
+      } else if (!city && zipcode) {
+        c = await this.cityRepository.findOne({
+          where: {
+            zipcode: +zipcode[0]
+          }
+        });
+      } else {
+        c = await this.cityRepository.findOne({
+          where: {
+            name: "",
+            zipcode: -1
+          }
+        });
+      }
+
+      if(!c){
+        createProspectDto.city = new City;
+        createProspectDto.city.name = city;
+        createProspectDto.city.zipcode = +zipcode[0];
+      }else {
+        createProspectDto.city = c;
+      }
+
+
+      // Activity affectation
+      let a: Activity;
+      if(!activity) {
+        a = await this.activityRepository.findOne({
+          where: {
+            name: ""
+          }
+        });
+      } else {
+        activity = activity.includes(",") && activity.split(",")[0];
+        a = await this.activityRepository.findOne({
+          where: {
+            name: activity
+          }
+        });
+      }
+
+      if(!a) {
+        createProspectDto.activity = new Activity;
+        createProspectDto.activity.name = activity
+      } else {
+        createProspectDto.activity = a;
+      }
+
+      this.prospectRepository.save(this.prospectRepository.create(createProspectDto));
+    }
+    
+    
+    // Adding first event for prospects
+    const prospects = await this.prospectRepository.find();
+    const pm = await this.pmRepository.findOne({
+      where: {
+        pseudo: "admin"
+      }
+    });
+
+    for(let prospect of prospects) {
+      this.eventRepository.save(this.eventRepository.create({
+        date: new Date,
+        description: "Prospect créé",
+        prospect: prospect,
+        type: EventType.CREATION,
+        pm: pm
+      }));
+    } 
+  }
 
   async create(createProspectDto: CreateProspectDto) {
     try {

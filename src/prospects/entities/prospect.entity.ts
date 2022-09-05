@@ -29,42 +29,42 @@ export class Prospect extends BaseEntity {
   })
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   @ApiProperty({
     description: "Nom de l'entreprise du prospect",
     required: true
   })
   companyName: string;
 
-  @ManyToOne(() => Activity, { cascade: ["insert"] })
+  @ManyToOne(() => Activity, { cascade: ["insert"], nullable: true})
   @ApiProperty({
     description: "Secteur d'activité du prospect",
     required: true
   })
   activity: Activity;
 
-  @Column()
+  @Column({ nullable: true })
   @ApiProperty({
     description: "Addresse (rue) du prospect",
     required: true
   })
   streetAddress: string;
 
-  @ManyToOne(() => City, { cascade: ["insert"] })
+  @ManyToOne(() => City, { cascade: ["insert"], nullable: true})
   @ApiProperty({
     description: "Ville du prospect",
     required: true
   })
   city: City;
 
-  @ManyToOne(() => Country, { cascade: ["insert"] })
+  @ManyToOne(() => Country, { cascade: ["insert"], nullable: true })
   @ApiProperty({
     description: "Pays du prospect",
     required: true
   })
   country: Country;
 
-  @OneToOne(() => Phone, { cascade: ["insert"] })
+  @OneToOne(() => Phone, { cascade: ["insert"], nullable: true })
   @JoinColumn()
   @ApiProperty({
     description: "Numéro de téléphone du prospect",
@@ -72,7 +72,7 @@ export class Prospect extends BaseEntity {
   })
   phone: Phone;
 
-  @OneToOne(() => Email, { cascade: ["insert"] })
+  @OneToOne(() => Email, { cascade: ["insert"], nullable: true })
   @JoinColumn()
   @ApiProperty({
     description: "Email du prospect",
@@ -80,7 +80,7 @@ export class Prospect extends BaseEntity {
   })
   email: Email;
 
-  @OneToOne(() => Website, { cascade: ["insert"] })
+  @OneToOne(() => Website, { cascade: ["insert"], nullable: true })
   @JoinColumn()
   @ApiProperty({
     description: "Site internet du prospect",
@@ -88,56 +88,56 @@ export class Prospect extends BaseEntity {
   })
   website: Website;
 
-  @OneToMany(() => Meeting, (meeting) => meeting.prospect)
+  @OneToMany(() => Meeting, (meeting) => meeting.prospect, { nullable: true })
   @ApiProperty({
     description: "Rendez-vous du prospect",
     required: true
   })
   meetings: Meeting[];
 
-  @OneToMany(() => Reminder, (reminder) => reminder.prospect)
+  @OneToMany(() => Reminder, (reminder) => reminder.prospect, { nullable: true })
   @ApiProperty({
     description: "Rappels du prospect",
     required: true
   })
   reminders: Reminder[];
 
-  @OneToOne(() => Bookmark, (bookmark) => bookmark.prospect)
+  @OneToOne(() => Bookmark, (bookmark) => bookmark.prospect, { nullable: true })
   @ApiProperty({
     description: "Favoris du prospect",
     required: true
   })
   bookmarks: Bookmark[];
 
-  @Column()
+  @Column({ nullable: true })
   @ApiProperty({
     description: "Indique si le prospect est mis en favoris",
     required: true
   })
   isBookmarked: boolean;
 
-  @OneToMany(() => Event, (event) => event.prospect)
+  @OneToMany(() => Event, (event) => event.prospect, { nullable: true })
   @ApiProperty({
     description: "Evènements du prospect",
     required: true
   })
   events: Event[];
 
-  @Column()
+  @Column({ nullable: true })
   @ApiProperty({
     description: "Commentaires sur le prospect",
     required: true
   })
   comment: string;
 
-  @Column()
+  @Column({ nullable: true })
   @ApiProperty({
     description: "Numéro du prospect",
     required: true
   })
   nbNo: number;
 
-  @Column()
+  @Column({ nullable: true })
   @ApiProperty({
     description: "Booléen: au lieu de supprimer les prospects, on les désactive",
     required: true

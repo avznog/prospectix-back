@@ -12,15 +12,15 @@ import { Website } from 'src/websites/entities/website.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
-import { Event } from 'src/events/entities/event.entity';
 import { ActivitiesController } from 'src/activities/activities.controller';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { AgendaLink } from 'src/agenda-links/entities/agenda-link.entity';
 import { Goal } from 'src/goals/entities/goal.entity';
 import { SentEmail } from 'src/sent-emails/entities/sent-email.entity';
+import { Event } from 'src/events/entities/event.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website])],
+  imports: [TypeOrmModule.forFeature([ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Goal, Phone, SentEmail, Website, Event])],
   controllers: [ProspectsController],
   providers: [ProspectsService],
 })

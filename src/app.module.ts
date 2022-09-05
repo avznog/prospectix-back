@@ -19,7 +19,6 @@ import { Bookmark } from './bookmarks/entities/bookmark.entity';
 import { City } from './cities/entities/city.entity';
 import { Country } from './countries/entities/country.entity';
 import { Email } from './emails/entities/email.entity';
-import { Event } from './events/entities/event.entity';
 import { Goal } from './goals/entities/goal.entity';
 import { Phone } from './phones/entities/phone.entity';
 import { SentEmail } from './sent-emails/entities/sent-email.entity';
@@ -31,11 +30,12 @@ import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { CitiesModule } from './cities/cities.module';
 import { CountriesModule } from './countries/countries.module';
 import { EmailsModule } from './emails/emails.module';
-import { EventsModule } from './events/events.module';
 import { GoalsModule } from './goals/goals.module';
 import { PhonesModule } from './phones/phones.module';
 import { SentEmailsModule } from './sent-emails/sent-emails.module';
 import { WebsitesModule } from './websites/websites.module';
+import { Event } from './events/entities/event.entity';
+import { EventsModule } from './events/events.module';
 console.log(process.env.BASE_URL)
 @Module({
   imports: [
@@ -50,10 +50,10 @@ console.log(process.env.BASE_URL)
     CitiesModule,
     CountriesModule,
     EmailsModule,
-    EventsModule,
     GoalsModule,
     PhonesModule,
     SentEmailsModule,
+    EventsModule,
     WebsitesModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({
@@ -69,7 +69,7 @@ console.log(process.env.BASE_URL)
       port: +process.env.POSTGRES_PORT,
       username: process.env.POSTGRES_USER || "postgres",
       password: process.env.POSTGRES_PASSWORD || "postgres",
-      database: process.env.POSTGRES_DATABASE ?? 'prospectix2',
+      database: process.env.POSTGRES_DATABASE ?? 'prospectix0',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
       entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website],
