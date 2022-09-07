@@ -18,7 +18,6 @@ export class ProjectManagersService {
     createProjectManagerDto: CreateProjectManagerDto,
   ): Promise<ProjectManager> {
     try {
-     createProjectManagerDto.disabled = false;
      return await this.pmRepository.save(createProjectManagerDto); 
     } catch (error) {
       console.log(error)
