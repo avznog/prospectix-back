@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { City } from 'src/cities/entities/city.entity';
 import { EventType } from 'src/constants/event.type';
+import { StageType } from 'src/constants/stage.type';
 import { Country } from 'src/countries/entities/country.entity';
 import { Email } from 'src/emails/entities/email.entity';
 import { Event } from 'src/events/entities/event.entity';
@@ -178,6 +179,7 @@ export class ProspectsService {
         relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
         where : [
           { 
+            stage: StageType.RESEARCH,
             disabled: false,
             city: {
               name: researchParamsProspectDto.city
@@ -190,6 +192,7 @@ export class ProspectsService {
             }
           },
           { 
+            stage: StageType.RESEARCH,
             disabled: false,
             city: {
               name: researchParamsProspectDto.city
@@ -202,6 +205,7 @@ export class ProspectsService {
             }
           },
           { 
+            stage: StageType.RESEARCH,
             disabled: false,
             city: {
               name: researchParamsProspectDto.city
@@ -214,6 +218,7 @@ export class ProspectsService {
             }
           },
           { 
+            stage: StageType.RESEARCH,
             disabled: false,
             city: {
               name: researchParamsProspectDto.city
@@ -224,6 +229,7 @@ export class ProspectsService {
             companyName: ILike(`%${researchParamsProspectDto.keyword}%`)
           },
           { 
+            stage: StageType.RESEARCH,
             disabled: false,
             city: {
               name: researchParamsProspectDto.city
@@ -234,6 +240,7 @@ export class ProspectsService {
             streetAddress: ILike(`%${researchParamsProspectDto.keyword}%`)
           },
           { 
+            stage: StageType.RESEARCH,
             disabled: false,
             city: {
               name: researchParamsProspectDto.city

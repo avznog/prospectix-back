@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { City } from 'src/cities/entities/city.entity';
+import { StageType } from 'src/constants/stage.type';
 import { Country } from 'src/countries/entities/country.entity';
 import { Email } from 'src/emails/entities/email.entity';
 import { Event } from 'src/events/entities/event.entity';
@@ -143,4 +144,18 @@ export class Prospect extends BaseEntity {
     required: true
   })
   disabled: boolean;
+
+  @Column({nullable: true})
+  @ApiProperty({
+    description: "Situtation du prospect actuelle",
+    required: false
+  })
+  stage: StageType;
+
+  @Column({nullable: true})
+  @ApiProperty({
+    description: "Date d'archivage du prospect",
+    required: false
+  })
+  archived: Date;
 }

@@ -44,7 +44,7 @@ export class RemindersController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query() researchParamsRemindersDto: ResearchParamsRemindersDto) : Promise<Reminder[]> {
-    return this.reminderService.findAllPaginated(researchParamsRemindersDto);
+  findAllPaginated(@Query() researchParamsRemindersDto: ResearchParamsRemindersDto, @CurrentUser() user) : Promise<Reminder[]> {
+    return this.reminderService.findAllPaginated(researchParamsRemindersDto, user);
   }
 }

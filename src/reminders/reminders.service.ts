@@ -1,7 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from "@nestjs/typeorm";
+import { StageType } from 'src/constants/stage.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { DeleteResult, ILike, In, LessThan, MoreThan, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, ILike, In, LessThan, MoreThan, MoreThanOrEqual, Repository, UpdateResult } from 'typeorm';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { ResearchParamsRemindersDto } from './dto/research-params-reminders.dto';
 import { Reminder } from './entities/reminder.entity';
@@ -60,173 +61,34 @@ export class RemindersService {
   }
 
   
-  async findAllPaginated(researchParamsRemindersDto: ResearchParamsRemindersDto) : Promise<Reminder[]> {
+  async findAllPaginated(researchParamsRemindersDto: ResearchParamsRemindersDto, user: ProjectManager) : Promise<Reminder[]> {
     try {
       return await this.reminderRepository.find({
         relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.activity","prospect.city","prospect.country"],
-        where: [  
-          researchParamsRemindersDto.date && {
-
-            done: researchParamsRemindersDto.done == "true" ? true : false,
-            date: new Date(researchParamsRemindersDto.date),
+        where: [
+          researchParamsRemindersDto.priority != 0 && {
+            prospect: {
+              stage: StageType.REMINDER
+            },
+            done: researchParamsRemindersDto.done == "true" ? true: false,
+            date: researchParamsRemindersDto.oldOrNew == "old" ? LessThan(new Date()) : MoreThanOrEqual(new Date()),
             pm: {
-              pseudo: ILike(`%${researchParamsRemindersDto.keyword}%`)
-            }
-          } && (
-           ( 
-            researchParamsRemindersDto.priority != 0 && 
-              {
-                priority: researchParamsRemindersDto.priority
-              }
-          ) || 
-          (
-            researchParamsRemindersDto.priority == 0 && {
-              priority: In([1,2,3])
-            }
-          )
-          ),
-          researchParamsRemindersDto.date && {
-            
-          done: researchParamsRemindersDto.done == "true" ? true : false,
-          date: new Date(researchParamsRemindersDto.date),
-          prospect: [
-            {
-              phone: {
-                number: ILike(`%${researchParamsRemindersDto.keyword}%`)
-              }
+              pseudo: user.pseudo
             },
-            {
-              email: {
-                email: ILike(`%${researchParamsRemindersDto.keyword}%`)
-              }
+            priority: researchParamsRemindersDto.priority
+          },
+          researchParamsRemindersDto.priority == 0 && {
+            prospect: {
+              stage: StageType.REMINDER
             },
-            {
-              website: {
-                website: ILike(`%${researchParamsRemindersDto.keyword}%`)
-              }
+            done: researchParamsRemindersDto.done == "true" ? true: false,
+            date: researchParamsRemindersDto.oldOrNew == "old" ? LessThan(new Date()) : MoreThanOrEqual(new Date()),
+            pm: {
+              pseudo: user.pseudo
             },
-            {
-              city: {
-                name: ILike(`%${researchParamsRemindersDto.keyword}%`)
-              }
-            },
-            {
-              country: {
-                name: ILike(`%${researchParamsRemindersDto.keyword}%`)
-              }
-            },
-            {
-              activity: {
-                name: ILike(`%${researchParamsRemindersDto.keyword}%`)
-              }
-            },{
-              companyName: ILike(`%${researchParamsRemindersDto.keyword}%`)
-            },
-            {
-              streetAddress: ILike(`%${researchParamsRemindersDto.keyword}%`)
-            },
-          ]
-        }  && (
-          ( 
-           researchParamsRemindersDto.priority != 0 && 
-             {
-               priority: researchParamsRemindersDto.priority
-             }
-         ) || 
-         (
-           researchParamsRemindersDto.priority == 0 && {
-             priority: In([1,2,3])
-           }
-         )
-         )
-
-         ,
-        !researchParamsRemindersDto.date && {
-          
-          done: researchParamsRemindersDto.done == "true" ? true : false,
-          date: researchParamsRemindersDto.oldOrNew == "old" ?  LessThan(new Date()) : MoreThan(new Date()),
-          pm: {
-            pseudo: ILike(`%${researchParamsRemindersDto.keyword}%`)
+            priority: In([1,2,3])
           }
-        }  && (
-          ( 
-           researchParamsRemindersDto.priority != 0 && 
-             {
-               priority: researchParamsRemindersDto.priority
-             }
-         ) || 
-         (
-           researchParamsRemindersDto.priority == 0 && {
-             priority: In([1,2,3])
-           }
-         )
-        ),
-        !researchParamsRemindersDto.date && {
-          
-          done: researchParamsRemindersDto.done == "true" ? true : false,
-          date: researchParamsRemindersDto.oldOrNew == "old" ?  LessThan(new Date()) : MoreThan(new Date()),
-          prospect: [
-            {
-              phone: {
-                number: ILike(`%${researchParamsRemindersDto.keyword}%`)
-              }
-            },
-            {
-              email: {
-                email: ILike(`%${researchParamsRemindersDto.keyword}%`)
-              }
-            },
-            {
-              website: {
-                website: ILike(`%${researchParamsRemindersDto.keyword}%`)
-              }
-            },
-            {
-              city: {
-                name: ILike(`%${researchParamsRemindersDto.keyword}%`)
-              }
-            },
-            {
-              country: {
-                name: ILike(`%${researchParamsRemindersDto.keyword}%`)
-              }
-            },
-            {
-              activity: {
-                name: ILike(`%${researchParamsRemindersDto.keyword}%`)
-              }
-            },{
-              companyName: ILike(`%${researchParamsRemindersDto.keyword}%`)
-            },
-            {
-              streetAddress: ILike(`%${researchParamsRemindersDto.keyword}%`)
-            },
-          ]
-        }  && (
-          ( 
-           researchParamsRemindersDto.priority != 0 && 
-             {
-               priority: researchParamsRemindersDto.priority
-             }
-         ) || 
-         (
-           researchParamsRemindersDto.priority == 0 && {
-             priority: In([1,2,3])
-           }
-         )
-        )
-      ],
-        take: researchParamsRemindersDto.take,
-        skip: researchParamsRemindersDto.skip,
-        order: (
-          researchParamsRemindersDto.orderByPriority == "true" && {
-          'priority': 'DESC'
-        }
-        ) || (
-          researchParamsRemindersDto.orderByPriority == "false" && {
-          date: 'desc'
-        }
-        )
+        ],
       });
     } catch (error) {
       console.log(error)

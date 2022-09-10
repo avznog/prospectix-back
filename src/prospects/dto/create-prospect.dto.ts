@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { City } from 'src/cities/entities/city.entity';
+import { StageType } from 'src/constants/stage.type';
 import { Country } from 'src/countries/entities/country.entity';
 import { Email } from 'src/emails/entities/email.entity';
 import { Event } from 'src/events/entities/event.entity';
@@ -95,4 +96,14 @@ export class CreateProspectDto {
     description: 'Prospect is enabled or not',
   })
   disabled: boolean;
+
+  @ApiProperty({
+    description: 'Situtaiton du prospect',
+  })
+  stage: StageType;
+
+  @ApiProperty({
+    description: 'Date d\' archivage du prospect',
+  })
+  archived: Date;
 }
