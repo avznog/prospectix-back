@@ -9,6 +9,7 @@ import { Event } from 'src/events/entities/event.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { Phone } from 'src/phones/entities/phone.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
+import { SentEmail } from 'src/sent-emails/entities/sent-email.entity';
 import { Website } from 'src/websites/entities/website.entity';
 import {
   BaseEntity,
@@ -123,6 +124,13 @@ export class Prospect extends BaseEntity {
     required: true
   })
   events: Event[];
+
+  @OneToMany(() => SentEmail, (sentEmail) => sentEmail.prospect, { nullable: true })
+  @ApiProperty({
+    description: "Emails en lien avec le prospect",
+    required: false
+  })
+  sentEmails: SentEmail[];
 
   @Column({ nullable: true })
   @ApiProperty({

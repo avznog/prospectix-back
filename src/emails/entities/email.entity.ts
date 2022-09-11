@@ -33,7 +33,4 @@ export class Email extends BaseEntity {
 
   @OneToOne(() => ProjectManager)
   pm: ProjectManager;
-
-  @OneToMany(() => SentEmail, (sentEmail) => sentEmail.email)
-  sentEmails: SentEmail[];
 }

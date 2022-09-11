@@ -64,7 +64,7 @@ export class RemindersService {
   async findAllPaginated(researchParamsRemindersDto: ResearchParamsRemindersDto, user: ProjectManager) : Promise<Reminder[]> {
     try {
       return await this.reminderRepository.find({
-        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.activity","prospect.city","prospect.country"],
+        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.activity","prospect.city","prospect.country","prospect.website","prospect.email","prospect.meetings","prospect.bookmarks","prospect.reminders"],
         where: [
           researchParamsRemindersDto.priority != 0 && {
             prospect: {

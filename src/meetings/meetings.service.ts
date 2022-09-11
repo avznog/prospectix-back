@@ -56,7 +56,7 @@ export class MeetingsService {
   async findAllPaginated(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<Meeting[]>{
     try {
       return await this.meetingRepository.find({
-        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email"],
+        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
         where: [
 
           researchParamsMeetingsDto.type != "" && {
@@ -67,7 +67,7 @@ export class MeetingsService {
               pseudo: user.pseudo
             },
             done: researchParamsMeetingsDto.done  == "true" ? true : false,
-            date: researchParamsMeetingsDto.oldOrNew == "old" ? LessThanOrEqual(new Date()) : MoreThan(new Date()),
+            // date: researchParamsMeetingsDto.oldOrNew == "old" ? LessThanOrEqual(new Date()) : MoreThan(new Date()),
             type: researchParamsMeetingsDto.type as MeetingType
           },
           researchParamsMeetingsDto.type == "" && {
@@ -78,7 +78,7 @@ export class MeetingsService {
               pseudo: user.pseudo
             },
             done: researchParamsMeetingsDto.done  == "true" ? true : false,
-            date: researchParamsMeetingsDto.oldOrNew == "old" ? LessThanOrEqual(new Date()) : MoreThan(new Date()),
+            // date: researchParamsMeetingsDto.oldOrNew == "old" ? LessThanOrEqual(new Date()) : MoreThan(new Date()),
           }
         ],
         take: researchParamsMeetingsDto.take,
