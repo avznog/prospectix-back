@@ -31,7 +31,7 @@ export class BookmarksController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query() researchParamsBookmarksDto: ResearchParamsBookmarksDto) {
-    return this.bookmarksService.findAllPaginated(researchParamsBookmarksDto);
+  findAllPaginated(@Query() researchParamsBookmarksDto: ResearchParamsBookmarksDto, @CurrentUser() user) {
+    return this.bookmarksService.findAllPaginated(researchParamsBookmarksDto, user);
   }
 }

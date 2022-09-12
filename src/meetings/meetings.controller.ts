@@ -45,7 +45,7 @@ export class MeetingsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto) : Promise<Meeting[]> {  
-    return this.meetingsService.findAllPaginated(researchParamsMeetingsDto);
+  findAllPaginated(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user) : Promise<Meeting[]> {  
+    return this.meetingsService.findAllPaginated(researchParamsMeetingsDto, user);
   }
 }

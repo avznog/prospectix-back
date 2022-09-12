@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Email } from 'src/emails/entities/email.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { Prospect } from 'src/prospects/entities/prospect.entity';
 import {
   BaseEntity,
   Column,
@@ -25,13 +26,6 @@ export class SentEmail extends BaseEntity {
   })
   pm: ProjectManager;
 
-  @ManyToOne(() => Email)
-  @ApiProperty({
-    description: "Contenu de l'email envoyé",
-    required: true
-  })
-  email: Email;
-
   @Column()
   @ApiProperty({
     description: "Object de l'email envoyé",
@@ -52,4 +46,11 @@ export class SentEmail extends BaseEntity {
     required: true
   })
   sendingDate: Date;
+
+  @ManyToOne(() => Prospect)
+  @ApiProperty({
+    description: "Prospect a qui est envoyé le mail",
+    required: true
+  })
+  prospect: Prospect
 }

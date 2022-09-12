@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { StageType } from 'src/constants/stage.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { DeleteResult, ILike, Repository } from 'typeorm';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
@@ -36,13 +37,14 @@ export class BookmarksService {
     }
   }
 
-  async findAllPaginated(researchParamsBookmarksDto: ResearchParamsBookmarksDto) : Promise<Bookmark[]> {
+  async findAllPaginated(researchParamsBookmarksDto: ResearchParamsBookmarksDto, user: ProjectManager) : Promise<Bookmark[]> {
     try {
       return await this.bookmarkRepository.find({
         relations: ["prospect", "pm","prospect.activity","prospect.city","prospect.country","prospect.events","prospect.meetings","prospect.phone","prospect.reminders","prospect.website", "prospect.email"],
         where: [
           {
             prospect: {
+              stage: StageType.BOOKMARK,
               disabled: false,
               city: {
                 name: researchParamsBookmarksDto.city
@@ -60,6 +62,7 @@ export class BookmarksService {
           },
           {
             prospect: {
+              stage: StageType.BOOKMARK,
               disabled: false,
               city: {
                 name: researchParamsBookmarksDto.city
@@ -77,6 +80,7 @@ export class BookmarksService {
           },
           {
             prospect: {
+              stage: StageType.BOOKMARK,
               disabled: false,
               city: {
                 name: researchParamsBookmarksDto.city
@@ -94,6 +98,7 @@ export class BookmarksService {
           },
           {
             prospect: {
+              stage: StageType.BOOKMARK,
               disabled: false,
               city: {
                 name: researchParamsBookmarksDto.city
@@ -109,6 +114,7 @@ export class BookmarksService {
           },
           {
             prospect: {
+              stage: StageType.BOOKMARK,
               disabled: false,
               city: {
                 name: researchParamsBookmarksDto.city
@@ -124,6 +130,7 @@ export class BookmarksService {
           },
           {
             prospect: {
+              stage: StageType.BOOKMARK,
               disabled: false,
               city: {
                 name: researchParamsBookmarksDto.city

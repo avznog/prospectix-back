@@ -2,12 +2,14 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { City } from 'src/cities/entities/city.entity';
+import { StageType } from 'src/constants/stage.type';
 import { Country } from 'src/countries/entities/country.entity';
 import { Email } from 'src/emails/entities/email.entity';
 import { Event } from 'src/events/entities/event.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { Phone } from 'src/phones/entities/phone.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
+import { SentEmail } from 'src/sent-emails/entities/sent-email.entity';
 import { Website } from 'src/websites/entities/website.entity';
 import {
   BaseEntity,
@@ -123,6 +125,13 @@ export class Prospect extends BaseEntity {
   })
   events: Event[];
 
+  @OneToMany(() => SentEmail, (sentEmail) => sentEmail.prospect, { nullable: true })
+  @ApiProperty({
+    description: "Emails en lien avec le prospect",
+    required: false
+  })
+  sentEmails: SentEmail[];
+
   @Column({ nullable: true })
   @ApiProperty({
     description: "Commentaires sur le prospect",
@@ -143,4 +152,18 @@ export class Prospect extends BaseEntity {
     required: true
   })
   disabled: boolean;
+
+  @Column({nullable: true})
+  @ApiProperty({
+    description: "Situtation du prospect actuelle",
+    required: false
+  })
+  stage: StageType;
+
+  @Column({nullable: true})
+  @ApiProperty({
+    description: "Date d'archivage du prospect",
+    required: false
+  })
+  archived: Date;
 }

@@ -1,8 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MeetingType } from 'src/constants/meeting.type';
+import { StageType } from 'src/constants/stage.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { DeleteResult, ILike, LessThan, MoreThan, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, ILike, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Repository, UpdateResult } from 'typeorm';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { ResearchParamsMeetingsDto } from './dto/research-parmas-meetings.dto';
 import { Meeting } from './entities/meeting.entity';
@@ -52,96 +53,33 @@ export class MeetingsService {
     }
   }
 
-  async findAllPaginated(researchParamsMeetingsDto: ResearchParamsMeetingsDto) : Promise<Meeting[]>{
+  async findAllPaginated(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<Meeting[]>{
     try {
       return await this.meetingRepository.find({
-        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email"],
+        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
         where: [
-          researchParamsMeetingsDto.type != "" && {
-            type: researchParamsMeetingsDto.type as MeetingType,
-            done: researchParamsMeetingsDto.done == "true" ? true : false,
-            date: researchParamsMeetingsDto.date ? new Date(researchParamsMeetingsDto.date) : researchParamsMeetingsDto.oldOrNew == "old" ? LessThan(new Date()) : MoreThan(new Date()),
-            prospect: [
-              {
-                phone: {
-                  number: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-                }
-              },
-              {
-                email: {
-                  email: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-                }
-              },
-              {
-                website: {
-                  website: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-                }
-              },
-              {
-                city: {
-                  name: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-                }
-              },
-              {
-                country: {
-                  name: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-                }
-              },
-              {
-                activity: {
-                  name: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-                }
-              },{
-                companyName: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-              },
-              {
-                streetAddress: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-              },
-            ]
-          },
 
-          // All meetings
-          researchParamsMeetingsDto.type == "" && {
-            done: researchParamsMeetingsDto.done == "true" ? true : false,
-            date: researchParamsMeetingsDto.date ? new Date(researchParamsMeetingsDto.date) : researchParamsMeetingsDto.oldOrNew == "old" ? LessThan(new Date()) : MoreThan(new Date()),
-            prospect: [
-              {
-                phone: {
-                  number: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-                }
-              },
-              {
-                email: {
-                  email: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-                }
-              },
-              {
-                website: {
-                  website: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-                }
-              },
-              {
-                city: {
-                  name: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-                }
-              },
-              {
-                country: {
-                  name: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-                }
-              },
-              {
-                activity: {
-                  name: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-                }
-              },{
-                companyName: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-              },
-              {
-                streetAddress: ILike(`%${researchParamsMeetingsDto.keyword}%`)
-              },
-            ]
+          researchParamsMeetingsDto.type != "" && {
+            prospect: {
+              stage: StageType.MEETING
+            },
+            pm: {
+              pseudo: user.pseudo
+            },
+            done: researchParamsMeetingsDto.done  == "true" ? true : false,
+            // date: researchParamsMeetingsDto.oldOrNew == "old" ? LessThanOrEqual(new Date()) : MoreThan(new Date()),
+            type: researchParamsMeetingsDto.type as MeetingType
           },
+          researchParamsMeetingsDto.type == "" && {
+            prospect: {
+              stage: StageType.MEETING
+            },
+            pm: {
+              pseudo: user.pseudo
+            },
+            done: researchParamsMeetingsDto.done  == "true" ? true : false,
+            // date: researchParamsMeetingsDto.oldOrNew == "old" ? LessThanOrEqual(new Date()) : MoreThan(new Date()),
+          }
         ],
         take: researchParamsMeetingsDto.take,
         skip: researchParamsMeetingsDto.skip
