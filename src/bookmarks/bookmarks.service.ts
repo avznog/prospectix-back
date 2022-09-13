@@ -148,7 +148,10 @@ export class BookmarksService {
           }
         ],
         take: researchParamsBookmarksDto.take,
-        skip: researchParamsBookmarksDto.skip
+        skip: researchParamsBookmarksDto.skip,
+        order: {
+          creationDate: "DESC"
+        }
       }
       );
     } catch (error) {
