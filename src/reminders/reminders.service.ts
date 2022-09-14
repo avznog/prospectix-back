@@ -5,6 +5,7 @@ import { ProjectManager } from 'src/project-managers/entities/project-manager.en
 import { DeleteResult, ILike, In, LessThan, MoreThan, MoreThanOrEqual, Repository, UpdateResult } from 'typeorm';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { ResearchParamsRemindersDto } from './dto/research-params-reminders.dto';
+import { UpdateReminderDto } from './dto/update-reminder.dto';
 import { Reminder } from './entities/reminder.entity';
 
 @Injectable()
@@ -14,6 +15,14 @@ export class RemindersService {
     private reminderRepository: Repository<Reminder>
   ){}
   
+  async update(id: number, updateReminderDto: UpdateReminderDto) {
+    try {
+      return await this.reminderRepository.update(id, updateReminderDto);
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de modifier le rappel", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
 
   async create(createReminderDto: CreateReminderDto, user: ProjectManager) : Promise<Reminder>{
     try {
@@ -71,7 +80,7 @@ export class RemindersService {
               stage: StageType.REMINDER
             },
             done: researchParamsRemindersDto.done == "true" ? true: false,
-            date: researchParamsRemindersDto.oldOrNew == "old" ? LessThan(new Date()) : MoreThanOrEqual(new Date()),
+            // date: researchParamsRemindersDto.oldOrNew == "old" ? LessThan(new Date()) : MoreThanOrEqual(new Date()),
             pm: {
               pseudo: user.pseudo
             },
@@ -82,7 +91,7 @@ export class RemindersService {
               stage: StageType.REMINDER
             },
             done: researchParamsRemindersDto.done == "true" ? true: false,
-            date: researchParamsRemindersDto.oldOrNew == "old" ? LessThan(new Date()) : MoreThanOrEqual(new Date()),
+            // date: researchParamsRemindersDto.oldOrNew == "old" ? LessThan(new Date()) : MoreThanOrEqual(new Date()),
             pm: {
               pseudo: user.pseudo
             },
