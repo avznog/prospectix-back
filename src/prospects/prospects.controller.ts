@@ -1,9 +1,6 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
-import { CurrentUser } from 'src/auth/decorators/current-user.model';
-import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
 import { UpdateResult } from 'typeorm';
 import { CreateProspectDto } from './dto/create-prospect.dto';
@@ -43,6 +40,12 @@ export class ProspectsController {
     @Body() updateProspectDto: UpdateProspectDto,
   ) : Promise<UpdateResult>{
     return this.prospectsService.update(+id, updateProspectDto);
+  }
+
+  @Patch("all-prospect/:id")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  updateAllProspect(@Param("id") id: number, @Body() updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
+    return this.prospectsService.updateAllProspect(id, updateProspectDto);
   }
 
   @Get('by-city/:id/:cityName')

@@ -35,7 +35,16 @@ export class ProspectsService {
     private readonly pmRepository: Repository<ProjectManager>,
 
     @InjectRepository(Event)
-    private readonly eventRepository: Repository<Event>
+    private readonly eventRepository: Repository<Event>,
+
+    @InjectRepository(Phone)
+    private readonly phoneRepository: Repository<Phone>,
+
+    @InjectRepository(Website)
+    private readonly websiteRepository: Repository<Website>,
+
+    @InjectRepository(Email)
+    private readonly emailRepository: Repository<Email>
 
   ) {}
 
@@ -264,6 +273,30 @@ export class ProspectsService {
 
   async update(idProspect: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
     try {
+      return await this.prospectRepository.update(idProspect, updateProspectDto);  
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("impossible de modifier le prospect",HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async updateAllProspect(idProspect: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
+    try {
+      updateProspectDto.phone && await this.phoneRepository.update(updateProspectDto.phone.id, { number: updateProspectDto.phone.number })
+      updateProspectDto.website && await this.websiteRepository.update(updateProspectDto.website.id, { website: updateProspectDto.website.website })
+      updateProspectDto.email && await this.emailRepository.update(updateProspectDto.email.id, { email: updateProspectDto.email.email })
+      updateProspectDto.city = await this.cityRepository.findOne({
+        where: {
+          name: updateProspectDto.city.name,
+          zipcode: updateProspectDto.city.zipcode
+        }
+      });
+
+      updateProspectDto.activity = await this.activityRepository.findOne({
+        where: {
+          name: updateProspectDto.activity.name
+        }
+      });
       return await this.prospectRepository.update(idProspect, updateProspectDto);  
     } catch (error) {
       console.log(error)
