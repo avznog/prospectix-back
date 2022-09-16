@@ -5,11 +5,14 @@ import { Goal } from 'src/goals/entities/goal.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { SentEmail } from 'src/sent-emails/entities/sent-email.entity';
+import { Statistic } from 'src/statistics/entities/statistic.entity';
 import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -118,4 +121,12 @@ export class ProjectManager extends BaseEntity {
     required: true
   })
   events: Event[];
+
+  @OneToOne(() => Statistic, { nullable: true })
+  @JoinColumn()
+  @ApiProperty({
+    description: "Statistiques du chef de projet",
+    required: false
+  })
+  statistic: Statistic;
 }
