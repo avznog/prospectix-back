@@ -58,7 +58,6 @@ export class MeetingsService {
       return await this.meetingRepository.find({
         relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
         where: [
-
           researchParamsMeetingsDto.type != "" && {
             prospect: {
               stage: StageType.MEETING
@@ -67,7 +66,6 @@ export class MeetingsService {
               pseudo: user.pseudo
             },
             done: researchParamsMeetingsDto.done  == "true" ? true : false,
-            // date: researchParamsMeetingsDto.oldOrNew == "old" ? LessThanOrEqual(new Date()) : MoreThan(new Date()),
             type: researchParamsMeetingsDto.type as MeetingType
           },
           researchParamsMeetingsDto.type == "" && {
@@ -78,7 +76,6 @@ export class MeetingsService {
               pseudo: user.pseudo
             },
             done: researchParamsMeetingsDto.done  == "true" ? true : false,
-            // date: researchParamsMeetingsDto.oldOrNew == "old" ? LessThanOrEqual(new Date()) : MoreThan(new Date()),
           }
         ],
         take: researchParamsMeetingsDto.take,

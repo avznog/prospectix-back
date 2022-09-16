@@ -24,133 +24,38 @@ export class BookmarksService {
     }
   }
 
-  async deleteByProspect(idProspect: number) : Promise<DeleteResult> {
+  async delete(idBookmark: number) : Promise<DeleteResult> {
     try {
-      return await this.bookmarkRepository.delete({
-        prospect: {
-          id: idProspect
-        }
-      });
+      return await this.bookmarkRepository.delete(idBookmark);
     } catch (error) {
-      console.log(error);
+      console.log(error)
       throw new HttpException("Impossible de supprimer le favoris",HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async findAllPaginated(researchParamsBookmarksDto: ResearchParamsBookmarksDto, user: ProjectManager) : Promise<Bookmark[]> {
+  async findAllPaginated(researchParamsBookmarksDto: ResearchParamsBookmarksDto, user: ProjectManager): Promise<Bookmark[]> {
     try {
       return await this.bookmarkRepository.find({
-        relations: ["prospect", "pm","prospect.activity","prospect.city","prospect.country","prospect.events","prospect.meetings","prospect.phone","prospect.reminders","prospect.website", "prospect.email"],
-        where: [
-          {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                name: researchParamsBookmarksDto.city
-              },
-              activity: {
-                name: researchParamsBookmarksDto.activity
-              },
-              phone: {
-                number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-              }
+        relations: ["prospect", "pm", "prospect.activity", "prospect.city", "prospect.country", "prospect.events", "prospect.meetings", "prospect.phone", "prospect.reminders", "prospect.website", "prospect.email"],
+        where: {
+          prospect: {
+            stage: StageType.BOOKMARK,
+            disabled: false,
+            city: {
+              name: researchParamsBookmarksDto.city
             },
-            pm: {
-              pseudo: ILike(`%${researchParamsBookmarksDto.pseudo}%`)
-            },
+            activity: {
+              name: researchParamsBookmarksDto.activity
+            }
           },
-          {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                name: researchParamsBookmarksDto.city
-              },
-              activity: {
-                name: researchParamsBookmarksDto.activity
-              },
-              email: {
-                email: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-              }
-            },
-            pm: {
-              pseudo: ILike(`%${researchParamsBookmarksDto.pseudo}%`)
-            },
+          pm: {
+            pseudo: user.pseudo
           },
-          {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                name: researchParamsBookmarksDto.city
-              },
-              activity: {
-                name: researchParamsBookmarksDto.activity
-              },
-              website: {
-                website: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-              }
-            },
-            pm: {
-              pseudo: ILike(`%${researchParamsBookmarksDto.pseudo}%`)
-            },
-          },
-          {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                name: researchParamsBookmarksDto.city
-              },
-              activity: {
-                name: researchParamsBookmarksDto.activity
-              },
-              companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-            },
-            pm: {
-              pseudo: ILike(`%${researchParamsBookmarksDto.pseudo}%`)
-            },
-          },
-          {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                name: researchParamsBookmarksDto.city
-              },
-              activity: {
-                name: researchParamsBookmarksDto.activity
-              },
-              streetAddress: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-            },
-            pm: {
-              pseudo: ILike(`%${researchParamsBookmarksDto.pseudo}%`)
-            },
-          },
-          {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                name: researchParamsBookmarksDto.city
-              },
-              activity: {
-                name: researchParamsBookmarksDto.activity
-              },
-              country: {
-                name: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-              }
-            },
-            pm: {
-              pseudo: ILike(`%${researchParamsBookmarksDto.pseudo}%`)
-            },
-          }
-        ],
+        },
         take: researchParamsBookmarksDto.take,
         skip: researchParamsBookmarksDto.skip,
         order: {
-          creationDate: "DESC"
+          creationDate: "ASC"
         }
       }
       );
@@ -159,4 +64,4 @@ export class BookmarksService {
       throw new HttpException("Impossible de récupérer les prospects favoris", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
- }
+}

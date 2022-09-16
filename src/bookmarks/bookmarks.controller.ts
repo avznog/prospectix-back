@@ -5,6 +5,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { DeleteResult } from 'typeorm';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
@@ -24,14 +25,14 @@ export class BookmarksController {
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Delete("by-prospect/:idProspect")
-  deleteByProspect(@Param("idProspect") idProspect: number) : Promise<DeleteResult> {
-    return this.bookmarksService.deleteByProspect(idProspect);
+  @Delete("/:idBookmark")
+  delete(@Param("idBookmark") idBookmark : number) : Promise<DeleteResult> {
+    return this.bookmarksService.delete(idBookmark);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query() researchParamsBookmarksDto: ResearchParamsBookmarksDto, @CurrentUser() user) {
+  findAllPaginated(@Query() researchParamsBookmarksDto: ResearchParamsBookmarksDto, @CurrentUser() user: ProjectManager) {
     return this.bookmarksService.findAllPaginated(researchParamsBookmarksDto, user);
   }
 }
