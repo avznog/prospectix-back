@@ -36,6 +36,8 @@ import { SentEmailsModule } from './sent-emails/sent-emails.module';
 import { WebsitesModule } from './websites/websites.module';
 import { Event } from './events/entities/event.entity';
 import { EventsModule } from './events/events.module';
+import { StatisticsModule } from './statistics/statistics.module';
+import { Statistic } from './statistics/entities/statistic.entity';
 console.log(process.env.BASE_URL)
 @Module({
   imports: [
@@ -69,11 +71,12 @@ console.log(process.env.BASE_URL)
       port: +process.env.POSTGRES_PORT,
       username: process.env.POSTGRES_USER || "postgres",
       password: process.env.POSTGRES_PASSWORD || "postgres",
-      database: process.env.POSTGRES_DATABASE ?? 'prospectix9',
+      database: process.env.POSTGRES_DATABASE ?? 'prospectix0',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
-      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website],
+      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website, Statistic],
     }),
+    StatisticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
