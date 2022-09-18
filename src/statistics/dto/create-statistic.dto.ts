@@ -28,6 +28,12 @@ export class CreateStatisticDto {
     required: true
   })
   totalSentEmails: number;
+  
+  @ApiProperty({
+    description: "Nombre total de refus",
+    required: true
+  })
+  totalNegativeAnswers: number;
 
   @ApiProperty({
     description: "Nombre total d'appels de la semaine",
@@ -52,4 +58,10 @@ export class CreateStatisticDto {
     required: true
   })
   weeklySentEmails: number;
+
+  @ApiProperty({
+    description: "Nombre total de refus de la semaine",
+    required: true
+  })
+  weeklyNegativeAnswers: number;
 }

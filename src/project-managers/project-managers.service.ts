@@ -41,7 +41,7 @@ export class ProjectManagersService {
   async findAll() : Promise<ProjectManager[]> {
     try {
       return await this.pmRepository.find({
-        relations: ["goals","meetings","reminders","sentEmails","bookmarks","events","bookmarks.prospect"],
+        relations: ["goals","meetings","reminders","sentEmails","bookmarks","events","bookmarks.prospect", "statistic"],
         where: {
           disabled: false
         }
@@ -82,7 +82,7 @@ export class ProjectManagersService {
   async findAllPaginated(researchParamsProjectManagersDto: ResearchParamsProjectManagersDto) : Promise<ProjectManager[]> {
     try {
       return await this.pmRepository.find({
-        relations: ["goals","meetings","reminders","sentEmails","bookmarks","events","bookmarks.prospect"],
+        relations: ["goals","meetings","reminders","sentEmails","bookmarks","events","bookmarks.prospect", "statistic"],
         take: researchParamsProjectManagersDto.take,
         skip: researchParamsProjectManagersDto.skip,
         order: {
