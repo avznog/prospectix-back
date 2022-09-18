@@ -64,4 +64,10 @@ export class CreateStatisticDto {
     required: true
   })
   weeklyNegativeAnswers: number;
+
+  @ApiProperty({
+    description: "To check if the data of the week has been reset",
+    required: true
+  })
+  isReseted: boolean;
 }

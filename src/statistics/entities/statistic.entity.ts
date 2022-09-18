@@ -85,4 +85,11 @@ export class Statistic extends BaseEntity {
     required: true
   })
   weeklyNegativeAnswers: number;
+
+  @Column({ default: false })
+  @ApiProperty({
+    description: "To check if the data of the week has been reset",
+    required: true
+  })
+  isReseted: boolean;
 }
