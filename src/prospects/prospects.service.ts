@@ -185,80 +185,21 @@ export class ProspectsService {
   async findAllPaginated(researchParamsProspectDto: ResearchParamsProspectDto) : Promise<Prospect[]> {
     try {
       return await this.prospectRepository.find({
-        relations: ["activity","city","country","events","meetings","phone","reminders","website", "email", "bookmarks","bookmarks.pm"],
-        where : [
-          { 
+        relations: ["activity", "city", "country", "events", "meetings", "phone", "reminders", "website", "email", "bookmarks", "bookmarks.pm"],
+        where: [
+          researchParamsProspectDto.zipcode != -1000 && {
             stage: StageType.RESEARCH,
-            disabled: false,
             city: {
-              name: researchParamsProspectDto.city
+              zipcode: researchParamsProspectDto.zipcode
             },
             activity: {
               name: researchParamsProspectDto.activity
-            },
-            phone: {
-              number: ILike(`%${researchParamsProspectDto.keyword}%`)
             }
           },
-          { 
+          researchParamsProspectDto.zipcode == -1000 && {
             stage: StageType.RESEARCH,
-            disabled: false,
-            city: {
-              name: researchParamsProspectDto.city
-            },
             activity: {
               name: researchParamsProspectDto.activity
-            },
-            website: {
-              website: ILike(`%${researchParamsProspectDto.keyword}%`)
-            }
-          },
-          { 
-            stage: StageType.RESEARCH,
-            disabled: false,
-            city: {
-              name: researchParamsProspectDto.city
-            },
-            activity: {
-              name: researchParamsProspectDto.activity
-            },
-            email: {
-              email: ILike(`%${researchParamsProspectDto.keyword}%`)
-            }
-          },
-          { 
-            stage: StageType.RESEARCH,
-            disabled: false,
-            city: {
-              name: researchParamsProspectDto.city
-            },
-            activity: {
-              name: researchParamsProspectDto.activity
-            },
-            companyName: ILike(`%${researchParamsProspectDto.keyword}%`)
-          },
-          { 
-            stage: StageType.RESEARCH,
-            disabled: false,
-            city: {
-              name: researchParamsProspectDto.city
-            },
-            activity: {
-              name: researchParamsProspectDto.activity
-            },
-            streetAddress: ILike(`%${researchParamsProspectDto.keyword}%`)
-          },
-          { 
-            stage: StageType.RESEARCH,
-            disabled: false,
-            city: {
-              name: researchParamsProspectDto.city
-            },
-            activity: {
-              name: researchParamsProspectDto.activity
-            },
-            country: {
-              name: ILike(`%${researchParamsProspectDto.keyword}%`)
             }
           }
         ],

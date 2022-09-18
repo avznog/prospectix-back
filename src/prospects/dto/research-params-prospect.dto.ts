@@ -2,6 +2,6 @@ export interface ResearchParamsProspectDto {
   keyword?: string;
   take: number;
   skip: number;
-  city?: string;
+  zipcode: number;
   activity?: string;
 }
