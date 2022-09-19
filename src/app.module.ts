@@ -38,6 +38,8 @@ import { Event } from './events/entities/event.entity';
 import { EventsModule } from './events/events.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { Statistic } from './statistics/entities/statistic.entity';
+import { StatsHistoryModule } from './stats-history/stats-history.module';
+import { StatsHistory } from './stats-history/entities/stats-history.entity';
 console.log(process.env.BASE_URL)
 @Module({
   imports: [
@@ -74,9 +76,10 @@ console.log(process.env.BASE_URL)
       database: process.env.POSTGRES_DATABASE ?? 'prospectixStat',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
-      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website, Statistic],
+      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website, Statistic, StatsHistory],
     }),
     StatisticsModule,
+    StatsHistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

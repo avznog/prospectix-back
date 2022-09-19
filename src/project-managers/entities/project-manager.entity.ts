@@ -6,6 +6,7 @@ import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { SentEmail } from 'src/sent-emails/entities/sent-email.entity';
 import { Statistic } from 'src/statistics/entities/statistic.entity';
+import { StatsHistory } from 'src/stats-history/entities/stats-history.entity';
 import {
   BaseEntity,
   Column,
@@ -129,4 +130,11 @@ export class ProjectManager extends BaseEntity {
     required: false
   })
   statistic: Statistic;
+
+  @OneToMany(() => StatsHistory, (statsHistory) => statsHistory.pm)
+  @ApiProperty({
+    description: "Historique des statistiques du chef de projet",
+    required: false
+  })
+  statsHistory: StatsHistory[];
 }
