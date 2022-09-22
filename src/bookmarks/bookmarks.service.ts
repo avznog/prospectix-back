@@ -34,29 +34,79 @@ export class BookmarksService {
   }
 
   async findAllPaginated(researchParamsBookmarksDto: ResearchParamsBookmarksDto, user: ProjectManager): Promise<Bookmark[]> {
+    console.log("lefnzln")
     try {
+      researchParamsBookmarksDto.zipcode = +researchParamsBookmarksDto.zipcode
       return await this.bookmarkRepository.find({
         relations: ["prospect", "pm", "prospect.activity", "prospect.city", "prospect.country", "prospect.events", "prospect.meetings", "prospect.phone", "prospect.reminders", "prospect.website", "prospect.email"],
-        where: {
-          prospect: {
-            stage: StageType.BOOKMARK,
-            disabled: false,
-            city: {
-              name: researchParamsBookmarksDto.city
+        where: [
+          researchParamsBookmarksDto.zipcode != -1000 && researchParamsBookmarksDto.activity! != "allActivities" && {
+            prospect: {
+              stage: StageType.BOOKMARK,
+              city: {
+                zipcode: researchParamsBookmarksDto.zipcode
+              },
+              activity: {
+                name: researchParamsBookmarksDto.activity
+              }
+              
             },
+            pm: {
+              pseudo: user.pseudo
+            }
+            
+          },
+          researchParamsBookmarksDto.zipcode == -1000 && researchParamsBookmarksDto.activity! != "allActivities" && {
+            prospect: {
+              stage: StageType.BOOKMARK,
             activity: {
               name: researchParamsBookmarksDto.activity
             }
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
           },
-          pm: {
-            pseudo: user.pseudo
+          researchParamsBookmarksDto.activity! == "allActivities" && researchParamsBookmarksDto.zipcode == -1000 && {
+            prospect: {
+              stage: StageType.BOOKMARK
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
           },
-        },
-        take: researchParamsBookmarksDto.take,
-        skip: researchParamsBookmarksDto.skip,
-        order: {
-          creationDate: "ASC"
-        }
+          researchParamsBookmarksDto.activity! == "allActivities" && researchParamsBookmarksDto.zipcode != -1000 && {
+            prospect: {
+              stage: StageType.BOOKMARK,
+            city: {
+              zipcode: researchParamsBookmarksDto.zipcode
+            }
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
+          }
+        ]
+      //   where: {
+      //     prospect: {
+      //       stage: StageType.BOOKMARK,
+      //       disabled: false,
+      //       city: {
+      //         name: researchParamsBookmarksDto.city
+      //       },
+      //       activity: {
+      //         name: researchParamsBookmarksDto.activity
+      //       }
+      //     },
+      //     pm: {
+      //       pseudo: user.pseudo
+      //     },
+      //   },
+      //   take: researchParamsBookmarksDto.take,
+      //   skip: researchParamsBookmarksDto.skip,
+      //   order: {
+      //     creationDate: "ASC"
+      //   }
       }
       );
     } catch (error) {
