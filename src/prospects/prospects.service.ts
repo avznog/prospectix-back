@@ -190,7 +190,7 @@ export class ProspectsService {
         
         relations: ["activity", "city", "country", "events", "meetings", "phone", "reminders", "website", "email", "bookmarks", "bookmarks.pm"],
         where: [
-          researchParamsProspectDto.zipcode != -1000 && researchParamsProspectDto.activity! != "allActivities" && {
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode != -1000 && researchParamsProspectDto.activity! != "allActivities" && {
             stage: StageType.RESEARCH,
             city: {
               zipcode: researchParamsProspectDto.zipcode
@@ -199,20 +199,24 @@ export class ProspectsService {
               name: researchParamsProspectDto.activity
             }
           },
-          researchParamsProspectDto.zipcode == -1000 && researchParamsProspectDto.activity! != "allActivities" && {
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode == -1000 && researchParamsProspectDto.activity! != "allActivities" && {
             stage: StageType.RESEARCH,
             activity: {
               name: researchParamsProspectDto.activity
             }
           },
-          researchParamsProspectDto.activity! == "allActivities" && researchParamsProspectDto.zipcode == -1000 && {
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.activity! == "allActivities" && researchParamsProspectDto.zipcode == -1000 && {
             stage: StageType.RESEARCH
           },
-          researchParamsProspectDto.activity! == "allActivities" && researchParamsProspectDto.zipcode != -1000 && {
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.activity! == "allActivities" && researchParamsProspectDto.zipcode != -1000 && {
             stage: StageType.RESEARCH,
             city: {
-              zipcode: researchParamsProspectDto.zipcode
+                  zipcode: researchParamsProspectDto.zipcode
             }
+          },
+          researchParamsProspectDto.keyword! != "" && {
+            stage: StageType.RESEARCH,
+            companyName: ILike(`%${researchParamsProspectDto.keyword}%`)
           }
         ],
         take: researchParamsProspectDto.take,

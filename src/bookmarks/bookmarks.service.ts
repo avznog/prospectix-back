@@ -40,7 +40,7 @@ export class BookmarksService {
       return await this.bookmarkRepository.find({
         relations: ["prospect", "pm", "prospect.activity", "prospect.city", "prospect.country", "prospect.events", "prospect.meetings", "prospect.phone", "prospect.reminders", "prospect.website", "prospect.email"],
         where: [
-          researchParamsBookmarksDto.zipcode != -1000 && researchParamsBookmarksDto.activity! != "allActivities" && {
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode != -1000 && researchParamsBookmarksDto.activity! != "allActivities" && {
             prospect: {
               stage: StageType.BOOKMARK,
               city: {
@@ -56,7 +56,7 @@ export class BookmarksService {
             }
             
           },
-          researchParamsBookmarksDto.zipcode == -1000 && researchParamsBookmarksDto.activity! != "allActivities" && {
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode == -1000 && researchParamsBookmarksDto.activity! != "allActivities" && {
             prospect: {
               stage: StageType.BOOKMARK,
             activity: {
@@ -67,7 +67,7 @@ export class BookmarksService {
               pseudo: user.pseudo
             }
           },
-          researchParamsBookmarksDto.activity! == "allActivities" && researchParamsBookmarksDto.zipcode == -1000 && {
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.activity! == "allActivities" && researchParamsBookmarksDto.zipcode == -1000 && {
             prospect: {
               stage: StageType.BOOKMARK
             },
@@ -75,12 +75,21 @@ export class BookmarksService {
               pseudo: user.pseudo
             }
           },
-          researchParamsBookmarksDto.activity! == "allActivities" && researchParamsBookmarksDto.zipcode != -1000 && {
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.activity! == "allActivities" && researchParamsBookmarksDto.zipcode != -1000 && {
             prospect: {
               stage: StageType.BOOKMARK,
             city: {
               zipcode: researchParamsBookmarksDto.zipcode
             }
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
+          },
+          researchParamsBookmarksDto.keyword != "" && {
+            prospect: {
+              stage: StageType.BOOKMARK,
+              companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`)
             },
             pm: {
               pseudo: user.pseudo
