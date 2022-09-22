@@ -34,7 +34,6 @@ export class BookmarksService {
   }
 
   async findAllPaginated(researchParamsBookmarksDto: ResearchParamsBookmarksDto, user: ProjectManager): Promise<Bookmark[]> {
-    console.log("lefnzln")
     try {
       researchParamsBookmarksDto.zipcode = +researchParamsBookmarksDto.zipcode
       return await this.bookmarkRepository.find({
@@ -96,26 +95,6 @@ export class BookmarksService {
             }
           }
         ]
-      //   where: {
-      //     prospect: {
-      //       stage: StageType.BOOKMARK,
-      //       disabled: false,
-      //       city: {
-      //         name: researchParamsBookmarksDto.city
-      //       },
-      //       activity: {
-      //         name: researchParamsBookmarksDto.activity
-      //       }
-      //     },
-      //     pm: {
-      //       pseudo: user.pseudo
-      //     },
-      //   },
-      //   take: researchParamsBookmarksDto.take,
-      //   skip: researchParamsBookmarksDto.skip,
-      //   order: {
-      //     creationDate: "ASC"
-      //   }
       }
       );
     } catch (error) {

@@ -33,7 +33,7 @@ export class EventsService {
           }
         },
         order: {
-          date: "asc"
+          date: "DESC"
         }
       });
     } catch (error) {
