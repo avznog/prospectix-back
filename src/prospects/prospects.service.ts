@@ -184,10 +184,13 @@ export class ProspectsService {
 
   async findAllPaginated(researchParamsProspectDto: ResearchParamsProspectDto) : Promise<Prospect[]> {
     try {
+      researchParamsProspectDto.zipcode = +researchParamsProspectDto.zipcode
+      console.log(researchParamsProspectDto)
       return await this.prospectRepository.find({
+        
         relations: ["activity", "city", "country", "events", "meetings", "phone", "reminders", "website", "email", "bookmarks", "bookmarks.pm"],
         where: [
-          researchParamsProspectDto.zipcode != -1000 && {
+          researchParamsProspectDto.zipcode != -1000 && researchParamsProspectDto.activity! != "allActivities" && {
             stage: StageType.RESEARCH,
             city: {
               zipcode: researchParamsProspectDto.zipcode
@@ -196,10 +199,19 @@ export class ProspectsService {
               name: researchParamsProspectDto.activity
             }
           },
-          researchParamsProspectDto.zipcode == -1000 && {
+          researchParamsProspectDto.zipcode == -1000 && researchParamsProspectDto.activity! != "allActivities" && {
             stage: StageType.RESEARCH,
             activity: {
               name: researchParamsProspectDto.activity
+            }
+          },
+          researchParamsProspectDto.activity! == "allActivities" && researchParamsProspectDto.zipcode == -1000 && {
+            stage: StageType.RESEARCH
+          },
+          researchParamsProspectDto.activity! == "allActivities" && researchParamsProspectDto.zipcode != -1000 && {
+            stage: StageType.RESEARCH,
+            city: {
+              zipcode: researchParamsProspectDto.zipcode
             }
           }
         ],
