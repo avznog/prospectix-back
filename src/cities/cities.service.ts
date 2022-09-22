@@ -13,7 +13,12 @@ export class CitiesService {
 
   async findAll() : Promise<City[]> {
     try {
-      return await this.cityRepository.find();
+      return await this.cityRepository.find({
+        order: {
+          name: "ASC",
+          zipcode: "ASC"
+        }
+      });
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récuprérer les villes", HttpStatus.INTERNAL_SERVER_ERROR)
