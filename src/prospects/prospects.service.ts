@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { City } from 'src/cities/entities/city.entity';
 import { EventType } from 'src/constants/event.type';
+import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
 import { StageType } from 'src/constants/stage.type';
 import { Country } from 'src/countries/entities/country.entity';
 import { Email } from 'src/emails/entities/email.entity';
@@ -185,13 +186,12 @@ export class ProspectsService {
   async findAllPaginated(researchParamsProspectDto: ResearchParamsProspectDto) : Promise<Prospect[]> {
     try {
       researchParamsProspectDto.zipcode = +researchParamsProspectDto.zipcode
-      console.log(researchParamsProspectDto)
       return await this.prospectRepository.find({
-        
         relations: ["activity", "city", "country", "events", "meetings", "phone", "reminders", "website", "email", "bookmarks", "bookmarks.pm"],
         where: [
           researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode != -1000 && researchParamsProspectDto.activity! != "allActivities" && {
             stage: StageType.RESEARCH,
+            disabled: false,
             city: {
               zipcode: researchParamsProspectDto.zipcode
             },
@@ -201,22 +201,40 @@ export class ProspectsService {
           },
           researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode == -1000 && researchParamsProspectDto.activity! != "allActivities" && {
             stage: StageType.RESEARCH,
+            disabled: false,
             activity: {
               name: researchParamsProspectDto.activity
             }
           },
           researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.activity! == "allActivities" && researchParamsProspectDto.zipcode == -1000 && {
-            stage: StageType.RESEARCH
+            stage: StageType.RESEARCH,
+            disabled: false,
           },
           researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.activity! == "allActivities" && researchParamsProspectDto.zipcode != -1000 && {
             stage: StageType.RESEARCH,
+            disabled: false,
             city: {
                   zipcode: researchParamsProspectDto.zipcode
             }
           },
           researchParamsProspectDto.keyword! != "" && {
             stage: StageType.RESEARCH,
-            companyName: ILike(`%${researchParamsProspectDto.keyword}%`)
+            disabled: false,
+            companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
+          },
+          researchParamsProspectDto.keyword! != "" && {
+            stage: StageType.RESEARCH,
+            disabled: false,
+            city: {
+              name: ILike(`%${researchParamsProspectDto.keyword}%`)
+            }
+          },
+          researchParamsProspectDto.keyword! != "" && {
+            stage: StageType.RESEARCH,
+            disabled: false,
+            activity: {
+              name: ILike(`%${researchParamsProspectDto.keyword}%`)
+            }
           }
         ],
         take: researchParamsProspectDto.take,
@@ -293,10 +311,11 @@ export class ProspectsService {
     } 
   }
 
-  async disable(idProspect: number) : Promise<UpdateResult> {
+  async disable(idProspect: number, reason: ReasonDisabledType) : Promise<UpdateResult> {
     try {
       const updateProspectDto = new UpdateProspectDto();
       updateProspectDto.disabled = true;
+      updateProspectDto.reasonDisabled = reason;
       return await this.prospectRepository.update(idProspect, updateProspectDto);
     } catch (error) {
       console.log(error)

@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { City } from 'src/cities/entities/city.entity';
+import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
 import { StageType } from 'src/constants/stage.type';
 import { Country } from 'src/countries/entities/country.entity';
 import { Email } from 'src/emails/entities/email.entity';
@@ -106,4 +107,10 @@ export class CreateProspectDto {
     description: 'Date d\' archivage du prospect',
   })
   archived: Date;
+
+  @ApiProperty({
+    description: "Raison de suppression du prospect",
+    required: false
+  })
+  reasonDisabled: ReasonDisabledType;
 }

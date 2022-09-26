@@ -1,7 +1,10 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
+import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
+import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
 import { UpdateResult } from 'typeorm';
 import { CreateProspectDto } from './dto/create-prospect.dto';
 import { ResearchParamsProspectDto } from './dto/research-params-prospect.dto';
@@ -11,7 +14,7 @@ import { ProspectsService } from './prospects.service';
 
 @Controller('prospects')
 @ApiTags('prospects')
-// @UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ProspectsController {
   constructor(private readonly prospectsService: ProspectsService) {}
 
@@ -61,9 +64,9 @@ export class ProspectsController {
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get('disable/:id')
-  remove(@Param('id') id: number) : Promise<UpdateResult>{
-    return this.prospectsService.disable(id);
+  @Get('disable/:id/:reason')
+  remove(@Param('id') id: number, @Param("reason") reason: ReasonDisabledType) : Promise<UpdateResult>{
+    return this.prospectsService.disable(id, reason);
   }
 
   @Roles(RolesType.ADMIN)

@@ -93,6 +93,28 @@ export class BookmarksService {
             pm: {
               pseudo: user.pseudo
             }
+          },
+          researchParamsBookmarksDto.keyword != "" && {
+            prospect: {
+              stage: StageType.BOOKMARK,
+              city: {
+                name: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+              }
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
+          },
+          researchParamsBookmarksDto.keyword != "" && {
+            prospect: {
+              stage: StageType.BOOKMARK,
+              activity: {
+                name: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+              }
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
           }
         ]
       }
