@@ -87,4 +87,31 @@ export class MeetingsService {
     }
   }
 
+  async findAllMeetingsDone(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<Meeting[]> {
+    try {
+      return await this.meetingRepository.find({
+        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
+        where: [
+          researchParamsMeetingsDto.type != "" && {
+            pm: {
+              pseudo: user.pseudo
+            },
+            done: true,
+            type: researchParamsMeetingsDto.type as MeetingType
+          },
+          researchParamsMeetingsDto.type == "" && {
+            pm: {
+              pseudo: user.pseudo
+            },
+            done: true
+          }
+        ],
+        take: researchParamsMeetingsDto.take,
+        skip: researchParamsMeetingsDto.skip
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer les renddez vous effectués", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

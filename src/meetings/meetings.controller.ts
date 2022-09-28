@@ -5,6 +5,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { ResearchParamsMeetingsDto } from './dto/research-parmas-meetings.dto';
@@ -45,7 +46,13 @@ export class MeetingsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user) : Promise<Meeting[]> {  
+  findAllPaginated(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<Meeting[]> {  
     return this.meetingsService.findAllPaginated(researchParamsMeetingsDto, user);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("find-all-meetings-done")
+  findAllMeetingsDone(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<Meeting[]> {
+    return this.meetingsService.findAllMeetingsDone(researchParamsMeetingsDto, user)
   }
 }
