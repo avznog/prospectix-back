@@ -53,4 +53,11 @@ export class Meeting extends BaseEntity {
     required: true
   })
   prospect: Prospect;
+
+  @Column({ nullable: true })
+  @ApiProperty({
+    description: "Date de création du rendez-vous",
+    required: true
+  })
+  creationDate: Date;
 }

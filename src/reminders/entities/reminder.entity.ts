@@ -59,4 +59,11 @@ export class Reminder extends BaseEntity {
     required: true
   })
   done: boolean;
+
+  @Column({ nullable: true })
+  @ApiProperty({
+    description: "Date de création du rappel",
+    required: true
+  })
+  creationDate: Date;
 }

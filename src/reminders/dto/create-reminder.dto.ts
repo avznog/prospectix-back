@@ -38,4 +38,10 @@ export class CreateReminderDto {
     required: true
   })
   done: boolean;
+
+  @ApiProperty({
+    description: "Date de création du rappel",
+    required: true
+  })
+  creationDate: Date;
 }

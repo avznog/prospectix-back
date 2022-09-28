@@ -104,4 +104,34 @@ export class RemindersService {
       throw new HttpException("Impossible de récupérer les rappels", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
+
+  async findAllRemindersDone(researchParamsRemindersDto: ResearchParamsRemindersDto, user: ProjectManager) : Promise<Reminder[]> {
+    try {
+      return await this.reminderRepository.find({
+        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.activity","prospect.city","prospect.country","prospect.website","prospect.email","prospect.meetings","prospect.bookmarks","prospect.reminders"],
+        where: [
+          researchParamsRemindersDto.priority != 0 && {
+          done: true,
+          pm: {
+            pseudo: user.pseudo
+          },
+          priority: researchParamsRemindersDto.priority
+        },
+        researchParamsRemindersDto.priority == 0 && {
+          done: true,
+          pm: {
+            pseudo: user.pseudo
+          },
+          priority: In([1,2,3])
+        }
+      ],
+      skip: researchParamsRemindersDto.skip,
+      take: researchParamsRemindersDto.take
+      })
+    
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer les rappels", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  } 
 }

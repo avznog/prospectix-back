@@ -5,6 +5,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { ResearchParamsRemindersDto } from './dto/research-params-reminders.dto';
@@ -51,7 +52,13 @@ export class RemindersController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query() researchParamsRemindersDto: ResearchParamsRemindersDto, @CurrentUser() user) : Promise<Reminder[]> {
+  findAllPaginated(@Query() researchParamsRemindersDto: ResearchParamsRemindersDto, @CurrentUser() user: ProjectManager) : Promise<Reminder[]> {
     return this.reminderService.findAllPaginated(researchParamsRemindersDto, user);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("find-all-reminders-done")
+  findAllRemindersDone(@Query() researchParamsRemindersDto: ResearchParamsRemindersDto, @CurrentUser() user: ProjectManager) : Promise<Reminder[]> {
+    return this.reminderService.findAllRemindersDone(researchParamsRemindersDto, user);
   }
 }
