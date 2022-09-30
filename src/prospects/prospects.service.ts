@@ -12,7 +12,7 @@ import { Phone } from 'src/phones/entities/phone.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Website } from 'src/websites/entities/website.entity';
 import { ILike, Repository, UpdateResult } from 'typeorm';
-import prospectsScrapped from "../../prospectsScrapped.json";
+import prospectsScrapped from "../../all-prospects-domained.json";
 import { CreateProspectDto } from './dto/create-prospect.dto';
 import { ResearchParamsProspectDto } from './dto/research-params-prospect.dto';
 import { UpdateProspectDto } from './dto/update-prospect.dto';
@@ -50,119 +50,139 @@ export class ProspectsService {
   ) {}
 
   async createFromScrapper() {
-    
-    const createProspectDto = new CreateProspectDto;
-    let count = 0;
+
+    // create admin account
+    await this.pmRepository.save(this.pmRepository.create({
+      pseudo: "admin",
+      admin: true,
+      name: "admin",
+      firstname: "admin",
+      mail: "admin@juniorisep.com",
+      tokenEmail: "",
+      disabled: false,
+    }));
+
+    // Creating France country
+    await this.countryRepository.save(this.countryRepository.create({
+      name: "France"
+    }));
+
+    let cities = new Map<number, string>();
+    let activities: string[] = [];
+    let activitiesFiltered = [];
+
+    // Creating the cities and activities arrays
+
     for(let prospect of prospectsScrapped) {
+      // adding filtered cities to map
+      if(!cities.has(+prospect.city.zipcode))
+        cities.set(+prospect.city.zipcode, prospect.city.name.toLowerCase())
 
-      // default values
-      createProspectDto.comment = "";
-      createProspectDto.disabled = false;
-      createProspectDto.nbNo = 0;
-      createProspectDto.isBookmarked = false;
+      // adding activities to array
+      activities.push(prospect.activity.name) 
+    }
+    
+    // Filtering activities
+    activities.forEach((element) => {
+      if (!activitiesFiltered.includes(element)) {
+          activitiesFiltered.push(element);
+      }
+    });
 
-      // Basic informations
-      createProspectDto.companyName = prospect.name;
-      createProspectDto.website = new Website;
-      createProspectDto.website.website = prospect.website ?? "";
-      createProspectDto.email = new Email;
-      createProspectDto.email.email = "";
-      createProspectDto.phone = new Phone;
-      createProspectDto.phone.number = prospect.phone.phone ? prospect.phone.phone : prospect.phone.mobile ? prospect.phone.mobile : "";
-      createProspectDto.streetAddress = prospect.location.split(/\d{5}/)[0];
-      let activity = prospect.domain;
+    // Adding cities to DB
+    for(let city of cities) {
+      await this.cityRepository.save(this.cityRepository.create({
+        name: city[1],
+        zipcode: +city[0]
+      }));
+    }
 
-      // France country by default
-      createProspectDto.country = await this.countryRepository.findOne({
+    // Adding activities to db
+    activitiesFiltered.forEach(activity => {
+      this.activityRepository.save(this.activityRepository.create({
+        name: activity
+      }))
+    })
+
+
+    for(let prospect of prospectsScrapped){    
+      // prospect basis
+      const newProspect = {
+        companyName: prospect.companyName,
+        streetAddress: prospect.streetAddress,
+        isBookmarked: false,
+        comment: "",
+        nbNo: 0,
+        disabled: false,
+        stage: StageType.RESEARCH,
+        phone: {
+          number: prospect.phone.number
+        },
+        website: {
+          website: prospect.website ? prospect.website.website : ""
+        },
+        email: {
+          email: ""
+        },
+        city: {
+          name: "",
+          zipcode: 0
+        },
+        activity: {
+          name: ""
+        },
+        country: {
+          id: 1,
+          name: "France"
+        }
+      }
+
+      // get city
+      await this.cityRepository.findOne({
+        where: {
+          name: prospect.city.name.toLowerCase(),
+          zipcode: +prospect.city.zipcode
+        }
+      }).then(city => {
+        newProspect.city = city;
+      });
+
+      // get activity
+      await this.activityRepository.findOne({
+        where: {
+          name: prospect.activity.name
+        }
+      }).then(activity => {
+        newProspect.activity = activity;
+      });
+
+      // get country // ! default France
+      await this.countryRepository.findOne({
         where: {
           name: "France"
         }
-      });
+      }).then(country => {
+        newProspect.country = country;
+      })
 
-
-      // spliting location => zipcode and city
-      let zipcode: number | RegExpMatchArray = prospect.location.match(/\d{5}/);
-      let city = prospect.location.split(/\d{5}/)[1];
-
-
-      // City affectation
-      if(city){
-        city = city.charAt(1).toUpperCase() + city.slice(2).toLowerCase();
-      }
-      let c: City;
-      if(city && zipcode) {
-        c = await this.cityRepository.findOne({
-          where: {
-            name: city,
-            zipcode: +zipcode[0]
-          }
-        });
-      } else if (city && !zipcode) {
-        c = await this.cityRepository.findOne({
-          where: {
-            name: city
-          }
-        });
-      } else if (!city && zipcode) {
-        c = await this.cityRepository.findOne({
-          where: {
-            zipcode: +zipcode[0]
-          }
-        });
-      } else {
-        c = await this.cityRepository.findOne({
-          where: {
-            name: "",
-            zipcode: -1
-          }
-        });
-      }
-
-      if(!c){
-        createProspectDto.city = new City;
-        createProspectDto.city.name = city;
-        createProspectDto.city.zipcode = +zipcode[0];
-      }else {
-        createProspectDto.city = c;
-      }
-
-
-      // Activity affectation
-      let a: Activity;
-      if(!activity) {
-        a = await this.activityRepository.findOne({
-          where: {
-            name: ""
-          }
-        });
-      } else {
-        activity = activity.includes(",") && activity.split(",")[0];
-        a = await this.activityRepository.findOne({
-          where: {
-            name: activity
-          }
-        });
-      }
-
-      if(!a) {
-        createProspectDto.activity = new Activity;
-        createProspectDto.activity.name = activity
-      } else {
-        createProspectDto.activity = a;
-      }
-
-      this.prospectRepository.save(this.prospectRepository.create(createProspectDto));
+      // save in db
+      this.prospectRepository.save(this.prospectRepository.create(newProspect))
     }
-    
+      
     
     // Adding first event for prospects
+
+    // fetching all prospects
     const prospects = await this.prospectRepository.find();
+
+    // getting admin pm
     const pm = await this.pmRepository.findOne({
       where: {
         pseudo: "admin"
       }
     });
 
+    // adding events
     for(let prospect of prospects) {
       this.eventRepository.save(this.eventRepository.create({
         date: new Date,

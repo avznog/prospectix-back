@@ -21,7 +21,7 @@ export class ProspectsController {
   @Roles(RolesType.ADMIN)
   @Get("create-from-scrapper")
   createFromScrapper() {
-    return this.prospectsService.createFromScrapper();
+    // return this.prospectsService.createFromScrapper();
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
