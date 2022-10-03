@@ -4,5 +4,7 @@ export enum StageType {
   REMINDER,
   MEETING,
   MAIL,
-  ARCHIVED
+  ARCHIVED,
+  PRO,
+  MEETING_DONE_AND_OUT
 }

@@ -19,7 +19,7 @@ export class EventsService {
       return this.eventRepository.save(createEventDto);
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossitble de créer l'évènement", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException("Impossible de créer l'évènement", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

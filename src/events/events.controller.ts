@@ -5,6 +5,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { CreateEventDto } from './dto/create-event.dto';
 import { Event } from './entities/event.entity';
 import { EventsService } from './events.service';
@@ -17,7 +18,7 @@ export class EventsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post("create")
-  create(@Body() createEventDto: CreateEventDto, @CurrentUser() user) : Promise<Event> {
+  create(@Body() createEventDto: CreateEventDto, @CurrentUser() user: ProjectManager) : Promise<Event> {
     return this.eventsService.create(createEventDto, user);
   }
 
