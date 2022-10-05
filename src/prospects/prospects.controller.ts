@@ -15,7 +15,7 @@ import { ProspectsService } from './prospects.service';
 
 @Controller('prospects')
 @ApiTags('prospects')
-// @UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ProspectsController {
   constructor(private readonly prospectsService: ProspectsService) {}
 
