@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StageType } from 'src/constants/stage.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, ILike, Repository } from 'typeorm';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { ResearchParamsBookmarksDto } from './dto/research-params-bookmarks.dto';
 import { Bookmark } from './entities/bookmark.entity';
@@ -88,7 +88,7 @@ export class BookmarksService {
           researchParamsBookmarksDto.keyword != "" && {
             prospect: {
               stage: StageType.BOOKMARK,
-              companyName: researchParamsBookmarksDto.keyword
+              companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`)
             },
             pm: {
               pseudo: user.pseudo
@@ -98,7 +98,7 @@ export class BookmarksService {
             prospect: {
               stage: StageType.BOOKMARK,
               city: {
-                name: researchParamsBookmarksDto.keyword
+                name: ILike(`%${researchParamsBookmarksDto.keyword}%`)
               }
             },
             pm: {
@@ -109,7 +109,7 @@ export class BookmarksService {
             prospect: {
               stage: StageType.BOOKMARK,
               activity: {
-                name: researchParamsBookmarksDto.keyword
+                name: ILike(`%${researchParamsBookmarksDto.keyword}%`)
               }
             },
             pm: {

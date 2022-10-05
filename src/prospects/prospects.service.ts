@@ -11,7 +11,7 @@ import { Event } from 'src/events/entities/event.entity';
 import { Phone } from 'src/phones/entities/phone.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Website } from 'src/websites/entities/website.entity';
-import { Repository, UpdateResult } from 'typeorm';
+import { ILike, Repository, UpdateResult } from 'typeorm';
 import prospectsScrapped from "../../all-prospects-domained.json";
 import { CreateProspectDto } from './dto/create-prospect.dto';
 import { ResearchParamsProspectDto } from './dto/research-params-prospect.dto';
@@ -240,20 +240,20 @@ export class ProspectsService {
           researchParamsProspectDto.keyword! != "" && {
             stage: StageType.RESEARCH,
             disabled: false,
-            companyName: researchParamsProspectDto.keyword,
+            companyName: ILike(`%${researchParamsProspectDto.keyword}%`)
           },
           researchParamsProspectDto.keyword! != "" && {
             stage: StageType.RESEARCH,
             disabled: false,
             city: {
-              name: researchParamsProspectDto.keyword
+              name: ILike(`%${researchParamsProspectDto.keyword}%`)
             }
           },
           researchParamsProspectDto.keyword! != "" && {
             stage: StageType.RESEARCH,
             disabled: false,
             activity: {
-              name: researchParamsProspectDto.keyword
+              name: ILike(`%${researchParamsProspectDto.keyword}%`)
             }
           }
         ],
@@ -351,6 +351,30 @@ export class ProspectsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible d'activer le prospect demandé",HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async countForDomains()  {
+    try {
+      let countDomains: [{}] = [{}];
+      countDomains.pop()
+      let activities = await this.activityRepository.find();
+      for(let activity of activities) {
+        let count = await this.prospectRepository.count({
+          where: {
+            activity: {
+              id: activity.id
+            }
+          }
+        });
+        countDomains.push({ id: activity.id, count: count})
+      }
+
+      return countDomains
+      
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les activités", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

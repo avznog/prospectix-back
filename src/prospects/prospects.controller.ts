@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Activity } from 'src/activities/entities/activity.entity';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -14,7 +15,7 @@ import { ProspectsService } from './prospects.service';
 
 @Controller('prospects')
 @ApiTags('prospects')
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProspectsController {
   constructor(private readonly prospectsService: ProspectsService) {}
 
@@ -73,5 +74,11 @@ export class ProspectsController {
   @Get("enable/:id")
   enable(@Param("id") id: number) : Promise<UpdateResult> {
     return this.prospectsService.enable(id);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-for-domains")
+  countForDomains() {
+    return this.prospectsService.countForDomains();
   }
 }
