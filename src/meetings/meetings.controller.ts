@@ -22,7 +22,7 @@ export class MeetingsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post()
-  create(@Body() createMeetingDto: CreateMeetingDto, @CurrentUser() user) : Promise<Meeting> {
+  create(@Body() createMeetingDto: CreateMeetingDto, @CurrentUser() user: ProjectManager) : Promise<Meeting> {
     return this.meetingsService.create(createMeetingDto, user);
   }
 
@@ -54,5 +54,11 @@ export class MeetingsController {
   @Get("find-all-meetings-done")
   findAllMeetingsDone(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<Meeting[]> {
     return this.meetingsService.findAllMeetingsDone(researchParamsMeetingsDto, user)
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-meetings")
+  countMeetings(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<number> {
+    return this.meetingsService.countMeetings(researchParamsMeetingsDto, user);
   }
 }

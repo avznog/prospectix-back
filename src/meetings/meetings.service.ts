@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MeetingType } from 'src/constants/meeting.type';
 import { StageType } from 'src/constants/stage.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { DeleteResult, ILike, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { ResearchParamsMeetingsDto } from './dto/research-parmas-meetings.dto';
 import { Meeting } from './entities/meeting.entity';
@@ -112,6 +112,37 @@ export class MeetingsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récupérer les renddez vous effectués", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async countMeetings(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<number> {
+    try {
+      return await this.meetingRepository.count({
+        where: [
+          researchParamsMeetingsDto.type != "" && {
+            prospect: {
+              stage: StageType.MEETING
+            },
+            pm: {
+              pseudo: user.pseudo
+            },
+            done: researchParamsMeetingsDto.done  == "true" ? true : false,
+            type: researchParamsMeetingsDto.type as MeetingType
+          },
+          researchParamsMeetingsDto.type == "" && {
+            prospect: {
+              stage: StageType.MEETING
+            },
+            pm: {
+              pseudo: user.pseudo
+            },
+            done: researchParamsMeetingsDto.done  == "true" ? true : false,
+          }
+        ]
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer le nombre de rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

@@ -87,4 +87,10 @@ export class ProspectsController {
   countForCities() {
     return this.prospectsService.countForCities();
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-prospects")
+  countProspects(@Query() researchParamsProspectDto: ResearchParamsProspectDto) : Promise<number> {
+    return this.prospectsService.countProspects(researchParamsProspectDto);
+  }
 }

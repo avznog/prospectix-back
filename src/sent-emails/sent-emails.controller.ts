@@ -28,4 +28,10 @@ export class SentEmailsController {
   create(@Body() createSentEmailDto: CreateSentEmailDto, @CurrentUser() user) : Promise<SentEmail> {
     return this.sentEmailsService.create(createSentEmailDto, user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-sent-emails")
+  countSentEmails(@CurrentUser() user: ProjectManager) : Promise<number> {
+    return this.sentEmailsService.countSentEmails(user);
+  }
 }

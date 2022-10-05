@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from "@nestjs/typeorm";
 import { StageType } from 'src/constants/stage.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { DeleteResult, ILike, In, LessThan, MoreThan, MoreThanOrEqual, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, In, Repository, UpdateResult } from 'typeorm';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { ResearchParamsRemindersDto } from './dto/research-params-reminders.dto';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
@@ -80,7 +80,6 @@ export class RemindersService {
               stage: StageType.REMINDER
             },
             done: researchParamsRemindersDto.done == "true" ? true: false,
-            // date: researchParamsRemindersDto.oldOrNew == "old" ? LessThan(new Date()) : MoreThanOrEqual(new Date()),
             pm: {
               pseudo: user.pseudo
             },
@@ -91,7 +90,6 @@ export class RemindersService {
               stage: StageType.REMINDER
             },
             done: researchParamsRemindersDto.done == "true" ? true: false,
-            // date: researchParamsRemindersDto.oldOrNew == "old" ? LessThan(new Date()) : MoreThanOrEqual(new Date()),
             pm: {
               pseudo: user.pseudo
             },
@@ -133,5 +131,37 @@ export class RemindersService {
       console.log(error)
       throw new HttpException("Impossible de récupérer les rappels", HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  } 
+  }
+
+  async countReminders(researchParamsRemindersDto: ResearchParamsRemindersDto, user: ProjectManager) : Promise<number> {
+    try {
+      return await this.reminderRepository.count({
+        where: [
+          researchParamsRemindersDto.priority != 0 && {
+            prospect: {
+              stage: StageType.REMINDER
+            },
+            done: researchParamsRemindersDto.done == "true" ? true: false,
+            pm: {
+              pseudo: user.pseudo
+            },
+            priority: researchParamsRemindersDto.priority
+          },
+          researchParamsRemindersDto.priority == 0 && {
+            prospect: {
+              stage: StageType.REMINDER
+            },
+            done: researchParamsRemindersDto.done == "true" ? true: false,
+            pm: {
+              pseudo: user.pseudo
+            },
+            priority: In([1,2,3])
+          }
+        ]
+      });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les rappels", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

@@ -35,4 +35,10 @@ export class BookmarksController {
   findAllPaginated(@Query() researchParamsBookmarksDto: ResearchParamsBookmarksDto, @CurrentUser() user: ProjectManager) {
     return this.bookmarksService.findAllPaginated(researchParamsBookmarksDto, user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-bookmarks")
+  countBookmarks(@Query() researchParamsBookmarksDto: ResearchParamsBookmarksDto, @CurrentUser() user: ProjectManager) : Promise<number> {
+    return this.bookmarksService.countBookmarks(researchParamsBookmarksDto, user);
+  }
 }

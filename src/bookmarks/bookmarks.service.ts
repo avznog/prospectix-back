@@ -124,4 +124,93 @@ export class BookmarksService {
       throw new HttpException("Impossible de récupérer les prospects favoris", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
+
+  async countBookmarks(researchParamsBookmarksDto: ResearchParamsBookmarksDto, user: ProjectManager) : Promise<number> {
+    try {
+      return await this.bookmarkRepository.count({
+        where: [
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode != -1000 && researchParamsBookmarksDto.activity! != "allActivities" && {
+            prospect: {
+              stage: StageType.BOOKMARK,
+              city: {
+                zipcode: researchParamsBookmarksDto.zipcode
+              },
+              activity: {
+                name: researchParamsBookmarksDto.activity
+              }
+              
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
+            
+          },
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode == -1000 && researchParamsBookmarksDto.activity! != "allActivities" && {
+            prospect: {
+              stage: StageType.BOOKMARK,
+            activity: {
+              name: researchParamsBookmarksDto.activity
+            }
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
+          },
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.activity! == "allActivities" && researchParamsBookmarksDto.zipcode == -1000 && {
+            prospect: {
+              stage: StageType.BOOKMARK
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
+          },
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.activity! == "allActivities" && researchParamsBookmarksDto.zipcode != -1000 && {
+            prospect: {
+              stage: StageType.BOOKMARK,
+            city: {
+              zipcode: researchParamsBookmarksDto.zipcode
+            }
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
+          },
+          researchParamsBookmarksDto.keyword != "" && {
+            prospect: {
+              stage: StageType.BOOKMARK,
+              companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
+          },
+          researchParamsBookmarksDto.keyword != "" && {
+            prospect: {
+              stage: StageType.BOOKMARK,
+              city: {
+                name: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+              }
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
+          },
+          researchParamsBookmarksDto.keyword != "" && {
+            prospect: {
+              stage: StageType.BOOKMARK,
+              activity: {
+                name: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+              }
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
+          }
+        ]
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les favoris", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

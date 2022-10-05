@@ -398,4 +398,63 @@ export class ProspectsService {
     }
   }
 
+  async countProspects(researchParamsProspectDto: ResearchParamsProspectDto) : Promise<number> {
+    try {
+      return await this.prospectRepository.count({
+        where: [
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode != -1000 && researchParamsProspectDto.activity! != "allActivities" && {
+            stage: StageType.RESEARCH,
+            disabled: false,
+            city: {
+              zipcode: researchParamsProspectDto.zipcode
+            },
+            activity: {
+              name: researchParamsProspectDto.activity
+            }
+          },
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode == -1000 && researchParamsProspectDto.activity! != "allActivities" && {
+            stage: StageType.RESEARCH,
+            disabled: false,
+            activity: {
+              name: researchParamsProspectDto.activity
+            }
+          },
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.activity! == "allActivities" && researchParamsProspectDto.zipcode == -1000 && {
+            stage: StageType.RESEARCH,
+            disabled: false,
+          },
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.activity! == "allActivities" && researchParamsProspectDto.zipcode != -1000 && {
+            stage: StageType.RESEARCH,
+            disabled: false,
+            city: {
+                  zipcode: researchParamsProspectDto.zipcode
+            }
+          },
+          researchParamsProspectDto.keyword! != "" && {
+            stage: StageType.RESEARCH,
+            disabled: false,
+            companyName: ILike(`%${researchParamsProspectDto.keyword}%`)
+          },
+          researchParamsProspectDto.keyword! != "" && {
+            stage: StageType.RESEARCH,
+            disabled: false,
+            city: {
+              name: ILike(`%${researchParamsProspectDto.keyword}%`)
+            }
+          },
+          researchParamsProspectDto.keyword! != "" && {
+            stage: StageType.RESEARCH,
+            disabled: false,
+            activity: {
+              name: ILike(`%${researchParamsProspectDto.keyword}%`)
+            }
+          }
+        ]
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les prospect", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
 }

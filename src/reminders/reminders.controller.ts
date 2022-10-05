@@ -61,4 +61,10 @@ export class RemindersController {
   findAllRemindersDone(@Query() researchParamsRemindersDto: ResearchParamsRemindersDto, @CurrentUser() user: ProjectManager) : Promise<Reminder[]> {
     return this.reminderService.findAllRemindersDone(researchParamsRemindersDto, user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-reminders")
+  countReminders(@Query() researchParamsRemindersDto: ResearchParamsRemindersDto, @CurrentUser() user: ProjectManager) : Promise<number> {
+    return this.reminderService.countReminders(researchParamsRemindersDto, user);
+  }
 }

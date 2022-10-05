@@ -45,4 +45,22 @@ export class SentEmailsService {
       throw new HttpException("Impossible de créer l'email", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async countSentEmails(user: ProjectManager) : Promise<number> {
+    try {
+      return await this.sentEmailRepository.count({
+        where: {
+          pm: {
+            pseudo: user.pseudo
+          },
+          prospect: {
+            stage: StageType.MAIL
+          }
+        }
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les mails", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }
