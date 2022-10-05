@@ -11,7 +11,7 @@ import { Event } from 'src/events/entities/event.entity';
 import { Phone } from 'src/phones/entities/phone.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Website } from 'src/websites/entities/website.entity';
-import { ILike, Repository, UpdateResult } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import prospectsScrapped from "../../all-prospects-domained.json";
 import { CreateProspectDto } from './dto/create-prospect.dto';
 import { ResearchParamsProspectDto } from './dto/research-params-prospect.dto';
@@ -240,20 +240,20 @@ export class ProspectsService {
           researchParamsProspectDto.keyword! != "" && {
             stage: StageType.RESEARCH,
             disabled: false,
-            companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
+            companyName: researchParamsProspectDto.keyword,
           },
           researchParamsProspectDto.keyword! != "" && {
             stage: StageType.RESEARCH,
             disabled: false,
             city: {
-              name: ILike(`%${researchParamsProspectDto.keyword}%`)
+              name: researchParamsProspectDto.keyword
             }
           },
           researchParamsProspectDto.keyword! != "" && {
             stage: StageType.RESEARCH,
             disabled: false,
             activity: {
-              name: ILike(`%${researchParamsProspectDto.keyword}%`)
+              name: researchParamsProspectDto.keyword
             }
           }
         ],
