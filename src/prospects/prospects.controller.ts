@@ -81,4 +81,10 @@ export class ProspectsController {
   countForDomains() {
     return this.prospectsService.countForDomains();
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-for-cities")
+  countForCities() {
+    return this.prospectsService.countForCities();
+  }
 }

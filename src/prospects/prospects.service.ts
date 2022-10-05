@@ -354,7 +354,7 @@ export class ProspectsService {
     }
   }
 
-  async countForDomains()  {
+  async countForDomains() {
     try {
       let countDomains: [{}] = [{}];
       countDomains.pop()
@@ -364,17 +364,37 @@ export class ProspectsService {
           where: {
             activity: {
               id: activity.id
-            }
+            },
+            stage: StageType.RESEARCH
           }
         });
         countDomains.push({ id: activity.id, count: count})
       }
-
-      return countDomains
-      
+      return countDomains;
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossible de compter les activités", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException("Impossible de compter les prospects par activités", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async countForCities() {
+    try {
+      let countCities: [{}] = [{}];
+      countCities.pop();
+      let cities = await this.cityRepository.find();
+      for(let city of cities) {
+        let count = await this.prospectRepository.count({
+          where: {
+          city: {
+            id: city.id
+          }
+        }});
+        countCities.push({ id: city.id, count: count});
+      }
+      return countCities;
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les prospects par ville", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
