@@ -1,26 +1,50 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { Repository } from 'typeorm';
 import { CreateCallDto } from './dto/create-call.dto';
 import { UpdateCallDto } from './dto/update-call.dto';
+import { Call } from './entities/call.entity';
 
 @Injectable()
 export class CallsService {
-  create(createCallDto: CreateCallDto) {
-    return 'This action adds a new call';
+
+  constructor(
+    @InjectRepository(Call)
+    private readonly callRepository: Repository<Call>
+  ) {}
+
+  async createForMe(createCallDto: CreateCallDto, user: ProjectManager) : Promise<Call> {
+    try {
+      createCallDto.pm = user;
+      return await this.callRepository.save(this.callRepository.create(createCallDto));
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de créer l'appel", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  findAll() {
-    return `This action returns all calls`;
+  async create(createCallDto: CreateCallDto) {
+    try {
+      return await this.callRepository.save(this.callRepository.create(createCallDto));
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de créer l'appel", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} call`;
-  }
-
-  update(id: number, updateCallDto: UpdateCallDto) {
-    return `This action updates a #${id} call`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} call`;
+  async countAllForMe(user: ProjectManager) : Promise<number> {
+    try {
+      return await this.callRepository.count({
+        where: {
+          pm: {
+            id: user.id
+          }
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de trouver les appels", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

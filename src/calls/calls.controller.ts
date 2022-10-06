@@ -1,34 +1,35 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Roles } from 'src/auth/annotations/roles.decorator';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
+import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { RolesType } from 'src/auth/role.type';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { CallsService } from './calls.service';
 import { CreateCallDto } from './dto/create-call.dto';
-import { UpdateCallDto } from './dto/update-call.dto';
 
 @Controller('calls')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CallsController {
   constructor(private readonly callsService: CallsService) {}
 
+  @Roles(RolesType.CDP,RolesType.ADMIN)
   @Post()
   create(@Body() createCallDto: CreateCallDto) {
     return this.callsService.create(createCallDto);
   }
 
-  @Get()
-  findAll() {
-    return this.callsService.findAll();
+  @Roles(RolesType.CDP,RolesType.ADMIN)
+  @Post("create-for-me")
+  createForMe(@Body() createCallDto: CreateCallDto, @CurrentUser() user: ProjectManager) {
+    return this.callsService.createForMe(createCallDto, user);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.callsService.findOne(+id);
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all-for-me")
+  countAllForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    return this.callsService.countAllForMe(user);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCallDto: UpdateCallDto) {
-    return this.callsService.update(+id, updateCallDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.callsService.remove(+id);
-  }
 }

@@ -38,6 +38,8 @@ import { Event } from './events/entities/event.entity';
 import { EventsModule } from './events/events.module';
 import { CallsModule } from './calls/calls.module';
 import { Call } from './calls/entities/call.entity';
+import { NegativeAnswersModule } from './negative-answers/negative-answers.module';
+import { NegativeAnswer } from './negative-answers/entities/negative-answer.entity';
 console.log(process.env.BASE_URL)
 @Module({
   imports: [
@@ -71,12 +73,13 @@ console.log(process.env.BASE_URL)
       port: +process.env.POSTGRES_PORT,
       username: process.env.POSTGRES_USER || "postgres",
       password: process.env.POSTGRES_PASSWORD || "postgres",
-      database: process.env.POSTGRES_DATABASE ?? 'prospectixStats',
+      database: process.env.POSTGRES_DATABASE ?? 'prospectix2',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
-      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website, Call],
+      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website, Call, NegativeAnswer],
     }),
-    CallsModule
+    CallsModule,
+    NegativeAnswersModule
   ],
   controllers: [AppController],
   providers: [AppService],
