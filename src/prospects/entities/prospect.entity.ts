@@ -9,6 +9,7 @@ import { Country } from 'src/countries/entities/country.entity';
 import { Email } from 'src/emails/entities/email.entity';
 import { Event } from 'src/events/entities/event.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
+import { NegativeAnswer } from 'src/negative-answers/entities/negative-answer.entity';
 import { Phone } from 'src/phones/entities/phone.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { SentEmail } from 'src/sent-emails/entities/sent-email.entity';
@@ -179,4 +180,8 @@ export class Prospect extends BaseEntity {
   @OneToOne(() => Call, (call) => call.prospect, { nullable: true })
   @JoinColumn()  
   call: Call;
+
+  @OneToOne(() => NegativeAnswer, (negativeAnswer) => negativeAnswer.prospect, { nullable: true})
+  @JoinColumn()
+  negativeAnswer: NegativeAnswer;
 }

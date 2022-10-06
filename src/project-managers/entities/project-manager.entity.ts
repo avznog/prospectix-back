@@ -4,6 +4,7 @@ import { Call } from 'src/calls/entities/call.entity';
 import { Event } from 'src/events/entities/event.entity';
 import { Goal } from 'src/goals/entities/goal.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
+import { NegativeAnswer } from 'src/negative-answers/entities/negative-answer.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { SentEmail } from 'src/sent-emails/entities/sent-email.entity';
 import {
@@ -124,4 +125,11 @@ export class ProjectManager extends BaseEntity {
     required: false
   })
   calls: Call[];
+
+  @OneToMany(() => NegativeAnswer, (negativeAnswer) => negativeAnswer.pm, { nullable: true })
+  @ApiProperty({
+    description: "Refus du chef de projet",
+    required: false
+  })
+  negativeAnswers: NegativeAnswer[];
 }
