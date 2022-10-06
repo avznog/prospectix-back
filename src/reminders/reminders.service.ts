@@ -164,4 +164,19 @@ export class RemindersService {
       throw new HttpException("Impossible de compter les rappels", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async countAllForMe(user: ProjectManager) : Promise<number> {
+    try {
+      return await this.reminderRepository.count({
+        where: {
+          pm: {
+            id: user.id
+          }
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les rappels", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

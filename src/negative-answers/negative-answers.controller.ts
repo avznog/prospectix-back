@@ -1,13 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { NegativeAnswersService } from './negative-answers.service';
-import { CreateNegativeAnswerDto } from './dto/create-negative-answer.dto';
-import { UpdateNegativeAnswerDto } from './dto/update-negative-answer.dto';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Roles } from 'src/auth/annotations/roles.decorator';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/annotations/roles.decorator';
 import { RolesType } from 'src/auth/role.type';
-import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { CreateNegativeAnswerDto } from './dto/create-negative-answer.dto';
+import { NegativeAnswersService } from './negative-answers.service';
 
 @Controller('negative-answers')
 @UseGuards(JwtAuthGuard, RolesGuard)
