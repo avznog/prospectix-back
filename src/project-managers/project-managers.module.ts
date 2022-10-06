@@ -5,10 +5,9 @@ import { ProjectManager } from './entities/project-manager.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
-import { Statistic } from 'src/statistics/entities/statistic.entity';
-
+import { Call } from 'src/calls/entities/call.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([ProjectManager, Reminder, Prospect, Statistic])],
+  imports: [TypeOrmModule.forFeature([ProjectManager, Reminder, Prospect, Call])],
   controllers: [ProjectManagersController],
   providers: [ProjectManagersService],
 })

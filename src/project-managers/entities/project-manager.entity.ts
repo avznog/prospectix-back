@@ -1,20 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
+import { Call } from 'src/calls/entities/call.entity';
 import { Event } from 'src/events/entities/event.entity';
 import { Goal } from 'src/goals/entities/goal.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { SentEmail } from 'src/sent-emails/entities/sent-email.entity';
-import { Statistic } from 'src/statistics/entities/statistic.entity';
-import { StatsHistory } from 'src/stats-history/entities/stats-history.entity';
 import {
   BaseEntity,
   Column,
-  Entity,
-  JoinColumn,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn,
+  Entity, OneToMany, PrimaryGeneratedColumn
 } from 'typeorm';
 
 @Entity()
@@ -123,18 +118,10 @@ export class ProjectManager extends BaseEntity {
   })
   events: Event[];
 
-  @OneToOne(() => Statistic, { nullable: true })
-  @JoinColumn()
+  @OneToMany(() => Call, (call) => call.pm, { nullable: true})
   @ApiProperty({
-    description: "Statistiques du chef de projet",
+    description: "Appels du chef de projet",
     required: false
   })
-  statistic: Statistic;
-
-  @OneToMany(() => StatsHistory, (statsHistory) => statsHistory.pm)
-  @ApiProperty({
-    description: "Historique des statistiques du chef de projet",
-    required: false
-  })
-  statsHistory: StatsHistory[];
+  calls: Call[];
 }

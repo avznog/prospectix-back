@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
+import { Call } from 'src/calls/entities/call.entity';
 import { City } from 'src/cities/entities/city.entity';
 import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
 import { StageType } from 'src/constants/stage.type';
@@ -174,4 +175,8 @@ export class Prospect extends BaseEntity {
     required: false
   })
   reasonDisabled: ReasonDisabledType;
+
+  @OneToOne(() => Call, (call) => call.prospect, { nullable: true })
+  @JoinColumn()  
+  call: Call;
 }
