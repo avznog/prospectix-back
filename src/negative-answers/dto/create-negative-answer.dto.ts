@@ -4,5 +4,5 @@ import { Prospect } from "src/prospects/entities/prospect.entity";
 export class CreateNegativeAnswerDto {
   date: Date;
   prospect: Prospect;
-  pm: ProjectManager:
+  pm: ProjectManager;
 }

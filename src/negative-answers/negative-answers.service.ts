@@ -1,26 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { Repository } from 'typeorm';
 import { CreateNegativeAnswerDto } from './dto/create-negative-answer.dto';
 import { UpdateNegativeAnswerDto } from './dto/update-negative-answer.dto';
+import { NegativeAnswer } from './entities/negative-answer.entity';
 
 @Injectable()
 export class NegativeAnswersService {
-  create(createNegativeAnswerDto: CreateNegativeAnswerDto) {
-    return 'This action adds a new negativeAnswer';
+
+  constructor(
+    @InjectRepository(NegativeAnswer)
+    private readonly negativeAnswerRepository: Repository<NegativeAnswer>
+  ) {}
+
+  async create(createNegativeAnswerDto: CreateNegativeAnswerDto) {
+    try {
+      return await this.negativeAnswerRepository.save(this.negativeAnswerRepository.create(createNegativeAnswerDto));
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de créer l'appel", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  findAll() {
-    return `This action returns all negativeAnswers`;
+  async createForMe(createNegativeAnswerDto: CreateNegativeAnswerDto, user: ProjectManager) : Promise<NegativeAnswer> {
+    try {
+      createNegativeAnswerDto.pm = user;
+      return await this.negativeAnswerRepository.save(this.negativeAnswerRepository.create(createNegativeAnswerDto));
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de créer l'appel", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} negativeAnswer`;
+  async countAllForMe(user: ProjectManager) : Promise<number> {
+    try {
+      return await this.negativeAnswerRepository.count({
+        where: {
+          pm: {
+            id: user.id
+          }
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de trouver les appels", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  update(id: number, updateNegativeAnswerDto: UpdateNegativeAnswerDto) {
-    return `This action updates a #${id} negativeAnswer`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} negativeAnswer`;
-  }
+  
 }
