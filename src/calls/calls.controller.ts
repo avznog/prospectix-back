@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
@@ -25,11 +25,15 @@ export class CallsController {
     return this.callsService.createForMe(createCallDto, user);
   }
 
-
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-all-for-me")
   countAllForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
     return this.callsService.countAllForMe(user);
   }
 
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all")
+  countAll(@Query() interval: { dateDown: Date, dateUp: Date }) {
+    return this.callsService.countAll(interval);
+  }
 }

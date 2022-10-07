@@ -1,7 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { cp } from 'fs';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { CreateCallDto } from './dto/create-call.dto';
 import { UpdateCallDto } from './dto/update-call.dto';
 import { Call } from './entities/call.entity';
@@ -11,7 +12,10 @@ export class CallsService {
 
   constructor(
     @InjectRepository(Call)
-    private readonly callRepository: Repository<Call>
+    private readonly callRepository: Repository<Call>,
+
+    @InjectRepository(ProjectManager)
+    private readonly pmRepository: Repository<ProjectManager>
   ) {}
 
   async createForMe(createCallDto: CreateCallDto, user: ProjectManager) : Promise<Call> {
@@ -45,6 +49,37 @@ export class CallsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de trouver les appels", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async countAll(interval: { dateDown: Date, dateUp: Date}) {
+    try {
+      let results: [{}] = [{}];
+      results.pop();
+      await this.pmRepository.find({
+      relations: ["calls"],
+      where: {
+        admin: false,
+      } 
+      }).then(pms => {
+        for(let pm of pms) {
+          let count = 0;
+          pm.calls ? pm.calls.forEach(call => {
+            if(new Date(interval.dateDown) < new Date(call.date) && new Date(call.date) < new Date(interval.dateUp)){
+              count += 1
+            }
+          }) : 0;
+
+         results.push({
+          pseudo: pm.pseudo,
+          count: count
+         }) 
+        }
+      });
+      return results;
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les appels",HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
