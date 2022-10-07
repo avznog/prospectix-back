@@ -34,4 +34,10 @@ export class SentEmailsController {
   countSentEmails(@CurrentUser() user: ProjectManager) : Promise<number> {
     return this.sentEmailsService.countSentEmails(user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all-for-me")
+  countAllForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    return this.sentEmailsService.countAllForMe(user);
+  }
 }

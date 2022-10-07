@@ -145,4 +145,19 @@ export class MeetingsService {
       throw new HttpException("Impossible de récupérer le nombre de rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async countAllForMe(user: ProjectManager) : Promise<number> {
+    try {
+      return await this.meetingRepository.count({
+        where: {
+          pm: {
+            id: user.id
+          }
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

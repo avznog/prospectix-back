@@ -63,4 +63,19 @@ export class SentEmailsService {
       throw new HttpException("Impossible de compter les mails", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async countAllForMe(user: ProjectManager) : Promise<number> {
+    try {
+      return await this.sentEmailRepository.count({
+        where: {
+          pm: {
+            id: user.id
+          }
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les mails", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

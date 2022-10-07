@@ -61,4 +61,10 @@ export class MeetingsController {
   countMeetings(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<number> {
     return this.meetingsService.countMeetings(researchParamsMeetingsDto, user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all-for-me")
+  countAllForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    return this.meetingsService.countAllForMe(user);
+  }
 }
