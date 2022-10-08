@@ -17,12 +17,14 @@ import { ProspectsService } from './prospects.service';
 @ApiTags('prospects')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProspectsController {
-  constructor(private readonly prospectsService: ProspectsService) {}
+  constructor(private readonly prospectsService: ProspectsService) {
+  }
 
   @Roles(RolesType.ADMIN)
   @Get("create-from-scrapper")
   createFromScrapper() {
-    // return this.prospectsService.createFromScrapper();
+    console.log("started")
+    this.prospectsService.createFromScrapper();
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)

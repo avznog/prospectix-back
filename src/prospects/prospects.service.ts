@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import fs from "fs";
 import { Activity } from 'src/activities/entities/activity.entity';
 import { City } from 'src/cities/entities/city.entity';
 import { EventType } from 'src/constants/event.type';
@@ -12,11 +13,11 @@ import { Phone } from 'src/phones/entities/phone.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Website } from 'src/websites/entities/website.entity';
 import { ILike, Repository, UpdateResult } from 'typeorm';
-import prospectsScrapped from "../../all-prospects-domained.json";
 import { CreateProspectDto } from './dto/create-prospect.dto';
 import { ResearchParamsProspectDto } from './dto/research-params-prospect.dto';
 import { UpdateProspectDto } from './dto/update-prospect.dto';
 import { Prospect } from './entities/prospect.entity';
+
 @Injectable()
 export class ProspectsService {
   constructor(
@@ -68,44 +69,75 @@ export class ProspectsService {
     }));
 
     let cities = new Map<number, string>();
-    let activities: string[] = [];
-    let activitiesFiltered = [];
+    let activitiesFiltered = new Set<string>();
 
     // Creating the cities and activities arrays
+
+    console.log("json decode")
+    console.time("json decode")
+
+    let prospectsScrapped = JSON.parse(fs.readFileSync("allprospects.json").toString())
+
+    console.timeEnd("json decode")
+
+    console.log("Filtering prospects")
+    console.time("filter")
+    const alreadyPhone = []
+    prospectsScrapped = (prospectsScrapped as any[]).filter(prospect => {
+      if(prospect.activity.name.trim().length == 0 || alreadyPhone.includes(prospect.phone.number))
+        return false
+      
+      if(isNaN(+prospect.city.zipcode))
+        return false
+
+      alreadyPhone.push(prospect.phone.number)
+      return true
+    })
+    console.timeEnd("filter")
 
     for(let prospect of prospectsScrapped) {
       // adding filtered cities to map
       if(!cities.has(+prospect.city.zipcode))
-        cities.set(+prospect.city.zipcode, prospect.city.name.toLowerCase())
+        cities.set(+prospect.city.zipcode, prospect.city.name[0].toUpperCase()+prospect.city.name.toLowerCase().slice(1))
 
       // adding activities to array
-      activities.push(prospect.activity.name) 
+      if(prospect.activity.name.trim().length)
+        activitiesFiltered.add(prospect.activity.name) 
     }
+    console.log("Chargement des villes et acti finies")
     
-    // Filtering activities
-    activities.forEach((element) => {
-      if (!activitiesFiltered.includes(element)) {
-          activitiesFiltered.push(element);
-      }
-    });
-
     // Adding cities to DB
+    let added = 0
+    const len = cities.size
     for(let city of cities) {
+      added++
+      if(added % 50 == 0)
+        console.log("cities", added, "/", len)
+
       await this.cityRepository.save(this.cityRepository.create({
         name: city[1],
         zipcode: +city[0]
       }));
     }
+    console.log("Sauvegarde des villes finies")
 
+    added = 0
     // Adding activities to db
     activitiesFiltered.forEach(activity => {
+      added++
+      if(added % 50 == 0)
+        console.log("acti", added, "/", len)
       this.activityRepository.save(this.activityRepository.create({
         name: activity
       }))
     })
 
+    const activitiesCache: {[key: string]: Activity} = {}
+    const cityCache: {[key: string]: City} = {}
+    const countryCache: {[key: string]: Country} = {}
 
-    for(let prospect of prospectsScrapped){    
+    added = 0
+    for(let prospect of prospectsScrapped){
       // prospect basis
       const newProspect = {
         companyName: prospect.companyName,
@@ -138,35 +170,39 @@ export class ProspectsService {
       }
 
       // get city
-      await this.cityRepository.findOne({
+      const city = cityCache[prospect.city.zipcode] ?? (cityCache[prospect.city.zipcode] = await this.cityRepository.findOne({
         where: {
-          name: prospect.city.name.toLowerCase(),
+          name: prospect.city.name[0].toUpperCase()+prospect.city.name.toLowerCase().slice(1),
           zipcode: +prospect.city.zipcode
         }
-      }).then(city => {
-        newProspect.city = city;
-      });
+      }))
+        
+      newProspect.city = city;
 
       // get activity
-      await this.activityRepository.findOne({
+      const activity = activitiesCache[prospect.activity.name] ?? (activitiesCache[prospect.activity.name] = await this.activityRepository.findOne({
         where: {
           name: prospect.activity.name
         }
-      }).then(activity => {
-        newProspect.activity = activity;
-      });
+      }))
+
+      newProspect.activity = activity;
 
       // get country // ! default France
-      await this.countryRepository.findOne({
+      const country = countryCache["France"] ?? (countryCache["France"] = await this.countryRepository.findOne({
         where: {
           name: "France"
         }
-      }).then(country => {
-        newProspect.country = country;
-      })
+      }))
+
+      newProspect.country = country;
 
       // save in db
       this.prospectRepository.save(this.prospectRepository.create(newProspect))
+
+      added++
+      if(added % 50 == 0)
+        console.log("prospect", added, "/", len)
     }
       
     

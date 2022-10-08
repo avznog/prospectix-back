@@ -40,6 +40,7 @@ import { StatisticsModule } from './statistics/statistics.module';
 import { Statistic } from './statistics/entities/statistic.entity';
 import { StatsHistoryModule } from './stats-history/stats-history.module';
 import { StatsHistory } from './stats-history/entities/stats-history.entity';
+import { ProspectsService } from './prospects/prospects.service';
 console.log(process.env.BASE_URL)
 @Module({
   imports: [
@@ -73,14 +74,14 @@ console.log(process.env.BASE_URL)
       port: +process.env.POSTGRES_PORT,
       username: process.env.POSTGRES_USER || "postgres",
       password: process.env.POSTGRES_PASSWORD || "postgres",
-      database: process.env.POSTGRES_DATABASE ?? 'prospectix0',
+      database: 'basetesti',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
       entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website, Statistic, StatsHistory],
     }),
     StatisticsModule,
     StatsHistoryModule,
-  ],
+],
   controllers: [AppController],
   providers: [AppService],
 })
