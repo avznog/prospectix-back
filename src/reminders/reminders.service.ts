@@ -187,7 +187,7 @@ export class RemindersService {
     try {
       let results : [{}] = [{}];
       results.pop();
-      const pms = await this.pmRepository.find({
+      await this.pmRepository.find({
         relations: ["reminders"],
         where: {
           admin: false
@@ -210,7 +210,7 @@ export class RemindersService {
       return results
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossible de compter les rapels", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException("Impossible de compter les rappels", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

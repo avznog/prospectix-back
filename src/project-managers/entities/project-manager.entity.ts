@@ -96,7 +96,7 @@ export class ProjectManager extends BaseEntity {
   reminders: Reminder[];
 
   @OneToMany(() => SentEmail, (sentEmail) => sentEmail.pm, {
-    lazy: true,
+    
   })
   @ApiProperty({
     description: "Emails envoyés du chef de projet",

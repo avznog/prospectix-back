@@ -40,4 +40,10 @@ export class SentEmailsController {
   countAllForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
     return this.sentEmailsService.countAllForMe(user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all")
+  countAll(@Query() interval: { dateDown: Date, dateUp: Date }) {
+    return this.sentEmailsService.countAll(interval);
+  }
 }

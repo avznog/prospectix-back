@@ -12,7 +12,10 @@ export class SentEmailsService {
 
   constructor(
     @InjectRepository(SentEmail)
-    private readonly sentEmailRepository: Repository<SentEmail>
+    private readonly sentEmailRepository: Repository<SentEmail>,
+
+    @InjectRepository(ProjectManager)
+    private readonly pmRepository: Repository<ProjectManager>
   ) {}
 
   async findAllPaginated(researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, user: ProjectManager) {
@@ -76,6 +79,37 @@ export class SentEmailsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de compter les mails", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async countAll(interval: { dateDown: Date, dateUp: Date }) {
+    try {
+      let results : [{}] = [{}];
+      results.pop();
+      await this.pmRepository.find({
+        relations: ["sentEmails"],
+        where: {
+          admin: false
+        }
+      }).then(pms => {
+        pms.forEach(pm => {
+          let count = 0;
+          
+          pm.sentEmails.length && pm.sentEmails.forEach(sentEmail => {
+            if(new Date(interval.dateDown) < new Date(sentEmail.sendingDate) && new Date(sentEmail.sendingDate) < new Date(interval.dateUp)){
+              count += 1;
+            }
+          })
+          results.push({
+            pseudo: pm.pseudo,
+            count: count
+          });
+        })
+      });
+      return results
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les emails envoyés", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

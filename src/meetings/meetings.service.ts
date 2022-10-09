@@ -12,7 +12,10 @@ import { Meeting } from './entities/meeting.entity';
 export class MeetingsService {
   constructor(
     @InjectRepository(Meeting)
-    private readonly meetingRepository: Repository<Meeting>
+    private readonly meetingRepository: Repository<Meeting>,
+
+    @InjectRepository(ProjectManager)
+    private readonly pmRepository: Repository<ProjectManager>
   ){}
 
   async create(createMeetingDto: CreateMeetingDto, user: ProjectManager) : Promise<Meeting> {
@@ -155,6 +158,37 @@ export class MeetingsService {
           }
         }
       });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async countAll(interval: { dateDown: Date, dateUp: Date }) {
+    try {
+      let results : [{}] = [{}];
+      results.pop();
+      await this.pmRepository.find({
+        relations: ["meetings"],
+        where: {
+          admin: false
+        }
+      }).then(pms => {
+        pms.forEach(pm => {
+          let count = 0;
+          pm.meetings.length > 0 && pm.meetings.forEach(meeting => {
+            if(new Date(interval.dateDown) < new Date(meeting.date) && new Date(meeting.date) < new Date(interval.dateUp)){
+              count += 1;
+            }
+            
+          })
+          results.push({
+            pseudo: pm.pseudo,
+            count: count
+          });
+        })
+      });
+      return results
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de compter les rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
