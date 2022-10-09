@@ -56,26 +56,27 @@ export class CallsService {
     try {
       let results: [{}] = [{}];
       results.pop();
-      await this.pmRepository.find({
+      const pms = await this.pmRepository.find({
       relations: ["calls"],
       where: {
         admin: false,
       } 
-      }).then(pms => {
-        for(let pm of pms) {
-          let count = 0;
-          pm.calls ? pm.calls.forEach(call => {
-            if(new Date(interval.dateDown) < new Date(call.date) && new Date(call.date) < new Date(interval.dateUp)){
-              count += 1
-            }
-          }) : 0;
-
-         results.push({
-          pseudo: pm.pseudo,
-          count: count
-         }) 
-        }
       });
+      for(let pm of pms) {
+        let count = 0;
+        pm.calls ? pm.calls.forEach(call => {
+          if(new Date(interval.dateDown) < new Date(call.date) && new Date(call.date) < new Date(interval.dateUp)){
+            count += 1
+          }
+        }) : 0;
+
+       results.push({
+        pseudo: pm.pseudo,
+        count: count
+       }) 
+      }
+      console.log(interval)
+      console.log(results)
       return results;
     } catch (error) {
       console.log(error)
