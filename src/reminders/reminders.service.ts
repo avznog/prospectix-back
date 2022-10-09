@@ -12,7 +12,10 @@ import { Reminder } from './entities/reminder.entity';
 export class RemindersService {
   constructor(
     @InjectRepository(Reminder)
-    private reminderRepository: Repository<Reminder>
+    private reminderRepository: Repository<Reminder>,
+
+    @InjectRepository(ProjectManager)
+    private pmRepository: Repository<ProjectManager>
   ){}
   
   async update(id: number, updateReminderDto: UpdateReminderDto) {
@@ -177,6 +180,37 @@ export class RemindersService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de compter les rappels", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async countAll(interval: { dateDown: Date, dateUp: Date }) {
+    try {
+      let results : [{}] = [{}];
+      results.pop();
+      const pms = await this.pmRepository.find({
+        relations: ["reminders"],
+        where: {
+          admin: false
+        }
+      }).then(pms => {
+        pms.forEach(pm => {
+          let count = 0;
+          pm.reminders.length > 0 && pm.reminders.forEach(reminder => {
+            if(new Date(interval.dateDown) < new Date(reminder.date) && new Date(reminder.date) < new Date(interval.dateUp)){
+              count += 1;
+            }
+            
+          })
+          results.push({
+            pseudo: pm.pseudo,
+            count: count
+          });
+        })
+      });
+      return results
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les rapels", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

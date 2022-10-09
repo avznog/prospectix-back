@@ -86,7 +86,8 @@ export class ProjectManager extends BaseEntity {
   meetings: Meeting[];
 
   @OneToMany(() => Reminder, (reminder) => reminder.pm, {
-    lazy: true,
+    
+    nullable: true
   })
   @ApiProperty({
     description: "Rappels du chef de projet",

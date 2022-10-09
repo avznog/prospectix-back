@@ -73,4 +73,10 @@ export class RemindersController {
   countAllForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
     return this.reminderService.countAllForMe(user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all")
+  countAll(@Query() interval: { dateDown: Date, dateUp: Date }) {
+    return this.reminderService.countAll(interval);
+  }
 }

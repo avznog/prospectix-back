@@ -75,8 +75,6 @@ export class CallsService {
         count: count
        }) 
       }
-      console.log(interval)
-      console.log(results)
       return results;
     } catch (error) {
       console.log(error)
