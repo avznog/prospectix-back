@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MeetingType } from 'src/constants/meeting.type';
 import { StageType } from 'src/constants/stage.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { DeleteResult, MoreThan, Repository, UpdateResult } from 'typeorm';
+import { Between, DeleteResult, MoreThan, Repository, UpdateResult } from 'typeorm';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { ResearchParamsMeetingsDto } from './dto/research-parmas-meetings.dto';
 import { Meeting } from './entities/meeting.entity';
@@ -210,6 +210,71 @@ export class MeetingsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de compter les rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async countAllForEveryOne() {
+    try {
+      let results: {
+        labels: [string],
+        datasets: [{
+          label: string,
+          data: [number]
+        }
+      ]
+      } = {
+        labels: [""],
+        datasets: [{
+          label: "",
+          data: [0]
+        }
+      ]
+      }
+      results.labels.pop();
+      results.datasets.pop();
+     
+      // getting all the pms
+      let pms = await this.pmRepository.find({
+        where: {
+          admin: false
+        }
+      });
+      let first = true;
+      let counter = 0;
+
+      // for each pm
+      for(let pm of pms) {
+        results.datasets.push({label: pm.pseudo, data: [0]})
+        results.datasets[counter].data.pop();
+
+        // ! The starting date for the stats
+        let date = new Date("2022-09-01T17:16:57.720Z");
+        
+        while(date < new Date()) {
+          // Scrolling through the dates, periods of each week 
+          const startDate = date;
+          const endDate = new Date(date)
+          endDate.setDate(date.getDate() + 7)
+          first && results.labels.push(startDate.toLocaleDateString("fr-FR"))
+          await this.meetingRepository.count({
+            where: {
+              pm: {
+                pseudo: pm.pseudo,
+              },
+              date: Between(startDate, endDate)
+            }
+          }).then(count => {
+            results.datasets[counter].data.push(count)
+          })
+          date.setDate(date.getDate() + 7)
+        }
+        first = false;
+        counter +=1;
+      }
+      return results
+    } catch (error) {
+      console.log(error)
+     throw new HttpException("Impossible de compter tous les rendez-vous pour tout le monde", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
