@@ -1,10 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { cp } from 'fs';
+import { lastDayOfWeek } from 'date-fns';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { Between, Repository } from 'typeorm';
+import { Between, MoreThan, Repository } from 'typeorm';
 import { CreateCallDto } from './dto/create-call.dto';
-import { UpdateCallDto } from './dto/update-call.dto';
 import { Call } from './entities/call.entity';
 
 @Injectable()
@@ -52,6 +51,24 @@ export class CallsService {
     }
   }
 
+  async countWeeklyForMe(user: ProjectManager) : Promise<number> {
+    try {
+      let currentDate = new Date;
+      var endDate = new Date(currentDate.setDate((currentDate.getDate() - currentDate.getDay() - 6) + 6));
+      return await this.callRepository.count({
+        where: {
+          pm: {
+            pseudo: user.pseudo
+          },
+          date: MoreThan(endDate)
+        }
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer les appels de la derniere semaine",HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async countAll(interval: { dateDown: Date, dateUp: Date}) {
     try {
       let results: [{}] = [{}];
@@ -79,6 +96,69 @@ export class CallsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de compter les appels",HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async countAllForEveryOne() {
+    try {
+      let results: {
+        labels: [string],
+        datasets: [{
+          label: string,
+          data: [number]
+        }
+      ]
+      } = {
+        labels: [""],
+        datasets: [{
+          label: "",
+          data: [0]
+        }
+      ]
+      }
+      results.labels.pop();
+      results.datasets.pop();
+     
+      // getting all the pms
+      let pms = await this.pmRepository.find({
+        where: {
+          admin: false
+        }
+      });
+      let first = true;
+      let counter = 0;
+      // for each pm
+      for(let pm of pms) {
+        results.datasets.push({label: pm.pseudo, data: [0]})
+        results.datasets[counter].data.pop();
+        // ! The starting date for the stats
+        let date = new Date("2022-09-01T17:16:57.720Z");
+        
+        while(date < new Date()) {
+          // Scrolling through the dates, periods of each week 
+          const startDate = date;
+          const endDate = new Date(date)
+          endDate.setDate(date.getDate() + 7)
+          first && results.labels.push(startDate.toLocaleDateString("fr-FR"))
+          await this.callRepository.count({
+            where: {
+              pm: {
+                pseudo: pm.pseudo,
+              },
+              date: Between(startDate, endDate)
+            }
+          }).then(count => {
+            results.datasets[counter].data.push(count)
+          })
+          date.setDate(date.getDate() + 7)
+        }
+        first = false;
+        counter +=1;
+      }
+      return results
+    } catch (error) {
+      console.log(error)
+     throw new HttpException("Impossible de compter tous les appels pour tout le monde", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

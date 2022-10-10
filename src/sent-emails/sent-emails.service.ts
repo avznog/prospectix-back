@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StageType } from 'src/constants/stage.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { CreateSentEmailDto } from './dto/create-sent-email.dto';
 import { ResearchParamsSentEmailsDto } from './dto/research-params-sent-emails.dto';
 import { SentEmail } from './entities/sent-email.entity';
@@ -64,6 +64,24 @@ export class SentEmailsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de compter les mails", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async countWeeklyForMe(user: ProjectManager) : Promise<number> {
+    try {
+      let currentDate = new Date;
+      var endDate = new Date(currentDate.setDate((currentDate.getDate() - currentDate.getDay() - 6) + 6));
+      return await this.sentEmailRepository.count({
+        where: {
+          pm: {
+            pseudo: user.pseudo
+          },
+          sendingDate: MoreThan(endDate)
+        }
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer les appels de la derniere semaine",HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

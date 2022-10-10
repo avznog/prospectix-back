@@ -36,4 +36,16 @@ export class CallsController {
   countAll(@Query() interval: { dateDown: Date, dateUp: Date }) {
     return this.callsService.countAll(interval);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-weekly-for-me")
+  countWeeklyForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    return this.callsService.countWeeklyForMe(user);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all-for-everyone")
+  countAllForEveryOne() {
+    return this.callsService.countAllForEveryOne();
+  }
 }

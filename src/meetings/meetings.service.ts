@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MeetingType } from 'src/constants/meeting.type';
 import { StageType } from 'src/constants/stage.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, MoreThan, Repository, UpdateResult } from 'typeorm';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { ResearchParamsMeetingsDto } from './dto/research-parmas-meetings.dto';
 import { Meeting } from './entities/meeting.entity';
@@ -161,6 +161,24 @@ export class MeetingsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de compter les rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async countWeeklyForMe(user: ProjectManager) : Promise<number> {
+    try {
+      let currentDate = new Date;
+      var endDate = new Date(currentDate.setDate((currentDate.getDate() - currentDate.getDay() - 6) + 6));
+      return await this.meetingRepository.count({
+        where: {
+          pm: {
+            pseudo: user.pseudo
+          },
+          date: MoreThan(endDate)
+        }
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer les appels de la derniere semaine",HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

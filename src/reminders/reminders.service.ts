@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from "@nestjs/typeorm";
 import { StageType } from 'src/constants/stage.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { DeleteResult, In, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, In, MoreThan, Repository, UpdateResult } from 'typeorm';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { ResearchParamsRemindersDto } from './dto/research-params-reminders.dto';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
@@ -180,6 +180,24 @@ export class RemindersService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de compter les rappels", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async countWeeklyForMe(user: ProjectManager) : Promise<number> {
+    try {
+      let currentDate = new Date;
+      var endDate = new Date(currentDate.setDate((currentDate.getDate() - currentDate.getDay() - 6) + 6));
+      return await this.reminderRepository.count({
+        where: {
+          pm: {
+            pseudo: user.pseudo
+          },
+          date: MoreThan(endDate)
+        }
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer les appels de la derniere semaine",HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

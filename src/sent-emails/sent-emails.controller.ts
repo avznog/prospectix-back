@@ -46,4 +46,10 @@ export class SentEmailsController {
   countAll(@Query() interval: { dateDown: Date, dateUp: Date }) {
     return this.sentEmailsService.countAll(interval);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-weekly-for-me")
+  countWeeklyForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    return this.sentEmailsService.countWeeklyForMe(user);
+  }
 }

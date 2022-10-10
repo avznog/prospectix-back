@@ -73,4 +73,10 @@ export class MeetingsController {
   countAll(@Query() interval: { dateDown: Date, dateUp: Date }) {
     return this.meetingsService.countAll(interval);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-weekly-for-me")
+  countWeeklyForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    return this.meetingsService.countWeeklyForMe(user);
+  }
 }
