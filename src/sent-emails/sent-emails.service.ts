@@ -107,7 +107,7 @@ export class SentEmailsService {
       await this.pmRepository.find({
         relations: ["sentEmails"],
         where: {
-          admin: false
+          statsEnabled: true
         }
       }).then(pms => {
         pms.forEach(pm => {

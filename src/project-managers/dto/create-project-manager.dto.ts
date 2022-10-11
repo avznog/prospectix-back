@@ -49,4 +49,10 @@ export class CreateProjectManagerDto {
     required: true
   })
   mail: string;
+
+  @ApiProperty({
+    description: "Apparaît ou non dans les staitstiques publiques",
+    required: true
+  })
+  statsEnabled: boolean;
 }

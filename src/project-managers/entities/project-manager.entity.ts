@@ -71,6 +71,13 @@ export class ProjectManager extends BaseEntity {
   })
   disabled: boolean;
 
+  @Column()
+  @ApiProperty({
+    description: "Active ou non l'apparition dans les statistiques",
+    required: true
+  })
+  statsEnabled: boolean;
+
   @OneToMany(() => Goal, (goal) => goal.pm)
   @ApiProperty({
     description: "Objectifs du chef de projet",

@@ -208,7 +208,7 @@ export class RemindersService {
       await this.pmRepository.find({
         relations: ["reminders"],
         where: {
-          admin: false
+          statsEnabled: true
         }
       }).then(pms => {
         pms.forEach(pm => {

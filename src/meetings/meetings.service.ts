@@ -189,7 +189,7 @@ export class MeetingsService {
       await this.pmRepository.find({
         relations: ["meetings"],
         where: {
-          admin: false
+          statsEnabled: true
         }
       }).then(pms => {
         pms.forEach(pm => {
@@ -236,7 +236,7 @@ export class MeetingsService {
       // getting all the pms
       let pms = await this.pmRepository.find({
         where: {
-          admin: false
+          statsEnabled: true
         }
       });
       let first = true;

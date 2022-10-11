@@ -76,7 +76,7 @@ export class CallsService {
       const pms = await this.pmRepository.find({
       relations: ["calls"],
       where: {
-        admin: false,
+        statsEnabled: true
       } 
       });
       for(let pm of pms) {
@@ -122,7 +122,7 @@ export class CallsService {
       // getting all the pms
       let pms = await this.pmRepository.find({
         where: {
-          admin: false
+          statsEnabled: true
         }
       });
       let first = true;
