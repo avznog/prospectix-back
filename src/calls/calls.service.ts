@@ -155,6 +155,7 @@ export class CallsService {
         first = false;
         counter +=1;
       }
+      console.log(results)
       return results
     } catch (error) {
       console.log(error)
