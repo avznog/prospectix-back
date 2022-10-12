@@ -42,10 +42,6 @@ export class Prospect extends BaseEntity {
   companyName: string;
 
   @ManyToOne(() => Activity, { cascade: ["insert"], nullable: true})
-  @ApiProperty({
-    description: "Secteur d'activité du prospect",
-    required: true
-  })
   activity: Activity;
 
   @Column({ nullable: true })
