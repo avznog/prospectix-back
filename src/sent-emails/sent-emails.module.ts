@@ -3,9 +3,10 @@ import { SentEmailsService } from './sent-emails.service';
 import { SentEmailsController } from './sent-emails.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SentEmail } from './entities/sent-email.entity';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SentEmail])],
+  imports: [TypeOrmModule.forFeature([SentEmail, ProjectManager])],
   controllers: [SentEmailsController],
   providers: [SentEmailsService]
 })

@@ -1,20 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
+import { Call } from 'src/calls/entities/call.entity';
 import { Event } from 'src/events/entities/event.entity';
 import { Goal } from 'src/goals/entities/goal.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
+import { NegativeAnswer } from 'src/negative-answers/entities/negative-answer.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { SentEmail } from 'src/sent-emails/entities/sent-email.entity';
-import { Statistic } from 'src/statistics/entities/statistic.entity';
-import { StatsHistory } from 'src/stats-history/entities/stats-history.entity';
 import {
   BaseEntity,
   Column,
-  Entity,
-  JoinColumn,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn,
+  Entity, OneToMany, PrimaryGeneratedColumn
 } from 'typeorm';
 
 @Entity()
@@ -75,6 +71,13 @@ export class ProjectManager extends BaseEntity {
   })
   disabled: boolean;
 
+  @Column()
+  @ApiProperty({
+    description: "Active ou non l'apparition dans les statistiques",
+    required: true
+  })
+  statsEnabled: boolean;
+
   @OneToMany(() => Goal, (goal) => goal.pm)
   @ApiProperty({
     description: "Objectifs du chef de projet",
@@ -90,7 +93,8 @@ export class ProjectManager extends BaseEntity {
   meetings: Meeting[];
 
   @OneToMany(() => Reminder, (reminder) => reminder.pm, {
-    lazy: true,
+    
+    nullable: true
   })
   @ApiProperty({
     description: "Rappels du chef de projet",
@@ -99,7 +103,7 @@ export class ProjectManager extends BaseEntity {
   reminders: Reminder[];
 
   @OneToMany(() => SentEmail, (sentEmail) => sentEmail.pm, {
-    lazy: true,
+    
   })
   @ApiProperty({
     description: "Emails envoyés du chef de projet",
@@ -123,18 +127,17 @@ export class ProjectManager extends BaseEntity {
   })
   events: Event[];
 
-  @OneToOne(() => Statistic, { nullable: true })
-  @JoinColumn()
+  @OneToMany(() => Call, (call) => call.pm, { nullable: true})
   @ApiProperty({
-    description: "Statistiques du chef de projet",
+    description: "Appels du chef de projet",
     required: false
   })
-  statistic: Statistic;
+  calls: Call[];
 
-  @OneToMany(() => StatsHistory, (statsHistory) => statsHistory.pm)
+  @OneToMany(() => NegativeAnswer, (negativeAnswer) => negativeAnswer.pm, { nullable: true })
   @ApiProperty({
-    description: "Historique des statistiques du chef de projet",
+    description: "Refus du chef de projet",
     required: false
   })
-  statsHistory: StatsHistory[];
+  negativeAnswers: NegativeAnswer[];
 }

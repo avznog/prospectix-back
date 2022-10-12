@@ -61,4 +61,34 @@ export class MeetingsController {
   countMeetings(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<number> {
     return this.meetingsService.countMeetings(researchParamsMeetingsDto, user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all-for-me")
+  countAllForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    return this.meetingsService.countAllForMe(user);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all")
+  countAll(@Query() interval: { dateDown: Date, dateUp: Date }) {
+    return this.meetingsService.countAll(interval);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-weekly-for-me")
+  countWeeklyForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    return this.meetingsService.countWeeklyForMe(user);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all-for-everyone")
+  countAllForEveryone() {
+    return this.meetingsService.countAllForEveryOne();
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all-by-weeks-for-me")
+  countAllByWeeksForMe(@CurrentUser() user: ProjectManager) {
+    return this.meetingsService.countAllByWeeksForMe(user);
+  }
 }

@@ -61,6 +61,7 @@ export class ProspectsService {
       mail: "admin@juniorisep.com",
       tokenEmail: "",
       disabled: false,
+      statsEnabled: false
     }));
 
     // Creating France country

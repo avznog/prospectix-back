@@ -38,6 +38,7 @@
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
     "cookie-parser": "^1.4.6",
+    "date-fns": "^2.29.3",
     "ldap-authentication": "^2.2.9",
     "passport": "^0.5.3",
     "passport-jwt": "^4.0.0",

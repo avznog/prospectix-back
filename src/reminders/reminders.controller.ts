@@ -67,4 +67,28 @@ export class RemindersController {
   countReminders(@Query() researchParamsRemindersDto: ResearchParamsRemindersDto, @CurrentUser() user: ProjectManager) : Promise<number> {
     return this.reminderService.countReminders(researchParamsRemindersDto, user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all-for-me")
+  countAllForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    return this.reminderService.countAllForMe(user);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all")
+  countAll(@Query() interval: { dateDown: Date, dateUp: Date }) {
+    return this.reminderService.countAll(interval);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-weekly-for-me")
+  countWeeklyForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    return this.reminderService.countWeeklyForMe(user);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all-by-weeks-for-me")
+  countAllByWeeksForMe(@CurrentUser() user: ProjectManager) {
+    return this.reminderService.countAllByWeeksForMe(user);
+  }
 }

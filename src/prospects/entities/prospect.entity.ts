@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
+import { Call } from 'src/calls/entities/call.entity';
 import { City } from 'src/cities/entities/city.entity';
 import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
 import { StageType } from 'src/constants/stage.type';
@@ -8,6 +9,7 @@ import { Country } from 'src/countries/entities/country.entity';
 import { Email } from 'src/emails/entities/email.entity';
 import { Event } from 'src/events/entities/event.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
+import { NegativeAnswer } from 'src/negative-answers/entities/negative-answer.entity';
 import { Phone } from 'src/phones/entities/phone.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { SentEmail } from 'src/sent-emails/entities/sent-email.entity';
@@ -174,4 +176,12 @@ export class Prospect extends BaseEntity {
     required: false
   })
   reasonDisabled: ReasonDisabledType;
+
+  @OneToOne(() => Call, (call) => call.prospect, { nullable: true })
+  @JoinColumn()  
+  call: Call;
+
+  @OneToOne(() => NegativeAnswer, (negativeAnswer) => negativeAnswer.prospect, { nullable: true})
+  @JoinColumn()
+  negativeAnswer: NegativeAnswer;
 }
