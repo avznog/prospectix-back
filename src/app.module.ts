@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { Auth } from './auth/entities/auth.entity';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { Bookmark } from './bookmarks/entities/bookmark.entity';
+import { CallsModule } from './calls/calls.module';
 import { Call } from './calls/entities/call.entity';
 import { CitiesModule } from './cities/cities.module';
 import { City } from './cities/entities/city.entity';
@@ -26,6 +27,7 @@ import { GoalsModule } from './goals/goals.module';
 import { Meeting } from './meetings/entities/meeting.entity';
 import { MeetingsModule } from './meetings/meetings.module';
 import { NegativeAnswer } from './negative-answers/entities/negative-answer.entity';
+import { NegativeAnswersModule } from './negative-answers/negative-answers.module';
 import { Phone } from './phones/entities/phone.entity';
 import { PhonesModule } from './phones/phones.module';
 import { ProjectManager } from './project-managers/entities/project-manager.entity';
@@ -57,6 +59,8 @@ console.log(process.env.BASE_URL)
     SentEmailsModule,
     EventsModule,
     WebsitesModule,
+    CallsModule,
+    NegativeAnswersModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
