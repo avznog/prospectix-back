@@ -157,7 +157,6 @@ export class SentEmailsService {
         results.data.push(count)
         startDate.setDate(startDate.getDate() + 7)
       }
-      console.log(results)
       return results
     } catch (error) {
       console.log(error)
