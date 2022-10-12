@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { lastDayOfWeek } from 'date-fns';
 import { MeetingType } from 'src/constants/meeting.type';
 import { StageType } from 'src/constants/stage.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
@@ -275,6 +276,38 @@ export class MeetingsService {
     } catch (error) {
       console.log(error)
      throw new HttpException("Impossible de compter tous les rendez-vous pour tout le monde", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async countAllByWeeksForMe(user: ProjectManager) {
+    try {
+      let results: { intervals: [{dateDown: Date, dateUp: Date}], data: [number]} = {intervals: [{dateDown: new Date, dateUp: new Date}], data: [0]};
+      results.data.pop();
+      results.intervals.pop();
+      let startDate = new Date("2022-07-04T08:26:39.123Z");
+      let endDate = lastDayOfWeek(new Date(), {weekStartsOn: 2});
+      let d = new Date("2022-07-04T08:26:39.123Z");
+      while(startDate  < endDate) {
+        d.setDate(startDate.getDate() + 7)
+        results.intervals.push({
+          dateDown: new Date(startDate),
+          dateUp: new Date(d)
+        });
+        const count =  await this.meetingRepository.count({
+          where: {
+            pm: {
+              pseudo: user.pseudo
+            },
+            date: Between(new Date(startDate), new Date(d))
+          }
+        })
+        results.data.push(count)
+        startDate.setDate(startDate.getDate() + 7)
+      }
+      return results
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les appels par semaines", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

@@ -48,4 +48,10 @@ export class CallsController {
   countAllForEveryOne() {
     return this.callsService.countAllForEveryOne();
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all-by-weeks-for-me")
+  countAllByWeeksForMe(@CurrentUser() user: ProjectManager) {
+    return this.callsService.countAllByWeeksForMe(user);
+  }
 }

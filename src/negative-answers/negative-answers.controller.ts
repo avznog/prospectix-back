@@ -36,4 +36,10 @@ export class NegativeAnswersController {
   countWeeklyForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
     return this.negativeAnswersService.countWeeklyForMe(user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all-by-weeks-for-me")
+  countAllByWeeksForMe(@CurrentUser() user: ProjectManager) {
+    return this.negativeAnswersService.countAllByWeeksForMe(user);
+  }
 }

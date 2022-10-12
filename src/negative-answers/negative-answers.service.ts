@@ -1,7 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { lastDayOfWeek } from 'date-fns';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { MoreThan, Repository } from 'typeorm';
+import { Between, MoreThan, Repository } from 'typeorm';
 import { CreateNegativeAnswerDto } from './dto/create-negative-answer.dto';
 import { UpdateNegativeAnswerDto } from './dto/update-negative-answer.dto';
 import { NegativeAnswer } from './entities/negative-answer.entity';
@@ -63,6 +64,38 @@ export class NegativeAnswersService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récupérer les appels de la derniere semaine",HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async countAllByWeeksForMe(user: ProjectManager) {
+    try {
+      let results: { intervals: [{dateDown: Date, dateUp: Date}], data: [number]} = {intervals: [{dateDown: new Date, dateUp: new Date}], data: [0]};
+      results.data.pop();
+      results.intervals.pop();
+      let startDate = new Date("2022-07-04T08:26:39.123Z");
+      let endDate = lastDayOfWeek(new Date(), {weekStartsOn: 2});
+      let d = new Date("2022-07-04T08:26:39.123Z");
+      while(startDate  < endDate) {
+        d.setDate(startDate.getDate() + 7)
+        results.intervals.push({
+          dateDown: new Date(startDate),
+          dateUp: new Date(d)
+        });
+        const count =  await this.negativeAnswerRepository.count({
+          where: {
+            pm: {
+              pseudo: user.pseudo
+            },
+            date: Between(new Date(startDate), new Date(d))
+          }
+        })
+        results.data.push(count)
+        startDate.setDate(startDate.getDate() + 7)
+      }
+      return results
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les appels par semaines", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   

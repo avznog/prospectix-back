@@ -85,4 +85,10 @@ export class RemindersController {
   countWeeklyForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
     return this.reminderService.countWeeklyForMe(user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-all-by-weeks-for-me")
+  countAllByWeeksForMe(@CurrentUser() user: ProjectManager) {
+    return this.reminderService.countAllByWeeksForMe(user);
+  }
 }
