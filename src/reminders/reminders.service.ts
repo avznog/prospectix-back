@@ -215,7 +215,7 @@ export class RemindersService {
         pms.forEach(pm => {
           let count = 0;
           pm.reminders.length > 0 && pm.reminders.forEach(reminder => {
-            if(new Date(interval.dateDown) < new Date(reminder.date) && new Date(reminder.date) < new Date(interval.dateUp)){
+            if(new Date(interval.dateDown) < new Date(reminder.creationDate) && new Date(reminder.creationDate) < new Date(interval.dateUp)){
               count += 1;
             }
             

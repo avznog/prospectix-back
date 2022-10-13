@@ -196,7 +196,7 @@ export class MeetingsService {
         pms.forEach(pm => {
           let count = 0;
           pm.meetings.length > 0 && pm.meetings.forEach(meeting => {
-            if(new Date(interval.dateDown) < new Date(meeting.date) && new Date(meeting.date) < new Date(interval.dateUp)){
+            if(new Date(interval.dateDown) < new Date(meeting.creationDate) && new Date(meeting.creationDate) < new Date(interval.dateUp)){
               count += 1;
             }
             
@@ -262,7 +262,7 @@ export class MeetingsService {
               pm: {
                 pseudo: pm.pseudo,
               },
-              date: Between(startDate, endDate)
+              creationDate: Between(startDate, endDate)
             }
           }).then(count => {
             results.datasets[counter].data.push(count)

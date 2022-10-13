@@ -75,8 +75,14 @@ export class CallsService {
       let results: { intervals: [{dateDown: Date, dateUp: Date}], data: [number]} = {intervals: [{dateDown: new Date, dateUp: new Date}], data: [0]};
       results.data.pop();
       results.intervals.pop();
+
+      // ! Date de début de l'historique
       let startDate = new Date("2022-07-04T08:26:39.123Z");
+
+      //! Date de fin de l'historique
       let endDate = lastDayOfWeek(new Date(), {weekStartsOn: 2});
+
+      // ! Date de début pour incrémenter
       let d = new Date("2022-07-04T08:26:39.123Z");
       while(startDate  < endDate) {
         d.setDate(startDate.getDate() + 7)
