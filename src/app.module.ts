@@ -38,6 +38,7 @@ import { Reminder } from './reminders/entities/reminder.entity';
 import { RemindersModule } from './reminders/reminders.module';
 import { SentEmail } from './sent-emails/entities/sent-email.entity';
 import { SentEmailsModule } from './sent-emails/sent-emails.module';
+import { SlackModule } from './slack/slack.module';
 import { Website } from './websites/entities/website.entity';
 import { WebsitesModule } from './websites/websites.module';
 console.log(process.env.BASE_URL)
@@ -80,6 +81,7 @@ console.log(process.env.BASE_URL)
       synchronize: true,
       entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website, Call, NegativeAnswer],
     }),
+    SlackModule,
   ],
   controllers: [AppController],
   providers: [AppService],
