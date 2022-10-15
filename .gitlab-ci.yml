@@ -48,10 +48,10 @@ docker-staging:
   stage: docker
   image: docker:latest
   before_script:
-    - docker login -u $CI_DEPLOY_USERNAME -p $CI_DEPLOY_TOKEN $CI_REGISTRY
+    - docker login -u $DOCKER_LOGIN -p $DOCKER_TOKEN $CI_REGISTRY
   script:
-    - docker build --tag registry.dev.juniorisep.com/interne/prospectix7/back:staging .
-    - docker push registry.dev.juniorisep.com/interne/prospectix7/back:staging
+    - docker build --tag $CI_REGISTRY_IMAGE:staging .
+    - docker push $CI_REGISTRY_IMAGE:staging
   dependencies:
     - build-staging
   only:
@@ -63,8 +63,8 @@ docker-prod:
   before_script:
     - docker login -u $CI_DEPLOY_USERNAME -p $CI_DEPLOY_TOKEN $CI_REGISTRY
   script:
-    - docker build --tag registry.dev.juniorisep.com/interne/prospectix7/back:prod .
-    - docker push registry.dev.juniorisep.com/interne/prospectix7/back:prod
+    - docker build --tag $CI_REGISTRY_IMAGE:prod .
+    - docker push $CI_REGISTRY_IMAGE:prod
   dependencies:
     - build-prod
   only:
