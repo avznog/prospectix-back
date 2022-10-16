@@ -1,0 +1,10 @@
+export enum StageType {
+  RESEARCH,
+  BOOKMARK,
+  REMINDER,
+  MEETING,
+  MAIL,
+  ARCHIVED,
+  PRO,
+  MEETING_DONE_AND_OUT
+}

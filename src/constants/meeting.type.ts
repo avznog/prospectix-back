@@ -1,5 +1,5 @@
 export enum MeetingType {
-  EXT,
-  TEL_VISIO,
-  MEETING_TABLE,
+  EXT = "Présentiel",
+  TEL_VISIO = "Distanciel",
+  MEETING_TABLE = "Table de rendez-vous"
 }
