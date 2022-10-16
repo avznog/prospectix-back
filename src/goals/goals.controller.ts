@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
+import { SentryInterceptor } from 'src/sentry.interceptor';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { CreateGoalDto } from './dto/create-goal.dto';
 import { ResearchParamsGoalsDto } from './dto/research-params-goals.dto';
@@ -12,6 +13,7 @@ import { UpdateGoalDto } from './dto/update-goal.dto';
 import { Goal } from './entities/goal.entity';
 import { GoalsService } from './goals.service';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('goals')
 @ApiTags("goals")
 @UseGuards(JwtAuthGuard, RolesGuard)

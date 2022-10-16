@@ -2,9 +2,15 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
+import * as Sentry from '@sentry/node';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Sentry configuration
+  Sentry.init({
+    dsn: process.env.SENTRYDSN
+  });
   app.use(cookieParser());
   app.enableCors({
     origin: process.env.BASE_URL,

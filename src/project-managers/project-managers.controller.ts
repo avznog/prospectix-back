@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
+import { SentryInterceptor } from 'src/sentry.interceptor';
 import { UpdateResult } from 'typeorm';
 import { CreateProjectManagerDto } from './dto/create-project-manager.dto';
 import { ResearchParamsProjectManagersDto } from './dto/research-params-project-managers.dto';
@@ -12,6 +13,7 @@ import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
 import { ProjectManager } from './entities/project-manager.entity';
 import { ProjectManagersService } from './project-managers.service';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('project-managers')
 @ApiTags('project-managers')
 @UseGuards(JwtAuthGuard, RolesGuard)

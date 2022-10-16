@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
 import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
+import { SentryInterceptor } from 'src/sentry.interceptor';
 import { UpdateResult } from 'typeorm';
 import { CreateProspectDto } from './dto/create-prospect.dto';
 import { ResearchParamsProspectDto } from './dto/research-params-prospect.dto';
@@ -12,6 +13,7 @@ import { UpdateProspectDto } from './dto/update-prospect.dto';
 import { Prospect } from './entities/prospect.entity';
 import { ProspectsService } from './prospects.service';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('prospects')
 @ApiTags('prospects')
 @UseGuards(JwtAuthGuard, RolesGuard)

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { SentEmailsService } from './sent-emails.service';
 import { ApiTags } from '@nestjs/swagger';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
@@ -10,7 +10,9 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { CreateSentEmailDto } from './dto/create-sent-email.dto';
 import { SentEmail } from './entities/sent-email.entity';
+import { SentryInterceptor } from 'src/sentry.interceptor';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('sent-emails')
 @ApiTags("sent-emails")
 @UseGuards(JwtAuthGuard, RolesGuard)

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
@@ -6,12 +6,14 @@ import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { SentryInterceptor } from 'src/sentry.interceptor';
 import { DeleteResult } from 'typeorm';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { ResearchParamsBookmarksDto } from './dto/research-params-bookmarks.dto';
 import { Bookmark } from './entities/bookmark.entity';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('bookmarks')
 @ApiTags("bookmarks")
 @UseGuards(JwtAuthGuard, RolesGuard)
