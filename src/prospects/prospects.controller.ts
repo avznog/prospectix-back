@@ -24,8 +24,9 @@ export class ProspectsController {
   @Roles(RolesType.ADMIN)
   @Get("create-from-scrapper")
   createFromScrapper() {
-    console.log("started")
-    this.prospectsService.createFromScrapper();
+    // console.log("started")
+    // this.prospectsService.createFromScrapper();
+    console.log("endpoint disabled")
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
