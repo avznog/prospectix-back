@@ -206,7 +206,9 @@ export class ProspectsService {
         console.log("prospect", added, "/", len)
     }
       
-    
+  }
+
+  async addEvents() {
     // Adding first event for prospects
 
     // fetching all prospects
@@ -229,6 +231,7 @@ export class ProspectsService {
         pm: pm
       }));
     } 
+    console.log("finished")
   }
 
   async create(createProspectDto: CreateProspectDto) {
