@@ -9,9 +9,18 @@ export class SlackService {
     private httpService: HttpService
   ) {}
 
-  async sendMeeting(user: ProjectManager, prospect: Prospect) {
+  async sendMeetingProd(user: ProjectManager, prospect: Prospect) {
     try {
       return this.httpService.post("https://hooks.slack.com/services/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", { text: `👥 ${user.firstname} ${user.name} a décroché un rendez-vous avec ${prospect.companyName}`}).subscribe()
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible d'envoyer la notification de rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async sendMeetingStaging(user: ProjectManager, prospect: Prospect) {
+    try {
+      return this.httpService.post("https://hooks.slack.com/services/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", { text: `👥 ${user.firstname} ${user.name} a décroché un rendez-vous avec ${prospect.companyName}`}).subscribe()
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible d'envoyer la notification de rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR)
