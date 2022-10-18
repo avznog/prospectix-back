@@ -33,8 +33,9 @@ export class ProspectsController {
   @Roles(RolesType.ADMIN)
   @Get("add-events")
   addEvents() {
-    console.log("started adding events")
-    this.prospectsService.addEvents();
+    // console.log("started adding events")
+    // this.prospectsService.addEvents();
+    console.log("endpoint disabled")
   }
   
   @Roles(RolesType.CDP, RolesType.ADMIN)
