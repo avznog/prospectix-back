@@ -77,13 +77,13 @@ export class CallsService {
       results.intervals.pop();
 
       // ! Date de début de l'historique
-      let startDate = new Date("2022-07-04T08:26:39.123Z");
+      let startDate = new Date("2022-11-07T00:00:00.000Z");
 
       //! Date de fin de l'historique
       let endDate = lastDayOfWeek(new Date(), {weekStartsOn: 2});
 
       // ! Date de début pour incrémenter
-      let d = new Date("2022-07-04T08:26:39.123Z");
+      let d = new Date("2022-11-07T00:00:00.000Z");
       while(startDate  < endDate) {
         d.setDate(startDate.getDate() + 7)
         results.intervals.push({
@@ -171,7 +171,7 @@ export class CallsService {
         results.datasets.push({label: pm.pseudo, data: [0]})
         results.datasets[counter].data.pop();
         // ! The starting date for the stats
-        let date = new Date("2022-09-01T17:16:57.720Z");
+        let date = new Date("2022-11-07T00:00:00.000Z");
         
         while(date < new Date()) {
           // Scrolling through the dates, periods of each week 
