@@ -6,26 +6,37 @@ import { Prospect } from 'src/prospects/entities/prospect.entity';
 
 @Injectable()
 export class SlackService {
+
+  webhookMeetingChannel: string;
+  webhookFraudChannel: string;
+  webhookChampionChannel: string;
+  webhookRecapChannel: string;
+
   constructor(
-    private httpService: HttpService
-  ) {}
+    private httpService: HttpService,
+  ) {
+    // ! changing the url for slack channel if prod / staging or localhost
+    if(process.env.BASE_URL.includes("localhost")) {
+      // ! LOCALHOST (= staging)
+      this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
+      this.webhookFraudChannel = "https://hooks.slack.com/services/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"
+    } else if (process.env.BASE_URL.includes("staging")) {
+      // ! STAGING
+      this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
+      this.webhookFraudChannel = "https://hooks.slack.com/services/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"
+    } else {
+      // ! PRODUCTION
+      this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
+      this.webhookFraudChannel = "https://hooks.slack.com/services/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"
+    }
+  }
 
   sendMeetingSlack(user: ProjectManager, prospect: Prospect) {
     try {
       const message = {
         text: `👥 ${user.firstname} ${user.name} a décroché un rendez-vous avec ${prospect.companyName}`
       }
-      let url;
-
-      // ! changing the url for slack channel if prod / staging or localhost
-      if(process.env.BASE_URL.includes("localhost")) {
-        url = "https://hooks.slack.com/services/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"
-      } else if (process.env.BASE_URL.includes("staging")) {
-        url = "https://hooks.slack.com/services/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"
-      } else {
-        url = "https://hooks.slack.com/services/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"
-      }
-      return this.httpService.post(url, message).subscribe()
+      return this.httpService.post(this.webhookMeetingChannel, message).subscribe()
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible d'envoyer la notification de rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR)
@@ -50,12 +61,12 @@ export class SlackService {
   //   console.log("Cron is working with " + new Date())
   // } 
 
-  sendCheatingSlack() {
+  sendFraud(prospect: Prospect, user: ProjectManager) {
     try {
       const message = {
-        text: ""
+        text: `🚨🚨🚨 Alerte ! Nous avons un fraudeur : *${user.firstname} ${user.name}* a appelé ${prospect.companyName} aujourd'hui à *${(new Date().toLocaleTimeString())}*`
       }
-      return this.httpService.post("", message).subscribe()
+      return this.httpService.post(this.webhookFraudChannel, message).subscribe()
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible d'envoyer la notification", HttpStatus.INTERNAL_SERVER_ERROR);

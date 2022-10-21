@@ -20,4 +20,10 @@ export class SlackController {
   sendMeetingProd(@CurrentUser() user: ProjectManager, @Body() prospect: Prospect) {
     return this.slackService.sendMeetingSlack(user, prospect);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Post("send-fraud")
+  sendFraud(@CurrentUser() user: ProjectManager, @Body() prospect: Prospect) {
+    return this.slackService.sendFraud(prospect, user);
+  }
 }
