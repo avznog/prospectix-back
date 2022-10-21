@@ -2,8 +2,6 @@ import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { lastDayOfWeek } from 'date-fns';
-import previousMonday from 'date-fns/previousMonday';
 import { Call } from 'src/calls/entities/call.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
@@ -31,7 +29,7 @@ export class SlackService {
     private readonly meetingRepository: Repository<Meeting>
   ) {
     // ! changing the url for slack channel if prod / staging or localhost
-    if(process.env.BASE_URL.includes("localhost")) {
+    if (process.env.BASE_URL.includes("localhost")) {
       // ! LOCALHOST (= staging)
       this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
       this.webhookFraudChannel = "https://hooks.slack.com/services/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"
@@ -80,7 +78,7 @@ export class SlackService {
   @Cron("00 17 * * 0")
   async sendWeekRecap() {
     try {
-      let weekPms: [{ pm: ProjectManager, countCalls: number, countMeetings: number}] = [{pm: {} as ProjectManager, countCalls: 0, countMeetings: 0}];
+      let weekPms: [{ pm: ProjectManager, countCalls: number, countMeetings: number }] = [{ pm: {} as ProjectManager, countCalls: 0, countMeetings: 0 }];
       weekPms.pop();
 
       // ? for all pms (CDP)
@@ -98,7 +96,7 @@ export class SlackService {
 
       // ? start date : last sunday 17h02
       first.setDate(new Date().getDate() - 7)
-      first.setHours(19,2,0,0)
+      first.setHours(19, 2, 0, 0)
 
       // ? end date -> the moment it starts with cron (every sunday, so sunday)
       end = new Date();
@@ -106,7 +104,7 @@ export class SlackService {
 
 
       // ? Loop in all pms
-      for(let pm of pms) {
+      for (let pm of pms) {
 
         // ? count calls of pm
         const countCalls = await this.callRepository.count({
@@ -118,8 +116,8 @@ export class SlackService {
           }
         })
 
-      // ? count meetings of pm
-      const countMeetings = await this.meetingRepository.count({
+        // ? count meetings of pm
+        const countMeetings = await this.meetingRepository.count({
           where: {
             pm: {
               pseudo: pm.pseudo
@@ -127,16 +125,16 @@ export class SlackService {
             creationDate: Between(new Date(first), new Date(end))
           }
         })
-        
+
         // ? if the pm did not complete the objectives
-          if(countCalls < 50 && countMeetings == 0) {
-            weekPms.push({
-              pm: pm,
-              countCalls: countCalls,
-              countMeetings: countMeetings
-            })
-          }
-        
+        if (countCalls < 50 && countMeetings == 0) {
+          weekPms.push({
+            pm: pm,
+            countCalls: countCalls,
+            countMeetings: countMeetings
+          })
+        }
+
       }
 
       // ? format message
@@ -150,12 +148,12 @@ export class SlackService {
 
       // ? send
       return this.httpService.post(this.webhookRecapChannel, message).subscribe()
-      
+
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible d'envoyer la notification du recap", HttpStatus.INTERNAL_SERVER_ERROR)
     }
-  } 
+  }
 
   sendFraud(prospect: Prospect, user: ProjectManager) {
     try {
