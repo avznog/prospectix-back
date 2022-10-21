@@ -29,7 +29,7 @@ export class SlackController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("send-champ")
-  sendChamp(@CurrentUser() user: ProjectManager) {
+  async sendChamp(@CurrentUser() user: ProjectManager) {
     return this.slackService.sendChampSlack(user);
   }
 }

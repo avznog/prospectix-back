@@ -39,6 +39,7 @@ import { Reminder } from './reminders/entities/reminder.entity';
 import { RemindersModule } from './reminders/reminders.module';
 import { SentEmail } from './sent-emails/entities/sent-email.entity';
 import { SentEmailsModule } from './sent-emails/sent-emails.module';
+import { Slack } from './slack/entities/slack.entity';
 import { SlackModule } from './slack/slack.module';
 import { Website } from './websites/entities/website.entity';
 import { WebsitesModule } from './websites/websites.module';
@@ -79,7 +80,7 @@ import { WebsitesModule } from './websites/websites.module';
       database: process.env.POSTGRES_DATABASE ?? 'prospectix0',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
-      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website, Call, NegativeAnswer],
+      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website, Call, NegativeAnswer, Slack],
     }),
     SlackModule,
     ScheduleModule.forRoot()
