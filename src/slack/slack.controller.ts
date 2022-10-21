@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
@@ -25,5 +25,11 @@ export class SlackController {
   @Post("send-fraud")
   sendFraud(@CurrentUser() user: ProjectManager, @Body() prospect: Prospect) {
     return this.slackService.sendFraud(prospect, user);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("send-champ")
+  sendChamp(@CurrentUser() user: ProjectManager) {
+    return this.slackService.sendChampSlack(user);
   }
 }

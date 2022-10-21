@@ -9,7 +9,7 @@ export class SlackService {
 
   webhookMeetingChannel: string;
   webhookFraudChannel: string;
-  webhookChampionChannel: string;
+  webhookChampChannel: string;
   webhookRecapChannel: string;
 
   constructor(
@@ -20,14 +20,17 @@ export class SlackService {
       // ! LOCALHOST (= staging)
       this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
       this.webhookFraudChannel = "https://hooks.slack.com/services/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"
+      this.webhookChampChannel = "https://hooks.slack.com/services/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"
     } else if (process.env.BASE_URL.includes("staging")) {
       // ! STAGING
       this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
       this.webhookFraudChannel = "https://hooks.slack.com/services/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"
+      this.webhookChampChannel = "https://hooks.slack.com/services/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"
     } else {
       // ! PRODUCTION
       this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
       this.webhookFraudChannel = "https://hooks.slack.com/services/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"
+      this.webhookChampChannel = "https://hooks.slack.com/services/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"
     }
   }
 
@@ -40,6 +43,18 @@ export class SlackService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible d'envoyer la notification de rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  sendChampSlack(user: ProjectManager) {
+    try {
+      const message = {
+        text: `🏆 Nouveau Champion ! ${user.firstname} ${user.name} a décroché son 3ème rendez-vous de la semaine`
+      }
+      return this.httpService.post(this.webhookChampChannel, message).subscribe()
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible d'envoyer la notification de champion", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
