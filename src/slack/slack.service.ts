@@ -10,18 +10,22 @@ export class SlackService {
     private httpService: HttpService
   ) {}
 
-  sendMeetingProd(user: ProjectManager, prospect: Prospect) {
+  sendMeetingSlack(user: ProjectManager, prospect: Prospect) {
     try {
-      return this.httpService.post("https://hooks.slack.com/services/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", { text: `👥 ${user.firstname} ${user.name} a décroché un rendez-vous avec ${prospect.companyName}`}).subscribe()
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible d'envoyer la notification de rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-  }
+      const message = {
+        text: `👥 ${user.firstname} ${user.name} a décroché un rendez-vous avec ${prospect.companyName}`
+      }
+      let url;
 
-  sendMeetingStaging(user: ProjectManager, prospect: Prospect) {
-    try {
-      return this.httpService.post("https://hooks.slack.com/services/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", { text: `👥 ${user.firstname} ${user.name} a décroché un rendez-vous avec ${prospect.companyName}`}).subscribe()
+      // ! changing the url for slack channel if prod / staging or localhost
+      if(process.env.BASE_URL.includes("localhost")) {
+        url = "https://hooks.slack.com/services/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"
+      } else if (process.env.BASE_URL.includes("staging")) {
+        url = "https://hooks.slack.com/services/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"
+      } else {
+        url = "https://hooks.slack.com/services/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"
+      }
+      return this.httpService.post(url, message).subscribe()
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible d'envoyer la notification de rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR)
@@ -29,13 +33,32 @@ export class SlackService {
   }
 
   //  ? Cron tab every sunday
-  @Cron("1 * * * * * ")
-  sendResumeOfWeek() {
+  // @Cron("1 * * * * * ")
+  // sendResumeOfWeek() {
+  //   try {
+  //     return this.httpService.post("https://hooks.slack.com/services/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", { text: "[TEST] Message automatique d'envoi toutes les minutes à la @RespoJuif "}).subscribe()
+  //   } catch (error) {
+  //     console.log(error)
+  //     throw new HttpException("Impossible d'envoyer la notification slack pour le résumé de la semaine du vendredi", HttpStatus.INTERNAL_SERVER_ERROR)
+  //   }
+  // } 
+
+
+  // //  ? Cron tab every sunday
+  // @Cron("00 17 * * 0")
+  // slack() {
+  //   console.log("Cron is working with " + new Date())
+  // } 
+
+  sendCheatingSlack() {
     try {
-      return this.httpService.post("https://hooks.slack.com/services/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", { text: "[TEST] Message automatique d'envoi toutes les minutes à la @RespoJuif "}).subscribe()
+      const message = {
+        text: ""
+      }
+      return this.httpService.post("", message).subscribe()
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossible d'envoyer la notification slack pour le résumé de la semaine du vendredi", HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException("Impossible d'envoyer la notification", HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  } 
+  }
 }

@@ -42,7 +42,6 @@ import { SentEmailsModule } from './sent-emails/sent-emails.module';
 import { SlackModule } from './slack/slack.module';
 import { Website } from './websites/entities/website.entity';
 import { WebsitesModule } from './websites/websites.module';
-console.log(process.env.BASE_URL)
 @Module({
   imports: [
     AuthModule,

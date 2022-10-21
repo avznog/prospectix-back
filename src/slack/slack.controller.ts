@@ -16,14 +16,8 @@ export class SlackController {
   constructor(private readonly slackService: SlackService) {}
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Post("send-meeting-prod")
+  @Post("send-meeting")
   sendMeetingProd(@CurrentUser() user: ProjectManager, @Body() prospect: Prospect) {
-    return this.slackService.sendMeetingProd(user, prospect);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Post("send-meeting-staging")
-  sendMeetingStaging(@CurrentUser() user: ProjectManager, @Body() prospect: Prospect) {
-    return this.slackService.sendMeetingStaging(user, prospect);
+    return this.slackService.sendMeetingSlack(user, prospect);
   }
 }
