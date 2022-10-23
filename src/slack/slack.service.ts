@@ -165,15 +165,12 @@ export class SlackService {
   @Cron("* * * * *")
   async sendPmReminder() {
     try {
-      console.log("starting send pm function")
       // ! IF PROSPECTIX IS IN DEV OR STAGING -> SENDING MESSAGES TO SLACK ADMIN
       let client = new WebClient();
       if (this.environment == "prod") {
-        console.log("IS IN PROD")
         // ? CLIENT CDP -> SLACK CDP 
         client = new WebClient("xoxb-451848388199-4265120570036-30Z0d4NI04Bo2Cb7wGtPsHFF");
       } else {
-        console.log("IS IN DEV OR STAGING")
         // ? CLIENT ADMIN -> SLACK ADMIN
         client = new WebClient("xoxb-358133606565-4230355888689-V1oyyJKt2LgKGIKDS3AWx7dH");
       }
@@ -189,12 +186,11 @@ export class SlackService {
           disabled: false
         }
       });
-      console.log(pms)
 
       // ?  if cron starts at 17:23:22 -> Between(17:23:00, 17:24:00)
-      // ! Dates will display as UTC so, date + 3h will print as date +1 (-2 + 3 ), BUT it works as 3h
-      const beginningInterval3h = new Date(new Date().setHours(new Date().getHours() + 3, new Date().getMinutes(), 0, 0));
-      const endInterval3h = new Date(new Date().setHours(new Date().getHours() + 3, new Date().getMinutes(), 59, 999))
+      // !  dates on local are not in french time zone (+5 because of utc 2)
+      const beginningInterval3h = new Date(new Date().setHours(new Date().getHours() + 5, new Date().getMinutes(), 0, 0));
+      const endInterval3h = new Date(new Date().setHours(new Date().getHours() + 5, new Date().getMinutes(), 59, 999))
 
       // * for each pm, check if exists on slack, and then check if he has a reminder in the same minute 3 hours later. If yes, send notif
       pms.forEach(async pm => {
@@ -210,10 +206,7 @@ export class SlackService {
               date: Between(beginningInterval3h, endInterval3h)
             }
           }).then(remindersCounted => {
-            console.log(pm.pseudo)
             if (remindersCounted[1] > 0) {
-              console.log("HAS REMINDERS")
-              console.log(remindersCounted)
               for (let reminder of remindersCounted[0]) {
                 client.chat.postMessage({
                   channel: slackUser.id,
