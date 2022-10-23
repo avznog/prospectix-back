@@ -8,7 +8,7 @@ import { ProjectManager } from 'src/project-managers/entities/project-manager.en
 import { Prospect } from 'src/prospects/entities/prospect.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { Between, Repository } from 'typeorm';
-const { WebClient, LogLevel } = require("@slack/web-api");
+const { WebClient } = require("@slack/web-api");
 
 @Injectable()
 export class SlackService {
