@@ -38,24 +38,24 @@ export class SlackService {
     if (process.env.BASE_URL.includes("localhost")) {
       this.environment = "dev"
       // ! LOCALHOST (= staging)
-      this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
-      this.webhookFraudChannel = "https://hooks.slack.com/services/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"
-      this.webhookChampChannel = "https://hooks.slack.com/services/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"
-      this.webhookRecapChannel = "https://hooks.slack.com/services/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"
+      this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
+      this.webhookFraudChannel = "https://hooks.slack.com/services/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"
+      this.webhookChampChannel = "https://hooks.slack.com/services/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"
+      this.webhookRecapChannel = "https://hooks.slack.com/services/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"
     } else if (process.env.BASE_URL.includes("staging")) {
       this.environment = "staging"
       // ! STAGING
-      this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
-      this.webhookFraudChannel = "https://hooks.slack.com/services/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"
-      this.webhookChampChannel = "https://hooks.slack.com/services/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"
-      this.webhookRecapChannel = "https://hooks.slack.com/services/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"
+      this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
+      this.webhookFraudChannel = "https://hooks.slack.com/services/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"
+      this.webhookChampChannel = "https://hooks.slack.com/services/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"
+      this.webhookRecapChannel = "https://hooks.slack.com/services/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"
     } else {
       this.environment = "prod"
       // ! PRODUCTION
-      this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
-      this.webhookFraudChannel = "https://hooks.slack.com/services/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"
-      this.webhookChampChannel = "https://hooks.slack.com/services/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"
-      this.webhookRecapChannel = "https://hooks.slack.com/services/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"
+      this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
+      this.webhookFraudChannel = "https://hooks.slack.com/services/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"
+      this.webhookChampChannel = "https://hooks.slack.com/services/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"
+      this.webhookRecapChannel = "https://hooks.slack.com/services/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"
     }
   }
 
