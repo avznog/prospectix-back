@@ -38,36 +38,21 @@ export class SlackService {
     if (process.env.BASE_URL.includes("localhost")) {
       this.environment = "dev"
       // ! LOCALHOST (= staging)
-      this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
       this.webhookFraudChannel = "https://hooks.slack.com/services/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"
       this.webhookChampChannel = "https://hooks.slack.com/services/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"
       this.webhookRecapChannel = "https://hooks.slack.com/services/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"
     } else if (process.env.BASE_URL.includes("staging")) {
       this.environment = "staging"
       // ! STAGING
-      this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
       this.webhookFraudChannel = "https://hooks.slack.com/services/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"
       this.webhookChampChannel = "https://hooks.slack.com/services/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"
       this.webhookRecapChannel = "https://hooks.slack.com/services/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"
     } else {
       this.environment = "prod"
       // ! PRODUCTION
-      this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
       this.webhookFraudChannel = "https://hooks.slack.com/services/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"
       this.webhookChampChannel = "https://hooks.slack.com/services/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"
       this.webhookRecapChannel = "https://hooks.slack.com/services/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"
-    }
-  }
-
-  sendMeetingSlack(user: ProjectManager, prospect: Prospect) {
-    try {
-      const message = {
-        text: `👥 ${user.firstname} ${user.name} a décroché un rendez-vous avec ${prospect.companyName}`
-      }
-      return this.httpService.post(this.webhookMeetingChannel, message).subscribe()
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible d'envoyer la notification de rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
