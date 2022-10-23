@@ -101,7 +101,7 @@ export class RemindersService {
           }
         ],
         order: {
-          date: "DESC"
+          date: "ASC"
         }
       });
     } catch (error) {

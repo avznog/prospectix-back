@@ -83,7 +83,7 @@ export class MeetingsService {
           }
         ],
         order: {
-          date: "DESC"
+          date: "ASC"
         },
         take: researchParamsMeetingsDto.take,
         skip: researchParamsMeetingsDto.skip
