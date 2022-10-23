@@ -100,6 +100,9 @@ export class RemindersService {
             priority: In([1,2,3])
           }
         ],
+        order: {
+          date: "DESC"
+        }
       });
     } catch (error) {
       console.log(error)

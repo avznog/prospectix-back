@@ -82,6 +82,9 @@ export class MeetingsService {
             done: researchParamsMeetingsDto.done  == "true" ? true : false,
           }
         ],
+        order: {
+          date: "DESC"
+        },
         take: researchParamsMeetingsDto.take,
         skip: researchParamsMeetingsDto.skip
       });
