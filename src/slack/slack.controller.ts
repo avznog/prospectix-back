@@ -32,4 +32,10 @@ export class SlackController {
   async sendChamp(@CurrentUser() user: ProjectManager) {
     return this.slackService.sendChampSlack(user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("send-pm-reminder")
+  async sendPmReminder() {
+    return this.slackService.sendPmReminder();
+  } 
 }

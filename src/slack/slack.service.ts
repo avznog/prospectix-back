@@ -6,7 +6,9 @@ import { Call } from 'src/calls/entities/call.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
+import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { Between, Repository } from 'typeorm';
+const { WebClient, LogLevel } = require("@slack/web-api");
 
 @Injectable()
 export class SlackService {
@@ -15,6 +17,7 @@ export class SlackService {
   webhookFraudChannel: string;
   webhookChampChannel: string;
   webhookRecapChannel: string;
+  environment: string = "";
 
   constructor(
     private httpService: HttpService,
@@ -26,22 +29,28 @@ export class SlackService {
     private readonly callRepository: Repository<Call>,
 
     @InjectRepository(Meeting)
-    private readonly meetingRepository: Repository<Meeting>
+    private readonly meetingRepository: Repository<Meeting>,
+    
+    @InjectRepository(Reminder)
+    private readonly reminderRepository: Repository<Reminder>
   ) {
     // ! changing the url for slack channel if prod / staging or localhost
     if (process.env.BASE_URL.includes("localhost")) {
+      this.environment = "dev"
       // ! LOCALHOST (= staging)
       this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
       this.webhookFraudChannel = "https://hooks.slack.com/services/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"
       this.webhookChampChannel = "https://hooks.slack.com/services/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"
       this.webhookRecapChannel = "https://hooks.slack.com/services/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"
     } else if (process.env.BASE_URL.includes("staging")) {
+      this.environment = "staging"
       // ! STAGING
       this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
       this.webhookFraudChannel = "https://hooks.slack.com/services/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"
       this.webhookChampChannel = "https://hooks.slack.com/services/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"
       this.webhookRecapChannel = "https://hooks.slack.com/services/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"
     } else {
+      this.environment = "prod"
       // ! PRODUCTION
       this.webhookMeetingChannel = "https://hooks.slack.com/services/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"
       this.webhookFraudChannel = "https://hooks.slack.com/services/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"
@@ -164,6 +173,70 @@ export class SlackService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible d'envoyer la notification", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  // ! CRON WORKING EVERY MINUTES, CHECKING IF U HAVE A REMINDER IN 3 H -> then send slack message
+  @Cron("* * * * *")
+  async sendPmReminder() {
+    try {
+      // ! IF PROSPECTIX IS IN DEV OR STAGING -> SENDING MESSAGES TO SLACK ADMIN
+      let client = new WebClient();
+      if (this.environment == "prod") {
+        // ? CLIENT CDP -> SLACK CDP 
+        client = new WebClient("xoxb-451848388199-4265120570036-30Z0d4NI04Bo2Cb7wGtPsHFF");
+      } else {
+        // ? CLIENT ADMIN -> SLACK ADMIN
+        client = new WebClient("xoxb-358133606565-4230355888689-V1oyyJKt2LgKGIKDS3AWx7dH");
+      }
+
+      // * getting all the users of slack
+      const result = await client.users.list();
+
+      // * getting all the pms that are cdp
+      let pms = await this.pmRepository.find({
+        where: {
+          admin: false,
+          statsEnabled: true,
+          disabled: false
+        }
+      });
+
+      // ?  if cron starts at 17:23:22 -> Between(17:23:00, 17:24:00)
+      // ! Dates will display as UTC so, date + 3h will print as date +1 (-2 + 3 ), BUT it works as 3h
+      const beginningInterval3h = new Date(new Date().setHours(new Date().getHours() + 3, new Date().getMinutes(), 0, 0));
+      const endInterval3h = new Date(new Date().setHours(new Date().getHours() + 3, new Date().getMinutes(), 59, 999))
+
+      // * for each pm, check if exists on slack, and then check if he has a reminder in the same minute 3 hours later. If yes, send notif
+      pms.forEach(async pm => {
+        if (result.members.find(member => member.name == pm.pseudo)) {
+          const slackUser = result.members.find(member => member.name == pm.pseudo)
+          await this.reminderRepository.findAndCount({
+            relations: ["prospect", "prospect.phone"],
+            where: {
+              pm: {
+                pseudo: pm.pseudo
+              },
+              // ? between minute down and minute up
+              date: Between(beginningInterval3h, endInterval3h)
+            }
+          }).then(remindersCounted => {
+            if (remindersCounted[1] > 0) {
+              for (let reminder of remindersCounted[0]) {
+                client.chat.postMessage({
+                  channel: slackUser.id,
+                  text: `Tu as un rappel à ${beginningInterval3h.toLocaleTimeString()} avec ${reminder.prospect.companyName} au <tel:${reminder.prospect.phone.number}|${reminder.prospect.phone.number}>`
+                })
+              }
+            }
+
+          })
+        }
+      })
+      return result
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible d'envoyer la notification personnalisée au chef de projet pour les rappels", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 }
