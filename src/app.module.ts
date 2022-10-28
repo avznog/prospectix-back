@@ -23,8 +23,6 @@ import { EmailsModule } from './emails/emails.module';
 import { Email } from './emails/entities/email.entity';
 import { Event } from './events/entities/event.entity';
 import { EventsModule } from './events/events.module';
-import { Goal } from './goals/entities/goal.entity';
-import { GoalsModule } from './goals/goals.module';
 import { Meeting } from './meetings/entities/meeting.entity';
 import { MeetingsModule } from './meetings/meetings.module';
 import { NegativeAnswer } from './negative-answers/entities/negative-answer.entity';
@@ -56,7 +54,6 @@ import { WebsitesModule } from './websites/websites.module';
     CitiesModule,
     CountriesModule,
     EmailsModule,
-    GoalsModule,
     PhonesModule,
     SentEmailsModule,
     EventsModule,
@@ -77,10 +74,10 @@ import { WebsitesModule } from './websites/websites.module';
       port: +process.env.POSTGRES_PORT,
       username: process.env.POSTGRES_USER || "postgres",
       password: process.env.POSTGRES_PASSWORD || "postgres",
-      database: process.env.POSTGRES_DATABASE ?? 'prospectix0',
+      database: process.env.POSTGRES_DATABASE ?? 'objectives',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
-      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website, Call, NegativeAnswer, Slack],
+      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Phone, SentEmail, Website, Call, NegativeAnswer, Slack],
     }),
     SlackModule,
     ScheduleModule.forRoot()

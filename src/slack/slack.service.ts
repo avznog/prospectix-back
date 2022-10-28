@@ -162,7 +162,7 @@ export class SlackService {
   }
 
   // ! CRON WORKING EVERY MINUTES, CHECKING IF U HAVE A REMINDER IN 3 H -> then send slack message
-  @Cron("* * * * *")
+  // @Cron("* * * * *")
   async sendPmReminder() {
     try {
       // ! IF PROSPECTIX IS IN DEV OR STAGING -> SENDING MESSAGES TO SLACK ADMIN

@@ -8,7 +8,6 @@ import { City } from 'src/cities/entities/city.entity';
 import { Country } from 'src/countries/entities/country.entity';
 import { Email } from 'src/emails/entities/email.entity';
 import { Event } from 'src/events/entities/event.entity';
-import { Goal } from 'src/goals/entities/goal.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { Phone } from 'src/phones/entities/phone.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
@@ -20,7 +19,7 @@ import { ProspectsController } from './prospects.controller';
 import { ProspectsService } from './prospects.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Goal, Phone, SentEmail, Website, Event, Call])],
+  imports: [TypeOrmModule.forFeature([ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Phone, SentEmail, Website, Event, Call])],
   controllers: [ProspectsController],
   providers: [ProspectsService],
 })
