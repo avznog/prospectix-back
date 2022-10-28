@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Email } from 'src/emails/entities/email.entity';
+import { Goal } from 'src/goals/entities/goal.entity';
 
 export class CreateProjectManagerDto {
   @ApiProperty({
@@ -55,4 +56,9 @@ export class CreateProjectManagerDto {
     required: true
   })
   statsEnabled: boolean;
+
+  @ApiProperty({
+    description: "Objectifs du chef de projet"
+  })
+  goals: Goal[]
 }
