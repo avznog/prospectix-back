@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { Call } from 'src/calls/entities/call.entity';
 import { Event } from 'src/events/entities/event.entity';
+import { Goal } from 'src/goals/entities/goal.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { NegativeAnswer } from 'src/negative-answers/entities/negative-answer.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
@@ -132,4 +133,10 @@ export class ProjectManager extends BaseEntity {
     required: false
   })
   negativeAnswers: NegativeAnswer[];
+
+  @OneToMany(() => Goal, (goal) => goal.pm)
+  @ApiProperty({
+    description: "Objectifs liés au pm"
+  })
+  goals: Goal[];
 }

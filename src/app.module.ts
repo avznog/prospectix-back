@@ -41,6 +41,10 @@ import { Slack } from './slack/entities/slack.entity';
 import { SlackModule } from './slack/slack.module';
 import { Website } from './websites/entities/website.entity';
 import { WebsitesModule } from './websites/websites.module';
+import { GoalTemplatesModule } from './goal-templates/goal-templates.module';
+import { GoalsModule } from './goals/goals.module';
+import { Goal } from './goals/entities/goal.entity';
+import { GoalTemplate } from './goal-templates/entities/goal-template.entity';
 @Module({
   imports: [
     AuthModule,
@@ -77,10 +81,12 @@ import { WebsitesModule } from './websites/websites.module';
       database: process.env.POSTGRES_DATABASE ?? 'objectives',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
-      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Phone, SentEmail, Website, Call, NegativeAnswer, Slack],
+      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Phone, SentEmail, Website, Call, NegativeAnswer, Slack, Goal, GoalTemplate],
     }),
     SlackModule,
-    ScheduleModule.forRoot()
+    ScheduleModule.forRoot(),
+    GoalTemplatesModule,
+    GoalsModule
   ],
   controllers: [AppController],
   providers: [AppService],
