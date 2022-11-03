@@ -1,34 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { GoalsService } from './goals.service';
-import { CreateGoalDto } from './dto/create-goal.dto';
+import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { Roles } from 'src/auth/annotations/roles.decorator';
+import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { RolesType } from 'src/auth/role.type';
 import { UpdateGoalDto } from './dto/update-goal.dto';
+import { Goal } from './entities/goal.entity';
+import { GoalsService } from './goals.service';
 
 @Controller('goals')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class GoalsController {
-  constructor(private readonly goalsService: GoalsService) {}
+  constructor(
+    private readonly goalsService: GoalsService
+  ) { }
 
-  @Post()
-  create(@Body() createGoalDto: CreateGoalDto) {
-    return this.goalsService.create(createGoalDto);
-  }
-
-  @Get()
-  findAll() {
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("find-all")
+  findAll() : Promise<Goal[]> {
     return this.goalsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.goalsService.findOne(+id);
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Patch(":id")
+  update(@Param("id") id: number, @Body() updateGoalDto: UpdateGoalDto) {
+    return this.goalsService.update(id, updateGoalDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGoalDto: UpdateGoalDto) {
-    return this.goalsService.update(+id, updateGoalDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.goalsService.remove(+id);
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("check/:id")
+  check(@Param("id") id: number) : Promise<Goal[]> {
+    return this.goalsService.check(id);
   }
 }

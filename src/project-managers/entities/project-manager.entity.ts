@@ -139,4 +139,10 @@ export class ProjectManager extends BaseEntity {
     description: "Objectifs liés au pm"
   })
   goals: Goal[];
+
+  @Column({default: false})
+  @ApiProperty({
+    description: "Apparaît dans les objectifs ou non"
+  })
+  objectived: boolean;
 }

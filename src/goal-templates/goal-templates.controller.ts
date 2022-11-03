@@ -1,34 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { GoalTemplatesService } from './goal-templates.service';
-import { CreateGoalTemplateDto } from './dto/create-goal-template.dto';
+import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { Roles } from 'src/auth/annotations/roles.decorator';
+import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { RolesType } from 'src/auth/role.type';
 import { UpdateGoalTemplateDto } from './dto/update-goal-template.dto';
+import { GoalTemplate } from './entities/goal-template.entity';
+import { GoalTemplatesService } from './goal-templates.service';
 
 @Controller('goal-templates')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class GoalTemplatesController {
-  constructor(private readonly goalTemplatesService: GoalTemplatesService) {}
+  constructor(
+    private readonly goalTemplatesService: GoalTemplatesService
+    ) {}
 
-  @Post()
-  create(@Body() createGoalTemplateDto: CreateGoalTemplateDto) {
-    return this.goalTemplatesService.create(createGoalTemplateDto);
-  }
-
-  @Get()
-  findAll() {
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("find-all")
+  findAll() : Promise<GoalTemplate[]> {
     return this.goalTemplatesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.goalTemplatesService.findOne(+id);
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Patch(":id")
+  update(@Param("id") id: number, @Body() updateGoalTemplateDto: UpdateGoalTemplateDto) {
+    return this.goalTemplatesService.update(id, updateGoalTemplateDto);
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGoalTemplateDto: UpdateGoalTemplateDto) {
-    return this.goalTemplatesService.update(+id, updateGoalTemplateDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.goalTemplatesService.remove(+id);
-  }
+  
 }

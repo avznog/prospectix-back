@@ -61,4 +61,9 @@ export class CreateProjectManagerDto {
     description: "Objectifs du chef de projet"
   })
   goals: Goal[]
+
+  @ApiProperty({
+    description: "apparaît dans les objectifs"
+  })
+  objectived: boolean;
 }
