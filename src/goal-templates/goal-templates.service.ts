@@ -1,6 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Goal } from 'src/goals/entities/goal.entity';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Repository, UpdateResult } from 'typeorm';
+import { CreateGoalTemplateDto } from './dto/create-goal-template.dto';
 import { UpdateGoalTemplateDto } from './dto/update-goal-template.dto';
 import { GoalTemplate } from './entities/goal-template.entity';
 
@@ -9,7 +12,13 @@ export class GoalTemplatesService {
 
   constructor(
     @InjectRepository(GoalTemplate)
-    private readonly goalTemplateRepository: Repository<GoalTemplate>
+    private readonly goalTemplateRepository: Repository<GoalTemplate>,
+
+    @InjectRepository(ProjectManager)
+    private readonly pmRepository: Repository<ProjectManager>,
+
+    @InjectRepository(Goal)
+    private readonly goalRepository: Repository<Goal>
 
   ) {}
 
@@ -30,6 +39,39 @@ export class GoalTemplatesService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de mettre à jour l'objectif template", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async create(createGoalTemplateDto: CreateGoalTemplateDto) : Promise<{goalTemplate: GoalTemplate, goals: Goal[]}> {
+    try {
+      let goalTemplate = await this.goalTemplateRepository.save(this.goalTemplateRepository.create(createGoalTemplateDto));
+      let pms = await this.pmRepository.find({
+        where: {
+          objectived: true
+        }
+      });
+
+      
+      for(let pm of pms) {
+        await this.goalRepository.save(this.goalRepository.create({
+          disabled: true,
+          pm: pm,
+          goalTemplate: goalTemplate,
+          value: createGoalTemplateDto.default
+        }))
+      }
+      let goals = await this.goalRepository.find({
+        relations: ["pm", "goalTemplate"],
+        where: {
+          goalTemplate: {
+            id: goalTemplate.id
+          }
+        }
+      })
+      return { goalTemplate: goalTemplate, goals: goals };
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de créer l'objectif " + createGoalTemplateDto, HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 }

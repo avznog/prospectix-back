@@ -57,7 +57,6 @@ export class GoalsService {
       }
 
       for(let goalTemplate of goalTemplates) {
-        go.includes(goalTemplate.id) && console.log("includes")
         if(!go.includes(goalTemplate.id)) {
           await this.goalRepository.save(this.goalRepository.create({
             disabled: true,
