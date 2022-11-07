@@ -295,6 +295,13 @@ export class ProspectsService {
             activity: {
               name: ILike(`%${researchParamsProspectDto.keyword}%`)
             }
+          },
+          researchParamsProspectDto.keyword! != "" && {
+            stage: StageType.RESEARCH,
+            disabled: false,
+            phone: {
+              number: ILike(`%${researchParamsProspectDto.keyword}%`)
+            }
           }
         ],
         take: researchParamsProspectDto.take,
@@ -487,6 +494,13 @@ export class ProspectsService {
             disabled: false,
             activity: {
               name: ILike(`%${researchParamsProspectDto.keyword}%`)
+            }
+          },
+          researchParamsProspectDto.keyword! != "" && {
+            stage: StageType.RESEARCH,
+            disabled: false,
+            phone: {
+              number: ILike(`%${researchParamsProspectDto.keyword}%`)
             }
           }
         ]
