@@ -234,9 +234,17 @@ export class ProspectsService {
     console.log("finished")
   }
 
-  async create(createProspectDto: CreateProspectDto) {
+  async create(createProspectDto: CreateProspectDto, pm: ProjectManager) {
     try {
-      return await this.prospectRepository.save(createProspectDto);
+      const newProspect = await this.prospectRepository.save(createProspectDto);
+      this.eventRepository.save(this.eventRepository.create({
+        date: new Date,
+        description: "Prospect créé",
+        prospect: newProspect,
+        type: EventType.CREATION,
+        pm: pm
+      }));
+      return newProspect
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de créer le prospect", HttpStatus.INTERNAL_SERVER_ERROR);
