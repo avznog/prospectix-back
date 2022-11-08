@@ -1,10 +1,12 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
 import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { UpdateResult } from 'typeorm';
 import { CreateProspectDto } from './dto/create-prospect.dto';
@@ -40,8 +42,8 @@ export class ProspectsController {
   
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post("create")
-  create(@Body() createProspectDto: CreateProspectDto) : Promise<Prospect> {
-    return this.prospectsService.create(createProspectDto);
+  create(@Body() createProspectDto: CreateProspectDto, @CurrentUser() pm: ProjectManager) : Promise<Prospect> {
+    return this.prospectsService.create(createProspectDto, pm);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
