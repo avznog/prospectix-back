@@ -165,7 +165,6 @@ export class SlackService {
   @Cron("* * * * *")
   async sendPmReminder() {
     try {
-      console.log("working on " + new Date().toISOString())
       // ! IF PROSPECTIX IS IN DEV OR STAGING -> SENDING MESSAGES TO SLACK ADMIN
       let client = new WebClient();
       if (this.environment == "prod") {
