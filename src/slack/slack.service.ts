@@ -212,7 +212,7 @@ export class SlackService {
               for (let reminder of remindersCounted[0]) {
                 client.chat.postMessage({
                   channel: slackUser.id,
-                  text: `Tu as un rappel à ${beginningInterval3h.toLocaleTimeString()} avec ${reminder.prospect.companyName} au <tel:${reminder.prospect.phone.number}|${reminder.prospect.phone.number}>`
+                  text: `Tu as un rappel à ${beginningInterval3h.getHours()}:${beginningInterval3h.getMinutes()} avec ${reminder.prospect.companyName} au <tel:${reminder.prospect.phone.number}|${reminder.prospect.phone.number}>`
                 })
               }
             }
