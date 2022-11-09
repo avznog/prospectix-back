@@ -189,13 +189,14 @@ export class SlackService {
 
       // ?  if cron starts at 17:23:22 -> Between(17:23:00, 17:24:00)
       // !  dates on local are not in french time zone (+5 because of utc 2)
-      const beginningInterval3h = new Date(new Date().setHours(new Date().getHours() + 5, new Date().getMinutes(), 0, 0));
-      const endInterval3h = new Date(new Date().setHours(new Date().getHours() + 5, new Date().getMinutes(), 59, 999))
+      const beginningInterval3h = new Date(new Date().setHours(new Date().getHours() + 3, new Date().getMinutes(), 0, 0));
+      const endInterval3h = new Date(new Date().setHours(new Date().getHours() + 3, new Date().getMinutes(), 59, 999))
 
       // * for each pm, check if exists on slack, and then check if he has a reminder in the same minute 3 hours later. If yes, send notif
       pms.forEach(async pm => {
         if (result.members.find(member => member.name == pm.pseudo)) {
           const slackUser = result.members.find(member => member.name == pm.pseudo)
+          console.log(beginningInterval3h, endInterval3h)
           await this.reminderRepository.findAndCount({
             relations: ["prospect", "prospect.phone"],
             where: {
@@ -210,7 +211,7 @@ export class SlackService {
               for (let reminder of remindersCounted[0]) {
                 client.chat.postMessage({
                   channel: slackUser.id,
-                  text: `Tu as un rappel à ${beginningInterval3h.toLocaleTimeString()} avec ${reminder.prospect.companyName} au <tel:${reminder.prospect.phone.number}|${reminder.prospect.phone.number}>`
+                  text: `Tu as un rappel à ${beginningInterval3h.getHours()}:${beginningInterval3h.getMinutes()} avec ${reminder.prospect.companyName} au <tel:${reminder.prospect.phone.number}|${reminder.prospect.phone.number}>`
                 })
               }
             }
