@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Goal } from 'src/goals/entities/goal.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { CreateGoalTemplateDto } from './dto/create-goal-template.dto';
 import { UpdateGoalTemplateDto } from './dto/update-goal-template.dto';
 import { GoalTemplate } from './entities/goal-template.entity';
@@ -72,6 +72,26 @@ export class GoalTemplatesService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de créer l'objectif " + createGoalTemplateDto, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async delete(id: number, user: ProjectManager) : Promise<DeleteResult> {
+    try {
+      let goals = await this.goalRepository.find({
+        where: {
+          goalTemplate: {
+            id: id
+          }
+        }
+      });
+
+      for(let goal of goals) {
+        await this.goalRepository.delete(goal.id);
+      }
+      return this.goalTemplateRepository.delete(id);
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(`Impossible de supprimer l'objectif (${user.pseudo} à ${new Date().toISOString()}) `, HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 }
