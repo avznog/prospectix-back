@@ -17,17 +17,23 @@ export class Goal extends BaseEntity {
   })
   goalTemplate: GoalTemplate;
 
-  @Column()
+  @Column({default: true})
   @ApiProperty({
     description: "Désactivation ou non de l'objectif template"
   })
   disabled: boolean;
 
-  @Column()
+  @Column({default: 0})
   @ApiProperty({
     description: "Valeur de l'objectif"
   })
   value: number;
+  
+  @Column({default: false})
+  @ApiProperty({
+    description: "Objectif considéré comme favoris pour le chef de projet (seul un administrateur peut l'indiquer comme favoris"
+  })
+  important: boolean;
 
   @ManyToOne(() => ProjectManager)
   @ApiProperty({
