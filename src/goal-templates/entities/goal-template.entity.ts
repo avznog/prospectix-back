@@ -17,27 +17,33 @@ export class GoalTemplate extends BaseEntity {
   })
   goals: Goal[];
 
-  @Column()
+  @Column({default: ""})
   @ApiProperty({
     description: "Nom de l'objectif template"
   })
   name: string;
 
-  @Column()
+  @Column({default: ""})
   @ApiProperty({
     description: "Description de l'objectif template"
   })
   description: string;
 
-  @Column()
+  @Column({ default: false })
   @ApiProperty({
     description: "Désactivation ou non de l'objectif template"
   })
   disabled: boolean;
 
-  @Column()
+  @Column({ default: 0 })
   @ApiProperty({
     description: "Valeur par défaut de l'objectif template"
   })
   default: number;
+
+  @Column({ default: false})
+  @ApiProperty({
+    description: "Objectif template apparaîtra comme favori dans le dashboard du chef de projet"
+  })
+  important: boolean;
 }
