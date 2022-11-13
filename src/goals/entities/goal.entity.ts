@@ -28,12 +28,6 @@ export class Goal extends BaseEntity {
     description: "Valeur de l'objectif"
   })
   value: number;
-  
-  @Column({default: false})
-  @ApiProperty({
-    description: "Objectif considéré comme favoris pour le chef de projet (seul un administrateur peut l'indiquer comme favoris"
-  })
-  important: boolean;
 
   @ManyToOne(() => ProjectManager)
   @ApiProperty({

@@ -56,7 +56,6 @@ export class GoalTemplatesService {
         await this.goalRepository.save(this.goalRepository.create({
           disabled: true,
           pm: pm,
-          important: false,
           goalTemplate: goalTemplate,
           value: createGoalTemplateDto.default
         }))
