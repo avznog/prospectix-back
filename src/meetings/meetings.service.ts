@@ -1,10 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { lastDayOfWeek } from 'date-fns';
 import { MeetingType } from 'src/constants/meeting.type';
 import { StageType } from 'src/constants/stage.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { Between, DeleteResult, MoreThan, Repository, UpdateResult } from 'typeorm';
+import { Between, DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { ResearchParamsMeetingsDto } from './dto/research-parmas-meetings.dto';
 import { Meeting } from './entities/meeting.entity';
@@ -170,14 +169,25 @@ export class MeetingsService {
 
   async countWeeklyForMe(user: ProjectManager) : Promise<number> {
     try {
-      let currentDate = new Date;
-      var endDate = new Date(currentDate.setDate((currentDate.getDate() - currentDate.getDay() - 6) + 6));
+      const today = new Date();
+      const firstd = today.getDate() - today.getDay() + 1;
+
+      //  ? getting the monday of the week
+      const monday = new Date(today.setDate(firstd));
+
+      // ? getting the sunday of the week
+      const sunday = new Date(today.setDate(firstd + 6));
+
+      // ? setting monday on midnight and sunday on 23:59:59
+      monday.setHours(1,0,0,0)
+      sunday.setHours(24,59,59,999)
+
       return await this.meetingRepository.count({
         where: {
           pm: {
             pseudo: user.pseudo
           },
-          date: MoreThan(endDate)
+          creationDate: Between(monday, sunday)
         }
       })
     } catch (error) {
@@ -287,25 +297,30 @@ export class MeetingsService {
       let results: { intervals: [{dateDown: Date, dateUp: Date}], data: [number]} = {intervals: [{dateDown: new Date, dateUp: new Date}], data: [0]};
       results.data.pop();
       results.intervals.pop();
-      let startDate = new Date("2022-11-07T00:00:00.000Z");
-      let endDate = lastDayOfWeek(new Date(), {weekStartsOn: 2});
-      let d = new Date("2022-11-07T00:00:00.000Z");
-      while(startDate  < endDate) {
-        d.setDate(startDate.getDate() + 7)
+
+      //  ! begining of history
+      let s = new Date("2022-11-07")
+
+      // ! end of history
+      let ed = new Date(new Date().setDate(new Date().getDate() - new Date().getDay() + 1 + 6));
+      while(s <= ed) {
+        let temp = new Date(ed);
+        // ! each week sunday
+        temp.setDate(s.getDate() + 7)
         results.intervals.push({
-          dateDown: new Date(startDate),
-          dateUp: new Date(d)
+          dateDown: new Date(s),
+          dateUp: new Date(temp.setHours(0,59,59,999))
         });
-        const count =  await this.meetingRepository.count({
+        const count = await this.meetingRepository.count({
           where: {
             pm: {
               pseudo: user.pseudo
             },
-            date: Between(new Date(startDate), new Date(d))
+            creationDate: Between(s, new Date(temp.setHours(0,59,59,999)))
           }
         })
         results.data.push(count)
-        startDate.setDate(startDate.getDate() + 7)
+        s.setDate(s.getDate() + 7)
       }
       return results
     } catch (error) {

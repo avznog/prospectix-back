@@ -1,8 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { lastDayOfWeek } from 'date-fns';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { Between, MoreThan, Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { CreateCallDto } from './dto/create-call.dto';
 import { Call } from './entities/call.entity';
 
@@ -53,15 +52,26 @@ export class CallsService {
 
   async countWeeklyForMe(user: ProjectManager) : Promise<number> {
     try {
-      let end = lastDayOfWeek(new Date(), { weekStartsOn: 2});
-      let first = new Date();
-      first.setDate(end.getDate() - 7)
+      const today = new Date();
+      const firstd = today.getDate() - today.getDay() + 1;
+
+      //  ? getting the monday of the week
+      const monday = new Date(today.setDate(firstd));
+
+      // ? getting the sunday of the week
+      const sunday = new Date(today.setDate(firstd + 6));
+
+      // ? setting monday on midnight and sunday on 23:59:59
+      monday.setHours(1,0,0,0)
+      sunday.setHours(24,59,59,999)
+
       return await this.callRepository.count({
         where: {
           pm: {
             pseudo: user.pseudo
           },
-          date: Between(new Date(first), new Date(end))
+          // date: Between(new Date(first), new Date(end))
+          date: Between(monday, sunday)
         }
       })
     } catch (error) {
@@ -76,30 +86,29 @@ export class CallsService {
       results.data.pop();
       results.intervals.pop();
 
-      // ! Date de début de l'historique
-      let startDate = new Date("2022-11-07T00:00:00.000Z");
+      //  ! begining of history
+      let s = new Date("2022-11-07")
 
-      //! Date de fin de l'historique
-      let endDate = lastDayOfWeek(new Date(), {weekStartsOn: 2});
-
-      // ! Date de début pour incrémenter
-      let d = new Date("2022-11-07T00:00:00.000Z");
-      while(startDate  < endDate) {
-        d.setDate(startDate.getDate() + 7)
+      // ! end of history
+      let ed = new Date(new Date().setDate(new Date().getDate() - new Date().getDay() + 1 + 6));
+      while(s <= ed) {
+        let temp = new Date(ed);
+        // ! each week sunday
+        temp.setDate(s.getDate() + 7)
         results.intervals.push({
-          dateDown: new Date(startDate),
-          dateUp: new Date(d)
+          dateDown: new Date(s),
+          dateUp: new Date(temp.setHours(0,59,59,999))
         });
-        const count =  await this.callRepository.count({
+        const count = await this.callRepository.count({
           where: {
             pm: {
               pseudo: user.pseudo
             },
-            date: Between(new Date(startDate), new Date(d))
+            date: Between(s, new Date(temp.setHours(0,59,59,999)))
           }
         })
         results.data.push(count)
-        startDate.setDate(startDate.getDate() + 7)
+        s.setDate(s.getDate() + 7)
       }
       return results
     } catch (error) {
