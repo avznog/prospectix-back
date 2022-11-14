@@ -1,10 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { lastDayOfWeek } from 'date-fns';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Between, MoreThan, Repository } from 'typeorm';
 import { CreateNegativeAnswerDto } from './dto/create-negative-answer.dto';
-import { UpdateNegativeAnswerDto } from './dto/update-negative-answer.dto';
 import { NegativeAnswer } from './entities/negative-answer.entity';
 
 @Injectable()
@@ -72,25 +70,30 @@ export class NegativeAnswersService {
       let results: { intervals: [{dateDown: Date, dateUp: Date}], data: [number]} = {intervals: [{dateDown: new Date, dateUp: new Date}], data: [0]};
       results.data.pop();
       results.intervals.pop();
-      let startDate = new Date("2022-11-07T00:00:00.000Z")
-      let endDate = lastDayOfWeek(new Date(), {weekStartsOn: 2});
-      let d = new Date("2022-11-07T00:00:00.000Z");
-      while(startDate  < endDate) {
-        d.setDate(startDate.getDate() + 7)
+
+      //  ! begining of history
+      let s = new Date("2022-11-07")
+
+      // ! end of history
+      let ed = new Date(new Date().setDate(new Date().getDate() - new Date().getDay() + 1 + 6));
+      while(s <= ed) {
+        let temp = new Date(ed);
+        // ! each week sunday
+        temp.setDate(s.getDate() + 7)
         results.intervals.push({
-          dateDown: new Date(startDate),
-          dateUp: new Date(d)
+          dateDown: new Date(s),
+          dateUp: new Date(temp.setHours(0,59,59,999))
         });
-        const count =  await this.negativeAnswerRepository.count({
+        const count = await this.negativeAnswerRepository.count({
           where: {
             pm: {
               pseudo: user.pseudo
             },
-            date: Between(new Date(startDate), new Date(d))
+            date: Between(s, new Date(temp.setHours(0,59,59,999)))
           }
         })
         results.data.push(count)
-        startDate.setDate(startDate.getDate() + 7)
+        s.setDate(s.getDate() + 7)
       }
       return results
     } catch (error) {
