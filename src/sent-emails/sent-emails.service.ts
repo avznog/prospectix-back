@@ -27,27 +27,15 @@ export class SentEmailsService {
       await this.checkMailsSynchro()
       return await this.sentEmailRepository.find({
         relations: ["pm", "prospect", "prospect.activity","prospect.city","prospect.country", "prospect.phone","prospect.email", "prospect.website", "prospect.reminders","prospect.meetings","prospect.events","prospect.bookmarks"],
-        where: [
-          researchParamsSentEmailsDto.date != "" && {
-            pm: {
-              pseudo: user.pseudo
-            },
-            prospect: {
-              stage: StageType.MAIL
-            },
-            date: new Date(researchParamsSentEmailsDto.date),
-            sent: false
+        where: {
+          pm: {
+            pseudo: user.pseudo
           },
-          researchParamsSentEmailsDto.date == "" && {
-            pm: {
-              pseudo: user.pseudo
-            },
-            prospect: {
-              stage: StageType.MAIL
-            },
-            sent: false
-          }
-        ],
+          prospect: {
+            stage: StageType.MAIL
+          },
+          sent: false
+        },
         order: {
           sendingDate: "ASC" 
         },
@@ -65,27 +53,15 @@ export class SentEmailsService {
       await this.checkMailsSynchro();
       return await this.sentEmailRepository.find({
         relations: ["pm", "prospect", "prospect.activity","prospect.city","prospect.country", "prospect.phone","prospect.email", "prospect.website", "prospect.reminders","prospect.meetings","prospect.events","prospect.bookmarks"],
-        where: [
-          researchParamsSentEmailsDto.date != "" && {
-            pm: {
-              pseudo: user.pseudo
-            },
-            prospect: {
-              stage: StageType.MAIL_SENT
-            },
-            date: new Date(researchParamsSentEmailsDto.date),
-            sent: true
+        where: {
+          pm: {
+            pseudo: user.pseudo
           },
-          researchParamsSentEmailsDto.date == "" && {
-            pm: {
-              pseudo: user.pseudo
-            },
-            prospect: {
-              stage: StageType.MAIL_SENT
-            },
-            sent: true
-          }
-        ],
+          prospect: {
+            stage: StageType.MAIL_SENT
+          },
+          sent: true
+        },
         order: {
           sendingDate: "ASC"
         },
@@ -141,27 +117,15 @@ export class SentEmailsService {
   async countSentEmails(user: ProjectManager, researchParamsSentEmailsDto: ResearchParamsSentEmailsDto) : Promise<number> {
     try {
       return await this.sentEmailRepository.count({
-        where: [
-          researchParamsSentEmailsDto.date != "" && {
-            pm: {
-              pseudo: user.pseudo
-            },
-            prospect: {
-              stage: StageType.MAIL
-            },
-            date: new Date(researchParamsSentEmailsDto.date),
-            sent: false
+        where: {
+          pm: {
+            pseudo: user.pseudo
           },
-          researchParamsSentEmailsDto.date == "" && {
-            pm: {
-              pseudo: user.pseudo
-            },
-            prospect: {
-              stage: StageType.MAIL
-            },
-            sent: false
-          }
-        ]
+          prospect: {
+            stage: StageType.MAIL
+          },
+          sent: false
+        }
       })
     } catch (error) {
       console.log(error)
@@ -172,27 +136,15 @@ export class SentEmailsService {
   async countSentEmailsSent(user: ProjectManager, researchParamsSentEmailsDto: ResearchParamsSentEmailsDto) : Promise<number> {
     try {
       return await this.sentEmailRepository.count({
-        where: [
-          researchParamsSentEmailsDto.date != "" && {
-            pm: {
-              pseudo: user.pseudo
-            },
-            prospect: {
-              stage: StageType.MAIL_SENT
-            },
-            date: new Date(researchParamsSentEmailsDto.date),
-            sent: true
+        where: {
+          pm: {
+            pseudo: user.pseudo
           },
-          researchParamsSentEmailsDto.date == "" && {
-            pm: {
-              pseudo: user.pseudo
-            },
-            prospect: {
-              stage: StageType.MAIL_SENT
-            },
-            sent: true
-          }
-        ]
+          prospect: {
+            stage: StageType.MAIL_SENT
+          },
+          sent: true
+        }
       })
     } catch (error) {
       console.log(error)
