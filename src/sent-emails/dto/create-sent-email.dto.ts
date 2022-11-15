@@ -31,5 +31,15 @@ export class CreateSentEmailDto {
     description: "Date d'envoi de l'email",
     required: true
   })
-  sendingDate: Date;
+  sendingDate?: Date;
+
+  @ApiProperty({
+    description: "Date de création du mail"
+  })
+  date: Date;
+
+  @ApiProperty({
+    description: "Si l'email est déjà envoyé ou non"
+  })
+  sent: boolean;
 }
