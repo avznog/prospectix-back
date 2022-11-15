@@ -92,7 +92,7 @@ export class SentEmailsService {
       });
       for(let sentEmail of sentEmails) {
         if(!sentEmail.date) {
-          this.sentEmailRepository.update(sentEmail.id, { date: sentEmail.sendingDate })
+          this.sentEmailRepository.update(sentEmail.id, { date: sentEmail.sendingDate, sent: true})
           if(sentEmail.prospect.stage == 4) {
             this.prospectRepository.update(sentEmail.prospect.id, { stage: 8})
           }
