@@ -6,6 +6,7 @@ import { ProjectManager } from 'src/project-managers/entities/project-manager.en
 import { Between, DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { ResearchParamsMeetingsDto } from './dto/research-parmas-meetings.dto';
+import { UpdateMeetingDto } from './dto/update-meeting.dto';
 import { Meeting } from './entities/meeting.entity';
 
 @Injectable()
@@ -326,6 +327,15 @@ export class MeetingsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de compter les appels par semaines", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async update(id: number, updateMeetingDto: UpdateMeetingDto) : Promise<UpdateResult> {
+    try {
+      return await this.meetingRepository.update(id, updateMeetingDto);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException("Impossible de mettre à jour le rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 }
