@@ -1,4 +1,5 @@
 export enum StageType {
+  // ! always add at the end
   RESEARCH,
   BOOKMARK,
   REMINDER,
@@ -6,5 +7,6 @@ export enum StageType {
   MAIL,
   ARCHIVED,
   PRO,
-  MEETING_DONE_AND_OUT
+  MEETING_DONE_AND_OUT,
+  MAIL_SENT
 }

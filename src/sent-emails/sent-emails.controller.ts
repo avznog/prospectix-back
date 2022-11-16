@@ -1,16 +1,17 @@
-import { Body, Controller, Get, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
-import { SentEmailsService } from './sent-emails.service';
+import { Body, Controller, Get, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auth/annotations/roles.decorator';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/annotations/roles.decorator';
 import { RolesType } from 'src/auth/role.type';
-import { ResearchParamsSentEmailsDto } from './dto/research-params-sent-emails.dto';
-import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { CreateSentEmailDto } from './dto/create-sent-email.dto';
-import { SentEmail } from './entities/sent-email.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
+import { UpdateResult } from 'typeorm';
+import { CreateSentEmailDto } from './dto/create-sent-email.dto';
+import { ResearchParamsSentEmailsDto } from './dto/research-params-sent-emails.dto';
+import { SentEmail } from './entities/sent-email.entity';
+import { SentEmailsService } from './sent-emails.service';
 
 @UseInterceptors(SentryInterceptor)
 @Controller('sent-emails')
@@ -26,6 +27,18 @@ export class SentEmailsController {
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("find-all-paginated-sent")
+  findAllPaginatedSent(@Query() researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, @CurrentUser() user: ProjectManager) {
+    return this.sentEmailsService.findAllPaginatedSent(researchParamsSentEmailsDto, user);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("mark-sent/:id")
+  markSent(@Param("id") id: number) : Promise<UpdateResult>{
+    return this.sentEmailsService.markSent(id);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post()
   create(@Body() createSentEmailDto: CreateSentEmailDto, @CurrentUser() user) : Promise<SentEmail> {
     return this.sentEmailsService.create(createSentEmailDto, user);
@@ -33,8 +46,14 @@ export class SentEmailsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-sent-emails")
-  countSentEmails(@CurrentUser() user: ProjectManager) : Promise<number> {
-    return this.sentEmailsService.countSentEmails(user);
+  countSentEmails(@CurrentUser() user: ProjectManager, @Query() researchParamsSentEmails: ResearchParamsSentEmailsDto) : Promise<number> {
+    return this.sentEmailsService.countSentEmails(user, researchParamsSentEmails);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-sent-emails-sent")
+  countSentEmailsSent(@CurrentUser() user: ProjectManager, @Query() researchParamsSentEmails: ResearchParamsSentEmailsDto) : Promise<number> {
+    return this.sentEmailsService.countSentEmailsSent(user, researchParamsSentEmails)
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)

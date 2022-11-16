@@ -2,7 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StageType } from 'src/constants/stage.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { Between, Repository } from 'typeorm';
+import { Prospect } from 'src/prospects/entities/prospect.entity';
+import { Between, Repository, UpdateResult } from 'typeorm';
 import { CreateSentEmailDto } from './dto/create-sent-email.dto';
 import { ResearchParamsSentEmailsDto } from './dto/research-params-sent-emails.dto';
 import { SentEmail } from './entities/sent-email.entity';
@@ -15,11 +16,15 @@ export class SentEmailsService {
     private readonly sentEmailRepository: Repository<SentEmail>,
 
     @InjectRepository(ProjectManager)
-    private readonly pmRepository: Repository<ProjectManager>
+    private readonly pmRepository: Repository<ProjectManager>,
+
+    @InjectRepository(Prospect)
+    private readonly prospectRepository: Repository<Prospect>
   ) {}
 
   async findAllPaginated(researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, user: ProjectManager) {
     try {
+      await this.checkMailsSynchro()
       return await this.sentEmailRepository.find({
         relations: ["pm", "prospect", "prospect.activity","prospect.city","prospect.country", "prospect.phone","prospect.email", "prospect.website", "prospect.reminders","prospect.meetings","prospect.events","prospect.bookmarks"],
         where: {
@@ -28,7 +33,37 @@ export class SentEmailsService {
           },
           prospect: {
             stage: StageType.MAIL
-          }
+          },
+          sent: false
+        },
+        order: {
+          sendingDate: "ASC" 
+        },
+        take: researchParamsSentEmailsDto.take,
+        skip: researchParamsSentEmailsDto.skip
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer les emails non envoyés", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findAllPaginatedSent(researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, user: ProjectManager) {
+    try {
+      await this.checkMailsSynchro();
+      return await this.sentEmailRepository.find({
+        relations: ["pm", "prospect", "prospect.activity","prospect.city","prospect.country", "prospect.phone","prospect.email", "prospect.website", "prospect.reminders","prospect.meetings","prospect.events","prospect.bookmarks"],
+        where: {
+          pm: {
+            pseudo: user.pseudo
+          },
+          prospect: {
+            stage: StageType.MAIL_SENT
+          },
+          sent: true
+        },
+        order: {
+          sendingDate: "ASC"
         },
         take: researchParamsSentEmailsDto.take,
         skip: researchParamsSentEmailsDto.skip
@@ -36,6 +71,36 @@ export class SentEmailsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récupérer les emails envoyés", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async markSent(idSentEmail: number) : Promise<UpdateResult> {
+    try {
+      return await this.sentEmailRepository.update(idSentEmail, { sent: true, sendingDate: new Date()});
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de marquer l'email comme envoyé",HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  // ! important -> when merging on the first time, due to the old database -> there will be only one  date for the sentEmail (the sendingDate)
+  // ! thus, I check for every prospect, if the sending date exists but not the date AND the the prospect is un stage 4 (mail), I change the stage to 8 and set the date to the same as sendingdDate
+  async checkMailsSynchro() {
+    try {
+      let sentEmails = await this.sentEmailRepository.find({
+        relations: ["prospect"],
+      });
+      for(let sentEmail of sentEmails) {
+        if(!sentEmail.date) {
+          this.sentEmailRepository.update(sentEmail.id, { date: sentEmail.sendingDate, sent: true})
+          if(sentEmail.prospect.stage == 4) {
+            this.prospectRepository.update(sentEmail.prospect.id, { stage: 8})
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de vérifier les dates des emails envoyés", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
@@ -49,7 +114,7 @@ export class SentEmailsService {
     }
   }
 
-  async countSentEmails(user: ProjectManager) : Promise<number> {
+  async countSentEmails(user: ProjectManager, researchParamsSentEmailsDto: ResearchParamsSentEmailsDto) : Promise<number> {
     try {
       return await this.sentEmailRepository.count({
         where: {
@@ -58,7 +123,8 @@ export class SentEmailsService {
           },
           prospect: {
             stage: StageType.MAIL
-          }
+          },
+          sent: false
         }
       })
     } catch (error) {
@@ -66,6 +132,26 @@ export class SentEmailsService {
       throw new HttpException("Impossible de compter les mails", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async countSentEmailsSent(user: ProjectManager, researchParamsSentEmailsDto: ResearchParamsSentEmailsDto) : Promise<number> {
+    try {
+      return await this.sentEmailRepository.count({
+        where: {
+          pm: {
+            pseudo: user.pseudo
+          },
+          prospect: {
+            stage: StageType.MAIL_SENT
+          },
+          sent: true
+        }
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de compter les mails", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
 
   async countWeeklyForMe(user: ProjectManager) : Promise<number> {
     try {
@@ -87,7 +173,7 @@ export class SentEmailsService {
           pm: {
             pseudo: user.pseudo
           },
-          sendingDate: Between(monday, sunday)
+          date: Between(monday, sunday)
         }
       })
     } catch (error) {
@@ -125,7 +211,7 @@ export class SentEmailsService {
           let count = 0;
           
           pm.sentEmails.length && pm.sentEmails.forEach(sentEmail => {
-            if(new Date(interval.dateDown) < new Date(sentEmail.sendingDate) && new Date(sentEmail.sendingDate) < new Date(interval.dateUp)){
+            if(new Date(interval.dateDown) < new Date(sentEmail.date) && new Date(sentEmail.date) < new Date(interval.dateUp)){
               count += 1;
             }
           })
@@ -166,7 +252,7 @@ export class SentEmailsService {
             pm: {
               pseudo: user.pseudo
             },
-            sendingDate: Between(s, new Date(temp.setHours(0,59,59,999)))
+            date: Between(s, new Date(temp.setHours(0,59,59,999)))
           }
         })
         results.data.push(count)
