@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
@@ -10,6 +10,7 @@ import { SentryInterceptor } from 'src/sentry.interceptor';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { ResearchParamsMeetingsDto } from './dto/research-parmas-meetings.dto';
+import { UpdateMeetingDto } from './dto/update-meeting.dto';
 import { Meeting } from './entities/meeting.entity';
 import { MeetingsService } from './meetings.service';
 
@@ -92,5 +93,11 @@ export class MeetingsController {
   @Get("count-all-by-weeks-for-me")
   countAllByWeeksForMe(@CurrentUser() user: ProjectManager) {
     return this.meetingsService.countAllByWeeksForMe(user);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Patch(":id")
+  update(@Param("id") id: number, @Body() updateMeetingDto: UpdateMeetingDto) : Promise<UpdateResult> {
+    return this.meetingsService.update(id, updateMeetingDto);
   }
 }
