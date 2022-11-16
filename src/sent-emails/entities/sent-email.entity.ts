@@ -40,12 +40,24 @@ export class SentEmail extends BaseEntity {
   })
   message: string;
 
-  @Column()
+  @Column({ nullable: true})
   @ApiProperty({
     description: "Date d'envoi de l'email envoyé",
     required: true
   })
   sendingDate: Date;
+
+  @Column({ nullable: true})
+  @ApiProperty({
+    description: "Date de création du mail"
+  })
+  date: Date;
+
+  @Column({ default: false})
+  @ApiProperty({
+    description: "Si l'email est déjà envoyé ou non"
+  })
+  sent: boolean;
 
   @ManyToOne(() => Prospect)
   @ApiProperty({
