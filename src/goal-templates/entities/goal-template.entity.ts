@@ -40,10 +40,4 @@ export class GoalTemplate extends BaseEntity {
     description: "Valeur par défaut de l'objectif template"
   })
   default: number;
-
-  @Column({ default: false})
-  @ApiProperty({
-    description: "Objectif template apparaîtra comme favori dans le dashboard du chef de projet"
-  })
-  important: boolean;
 }

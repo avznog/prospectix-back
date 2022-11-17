@@ -3,5 +3,4 @@ export class CreateGoalTemplateDto {
   description: string;
   disabled: boolean;
   default: number;
-  important: boolean;
 }
