@@ -316,14 +316,22 @@ export class MeetingsService {
 
   async countWeeklyAll() : Promise<{id: number, count: number}[]> {
     try {
-      let end = lastDayOfWeek(new Date(), { weekStartsOn: 2});
-      let first = new Date();
-      first.setDate(end.getDate() - 7)
-      first = new Date(first.setHours(1,0,0,0))
-      end = new Date(end.setHours(0,59,59,999))
+      const today = new Date();
+      const firstd = today.getDate() - today.getDay() + 1;
+
+      //  ? getting the monday of the week
+      const monday = new Date(today.setDate(firstd));
+
+      // ? getting the sunday of the week
+      const sunday = new Date(today.setDate(firstd + 6));
+
+      // ? setting monday on midnight and sunday on 23:59:59
+      monday.setHours(1,0,0,0)
+      sunday.setHours(24,59,59,999)
+
       const results = [{}] as {id: number, count: number}[];
       const pms = await this.pmRepository.find({
-        relations: ["calls"],
+        relations: ["meetings"],
         where: {
           objectived: true
         }
@@ -333,10 +341,10 @@ export class MeetingsService {
       pms.forEach(pm => {
         results.push({
           id: pm.id,
-          count: !pm.meetings ? 0 : pm.meetings.filter(meeting => first <= meeting.creationDate && meeting.creationDate <= end).length
+          count: !pm.meetings ? 0 : pm.meetings.filter(meeting => monday <= meeting.creationDate && meeting.creationDate <= sunday).length
         })
       })
-      console.log(results)
+      
       return results
     } catch (error) {
       console.log(error)
