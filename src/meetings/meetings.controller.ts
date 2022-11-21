@@ -93,4 +93,10 @@ export class MeetingsController {
   countAllByWeeksForMe(@CurrentUser() user: ProjectManager) {
     return this.meetingsService.countAllByWeeksForMe(user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-weekly-all")
+  countWeeklyAll() : Promise<{id: number, count: number}[]> {
+    return this.meetingsService.countWeeklyAll();
+  }
 }

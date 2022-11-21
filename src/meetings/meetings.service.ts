@@ -313,4 +313,34 @@ export class MeetingsService {
       throw new HttpException("Impossible de compter les appels par semaines", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async countWeeklyAll() : Promise<{id: number, count: number}[]> {
+    try {
+      let end = lastDayOfWeek(new Date(), { weekStartsOn: 2});
+      let first = new Date();
+      first.setDate(end.getDate() - 7)
+      first = new Date(first.setHours(1,0,0,0))
+      end = new Date(end.setHours(0,59,59,999))
+      const results = [{}] as {id: number, count: number}[];
+      const pms = await this.pmRepository.find({
+        relations: ["calls"],
+        where: {
+          objectived: true
+        }
+      });
+
+      results.pop()
+      pms.forEach(pm => {
+        results.push({
+          id: pm.id,
+          count: !pm.meetings ? 0 : pm.meetings.filter(meeting => first <= meeting.creationDate && meeting.creationDate <= end).length
+        })
+      })
+      console.log(results)
+      return results
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer le nombre de rendez)ous de la semaine de tous les cdp", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
 }
