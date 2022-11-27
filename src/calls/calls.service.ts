@@ -88,13 +88,14 @@ export class CallsService {
 
       //  ! begining of history
       let s = new Date("2022-11-07")
-
+      let temp = new Date("2022-11-07")
+      
       // ! end of history
       let ed = new Date(new Date().setDate(new Date().getDate() - new Date().getDay() + 1 + 6));
       while(s <= ed) {
-        let temp = new Date(ed);
+        
         // ! each week sunday
-        temp.setDate(s.getDate() + 7)
+        temp.setDate(temp.getDate() + 7)
         results.intervals.push({
           dateDown: new Date(s),
           dateUp: new Date(temp.setHours(0,59,59,999))
