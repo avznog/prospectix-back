@@ -1,68 +1,37 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { ApiProperty } from "@nestjs/swagger";
+import { GoalTemplate } from "src/goal-templates/entities/goal-template.entity";
+import { ProjectManager } from "src/project-managers/entities/project-manager.entity";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Goal extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
+  @PrimaryGeneratedColumn()
   @ApiProperty({
     description: "Id de l'objectif",
-    required: true
   })
   id: number;
 
-  @Column()
+  @ManyToOne(() => GoalTemplate)
   @ApiProperty({
-    description: "Réccurrence de l'objectif",
-    required: true
+    description: "Template de l'objectif"
   })
-  isCyclic: boolean;
+  goalTemplate: GoalTemplate;
 
-  @Column()
+  @Column({default: true})
   @ApiProperty({
-    description: "Date deadline de l'objectif",
-    required: true
+    description: "Désactivation ou non de l'objectif template"
   })
-  deadline: Date;
+  disabled: boolean;
 
-  @Column()
+  @Column({default: 0})
   @ApiProperty({
-    description: "Titre de l'objectif",
-    required: true
+    description: "Valeur de l'objectif"
   })
-  title: string;
-
-  @Column()
-  @ApiProperty({
-    description: "Description de l'objectif",
-    required: true
-  })
-  description: string;
-
-  @Column()
-  @ApiProperty({
-    description: "Nombre total d'étapes de l'objectif",
-    required: true
-  })
-  totalSteps: number;
-
-  @Column()
-  @ApiProperty({
-    description: "Etape actuelle de l'objectif",
-    required: true
-  })
-  currentStep: number;
+  value: number;
 
   @ManyToOne(() => ProjectManager)
   @ApiProperty({
-    description: "Chef de projet à qui appartient l'objectif",
-    required: true
+    description: "ProjectManager relié à l'objectif"
   })
   pm: ProjectManager;
 }

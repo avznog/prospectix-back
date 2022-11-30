@@ -1,97 +1,84 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { GoalTemplate } from 'src/goal-templates/entities/goal-template.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { DeleteResult, ILike, Repository, UpdateResult } from 'typeorm';
-import { CreateGoalDto } from './dto/create-goal.dto';
-import { ResearchParamsGoalsDto } from './dto/research-params-goals.dto';
+import { Repository } from 'typeorm';
 import { UpdateGoalDto } from './dto/update-goal.dto';
 import { Goal } from './entities/goal.entity';
 
 @Injectable()
 export class GoalsService {
-  constructor(
-    @InjectRepository(ProjectManager)
-    private readonly pmRepository: Repository<ProjectManager>,
 
+  constructor(
     @InjectRepository(Goal)
-    private readonly goalRepository: Repository<Goal>
+    private readonly goalRepository: Repository<Goal>,
+
+    @InjectRepository(GoalTemplate)
+    private readonly goalTemplateRepository: Repository<GoalTemplate>,
+
+    @InjectRepository(ProjectManager)
+    private readonly pmRepository: Repository<ProjectManager>
   ) {}
 
-  async createForCurrentPm(createGoalDto: CreateGoalDto, idPm: number) : Promise<Goal>{
-    try{
-      const pm = await this.pmRepository.findOne({
-        where: {
-          id: idPm
-        }
-      });
-      
-      if(!pm)
-        throw new HttpException("Ce chef de projet n'existe pas !", HttpStatus.NOT_FOUND)
-      createGoalDto.pm = pm;
-      
-      return await this.goalRepository.save(createGoalDto);
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de créer un objectif pour ce chef de projet", HttpStatus.BAD_REQUEST)
-    }
-  }
-
-  async createForPm(createGoalDto: CreateGoalDto, pseudo: string) : Promise<Goal> {
-    try {
-      createGoalDto.pm = await this.pmRepository.findOne({
-        where: {
-          pseudo: pseudo
-        }
-      });
-      return await this.goalRepository.save(createGoalDto);
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de créer un objectif pour ce chef de projet", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  async findAllPaginated(researchParamsGoalsDto: ResearchParamsGoalsDto) : Promise<Goal[]> {
+  
+  async findAll() : Promise<Goal[]> {
     try {
       return await this.goalRepository.find({
-        relations: ["pm"],
-        where: [
-          {
-            title: ILike(`%${researchParamsGoalsDto.keyword}%`),
-            pm: {
-              pseudo: ILike(`%${researchParamsGoalsDto.pseudo}%`),
-            }
-          }
-        ],
-        take: researchParamsGoalsDto.take,
-        skip: researchParamsGoalsDto.skip,
-        order: {
-          pm: {
-            pseudo: "asc"
-          }
-        }
+        relations: ["pm","goalTemplate","pm.goals"]
       })
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossible de trouver les objectifs", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException("Impossible de récupérer tous les objectifs", HttpStatus.INTERNAL_SERVER_ERROR  )
     }
   }
 
-  async update(id: number, updateGoalDto: UpdateGoalDto) : Promise<UpdateResult> {
+  async update(id: number, updateGoalDto: UpdateGoalDto) {
     try {
-      return await this.goalRepository.update(id, updateGoalDto);  
+      return await this.goalRepository.update(id, updateGoalDto);
     } catch (error) {
       console.log(error)
-      throw new HttpException("impossible de modifier l'objectif", HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException("Impossible de mettre à jour l'objectif", HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    
   }
 
-  async delete(id: number) : Promise<DeleteResult> {
+  async check(id: number) {
     try {
-      return await this.goalRepository.delete(id);
+      let goalTemplates = await this.goalTemplateRepository.find();
+      let pm = await this.pmRepository.findOne({
+        relations: ["goals", "goals.goalTemplate"],
+        where: {
+          id: id
+        }
+      });
+      let go = [];
+
+      for(let goal of pm.goals) {
+        go.push(goal.goalTemplate.id);
+      }
+
+      for(let goalTemplate of goalTemplates) {
+        if(!go.includes(goalTemplate.id)) {
+          await this.goalRepository.save(this.goalRepository.create({
+            disabled: true,
+            pm: pm,
+            goalTemplate: goalTemplate,
+            value: goalTemplate.default
+          }))
+        }
+      }
+
+      let pmWithGoals =  await this.pmRepository.findOne({
+        relations: ["goals", "goals.goalTemplate"],
+        where: {
+          id: id
+        }
+      });
+
+      return pmWithGoals.goals;
+
     } catch (error) {
-      console.log(error);
-      throw new HttpException("Impossible de supprimer l'objectif", HttpStatus.INTERNAL_SERVER_ERROR);
+      console.log(error)
+      throw new HttpException("Impossible de vérifier les objectifs", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

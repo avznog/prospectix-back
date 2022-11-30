@@ -339,4 +339,42 @@ export class MeetingsService {
       throw new HttpException("Impossible de mettre à jour le rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
+  
+  async countWeeklyAll() : Promise<{id: number, count: number}[]> {
+    try {
+      const today = new Date();
+      const firstd = today.getDate() - today.getDay() + 1;
+
+      //  ? getting the monday of the week
+      const monday = new Date(today.setDate(firstd));
+
+      // ? getting the sunday of the week
+      const sunday = new Date(today.setDate(firstd + 6));
+
+      // ? setting monday on midnight and sunday on 23:59:59
+      monday.setHours(1,0,0,0)
+      sunday.setHours(24,59,59,999)
+
+      const results = [{}] as {id: number, count: number}[];
+      const pms = await this.pmRepository.find({
+        relations: ["meetings"],
+        where: {
+          objectived: true
+        }
+      });
+
+      results.pop()
+      pms.forEach(pm => {
+        results.push({
+          id: pm.id,
+          count: !pm.meetings ? 0 : pm.meetings.filter(meeting => monday <= meeting.creationDate && meeting.creationDate <= sunday).length
+        })
+      })
+      
+      return results
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer le nombre de rendez)ous de la semaine de tous les cdp", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
 }

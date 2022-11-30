@@ -56,4 +56,10 @@ export class CallsController {
   countAllByWeeksForMe(@CurrentUser() user: ProjectManager) {
     return this.callsService.countAllByWeeksForMe(user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("count-weekly-all")
+  countWeeklyAll() : Promise<{id: number, count: number}[]> {
+    return this.callsService.countWeeklyAll();
+  }
 }

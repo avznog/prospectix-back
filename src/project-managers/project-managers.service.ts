@@ -42,6 +42,7 @@ export class ProjectManagersService {
     try {
       return await this.pmRepository.find({
         // relations: ["goals","meetings","reminders","sentEmails","bookmarks","events","bookmarks.prospect", "statistic"],
+        relations: ["goals", "goals.goalTemplate"],
         where: {
           disabled: false
         }
@@ -82,6 +83,7 @@ export class ProjectManagersService {
   async findAllPaginated(researchParamsProjectManagersDto: ResearchParamsProjectManagersDto) : Promise<ProjectManager[]> {
     try {
       return await this.pmRepository.find({
+        relations: ["goals","goals.goalTemplate"],
         take: researchParamsProjectManagersDto.take,
         skip: researchParamsProjectManagersDto.skip,
       })

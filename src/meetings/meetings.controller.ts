@@ -100,4 +100,9 @@ export class MeetingsController {
   update(@Param("id") id: number, @Body() updateMeetingDto: UpdateMeetingDto) : Promise<UpdateResult> {
     return this.meetingsService.update(id, updateMeetingDto);
   }
+  
+  @Get("count-weekly-all")
+  countWeeklyAll() : Promise<{id: number, count: number}[]> {
+    return this.meetingsService.countWeeklyAll();
+  }
 }
