@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { lastDayOfWeek } from 'date-fns';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Between, Repository } from 'typeorm';
 import { CreateCallDto } from './dto/create-call.dto';
@@ -59,7 +60,8 @@ export class CallsService {
       const monday = new Date(today.setDate(firstd));
 
       // ? getting the sunday of the week
-      const sunday = new Date(today.setDate(firstd + 6));
+      // const sunday = new Date(today.setDate(firstd + 6));
+      const sunday = lastDayOfWeek(new Date(), { weekStartsOn: 1})
 
       // ? setting monday on midnight and sunday on 23:59:59
       monday.setHours(1,0,0,0)
