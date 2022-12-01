@@ -45,6 +45,8 @@ import { GoalTemplatesModule } from './goal-templates/goal-templates.module';
 import { GoalsModule } from './goals/goals.module';
 import { Goal } from './goals/entities/goal.entity';
 import { GoalTemplate } from './goal-templates/entities/goal-template.entity';
+import { GoogleModule } from './google/google.module';
+import { Google } from './google/entities/google.entity';
 @Module({
   imports: [
     AuthModule,
@@ -81,12 +83,13 @@ import { GoalTemplate } from './goal-templates/entities/goal-template.entity';
       database: process.env.POSTGRES_DATABASE ?? 'dev',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
-      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Phone, SentEmail, Website, Call, NegativeAnswer, Slack, Goal, GoalTemplate],
+      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Phone, SentEmail, Website, Call, NegativeAnswer, Slack, Goal, GoalTemplate, Google],
     }),
     SlackModule,
     ScheduleModule.forRoot(),
     GoalTemplatesModule,
-    GoalsModule
+    GoalsModule,
+    GoogleModule
   ],
   controllers: [AppController],
   providers: [AppService],
