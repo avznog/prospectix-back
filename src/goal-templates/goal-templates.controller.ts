@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
@@ -6,6 +6,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
 import { Goal } from 'src/goals/entities/goal.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { SentryInterceptor } from 'src/sentry.interceptor';
 import { DeleteResult } from 'typeorm';
 import { CreateGoalTemplateDto } from './dto/create-goal-template.dto';
 import { UpdateGoalTemplateDto } from './dto/update-goal-template.dto';
@@ -14,6 +15,7 @@ import { GoalTemplatesService } from './goal-templates.service';
 
 @Controller('goal-templates')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@UseInterceptors(SentryInterceptor)
 export class GoalTemplatesController {
   constructor(
     private readonly goalTemplatesService: GoalTemplatesService
