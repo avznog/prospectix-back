@@ -2,9 +2,10 @@ import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Call } from 'src/calls/entities/call.entity';
-import { Meeting } from 'src/meetings/entities/meeting.entity';
+import { CallsService } from 'src/calls/calls.service';
+import { MeetingsService } from 'src/meetings/meetings.service';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { ProjectManagersService } from 'src/project-managers/project-managers.service';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { Between, Repository } from 'typeorm';
@@ -24,15 +25,13 @@ export class SlackService {
 
     @InjectRepository(ProjectManager)
     private readonly pmRepository: Repository<ProjectManager>,
-
-    @InjectRepository(Call)
-    private readonly callRepository: Repository<Call>,
-
-    @InjectRepository(Meeting)
-    private readonly meetingRepository: Repository<Meeting>,
     
     @InjectRepository(Reminder)
-    private readonly reminderRepository: Repository<Reminder>
+    private readonly reminderRepository: Repository<Reminder>,
+
+    private readonly callsService: CallsService,
+    private readonly meetingsService: MeetingsService,
+    private readonly pmService: ProjectManagersService
   ) {
     // ! changing the url for slack channel if prod / staging or localhost
     if (process.env.BASE_URL.includes("localhost")) {
@@ -72,75 +71,30 @@ export class SlackService {
   @Cron("00 17 * * 0")
   async sendWeekRecap() {
     try {
-      let weekPms: [{ pm: ProjectManager, countCalls: number, countMeetings: number }] = [{ pm: {} as ProjectManager, countCalls: 0, countMeetings: 0 }];
-      weekPms.pop();
-
-      // ? for all pms (CDP)
-      let pms = await this.pmRepository.find({
+      const allCallsCounted = await this.callsService.countWeeklyAll();
+      const allMeetingsCounted = await this.meetingsService.countWeeklyAll();
+      let pmsObjectived = await this.pmRepository.find({
+        relations: ["goals", "goals.goalTemplate"],
         where: {
-          statsEnabled: true,
-          disabled: false,
-          admin: false,
+          objectived: true
         }
       });
-
-      // ? DATES
-      let end = new Date()
-      let first = new Date();
-
-      // ? start date : last sunday 17h02
-      first.setDate(new Date().getDate() - 7)
-      first.setHours(19, 2, 0, 0)
-
-      // ? end date -> the moment it starts with cron (every sunday, so sunday)
-      end = new Date();
-
-
-
-      // ? Loop in all pms
-      for (let pm of pms) {
-
-        // ? count calls of pm
-        const countCalls = await this.callRepository.count({
-          where: {
-            pm: {
-              pseudo: pm.pseudo
-            },
-            date: Between(new Date(first), new Date(end))
-          }
-        })
-
-        // ? count meetings of pm
-        const countMeetings = await this.meetingRepository.count({
-          where: {
-            pm: {
-              pseudo: pm.pseudo
-            },
-            creationDate: Between(new Date(first), new Date(end))
-          }
-        })
-
-        // ? if the pm did not complete the objectives
-        if (countCalls < 50 && countMeetings == 0) {
-          weekPms.push({
-            pm: pm,
-            countCalls: countCalls,
-            countMeetings: countMeetings
-          })
-        }
-
-      }
-
-      // ? format message
+      pmsObjectived = pmsObjectived.filter(pm => pm.objectived)
       let content = "";
-      weekPms.forEach(data => {
-        content = content + `*${data.pm.firstname} ${data.pm.name}* n'a fait QUE ${data.countCalls} appels et ${data.countMeetings} rendez-vous\n>`
+
+      allCallsCounted.forEach(callCounted => {
+        const currentPm = pmsObjectived.find(pm => pm.id == callCounted.id)
+        const meetingCounted = allMeetingsCounted.find(meetingC => meetingC.id == callCounted.id);
+        const callsGoalValue = currentPm.goals.find(goal => goal.goalTemplate.name == 'Appels').value
+        const meetingsGoalValue = currentPm.goals.find(goal => goal.goalTemplate.name == 'Rendez-vous').value
+        if(callCounted.count < callsGoalValue || meetingCounted.count < meetingsGoalValue ) {
+          content += `*${currentPm.firstname} ${currentPm.name}* : *${callCounted.count} / ${callsGoalValue}* Appels et *${meetingCounted.count} / ${meetingsGoalValue}* Rendez-vous\n>`
+
+        }
       })
       const message = {
         text: `:loading: :excuseme: Alerte aux faibles : \n>${content}`
       }
-
-      // ? send
       return this.httpService.post(this.webhookRecapChannel, message).subscribe()
 
     } catch (error) {
