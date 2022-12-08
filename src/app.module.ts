@@ -23,8 +23,6 @@ import { EmailsModule } from './emails/emails.module';
 import { Email } from './emails/entities/email.entity';
 import { Event } from './events/entities/event.entity';
 import { EventsModule } from './events/events.module';
-import { Goal } from './goals/entities/goal.entity';
-import { GoalsModule } from './goals/goals.module';
 import { Meeting } from './meetings/entities/meeting.entity';
 import { MeetingsModule } from './meetings/meetings.module';
 import { NegativeAnswer } from './negative-answers/entities/negative-answer.entity';
@@ -43,6 +41,10 @@ import { Slack } from './slack/entities/slack.entity';
 import { SlackModule } from './slack/slack.module';
 import { Website } from './websites/entities/website.entity';
 import { WebsitesModule } from './websites/websites.module';
+import { GoalTemplatesModule } from './goal-templates/goal-templates.module';
+import { GoalsModule } from './goals/goals.module';
+import { Goal } from './goals/entities/goal.entity';
+import { GoalTemplate } from './goal-templates/entities/goal-template.entity';
 @Module({
   imports: [
     AuthModule,
@@ -56,7 +58,6 @@ import { WebsitesModule } from './websites/websites.module';
     CitiesModule,
     CountriesModule,
     EmailsModule,
-    GoalsModule,
     PhonesModule,
     SentEmailsModule,
     EventsModule,
@@ -73,17 +74,19 @@ import { WebsitesModule } from './websites/websites.module';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.POSTGRES_HOST || "localhost",
+      host: process.env.POSTGRES_HOST || "192.168.0.158",
       port: +process.env.POSTGRES_PORT,
       username: process.env.POSTGRES_USER || "postgres",
-      password: process.env.POSTGRES_PASSWORD || "postgres",
-      database: process.env.POSTGRES_DATABASE ?? 'addcity',
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DATABASE ?? 'dev',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
-      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Goal, Phone, SentEmail, Website, Call, NegativeAnswer, Slack],
+      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Phone, SentEmail, Website, Call, NegativeAnswer, Slack, Goal, GoalTemplate],
     }),
     SlackModule,
-    ScheduleModule.forRoot()
+    ScheduleModule.forRoot(),
+    GoalTemplatesModule,
+    GoalsModule
   ],
   controllers: [AppController],
   providers: [AppService],
