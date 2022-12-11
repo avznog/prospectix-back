@@ -219,15 +219,23 @@ export class CallsService {
       const firstd = today.getDate() - today.getDay() + 1;
 
       //  ? getting the monday of the week
-      const monday = new Date(today.setDate(firstd));
+     // const monday = new Date(today.setDate(firstd));
+
+      const date = new Date(today);
+      const day = date.getDay(); // 👉️ get day of week
+
+      // 👇️ day of month - day of week (-6 if Sunday), otherwise +1
+      const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+
+      const monday =  new Date(date.setDate(diff));
 
       // ? getting the sunday of the week
       // const sunday = new Date(today.setDate(firstd + 6));
       const sunday = lastDayOfWeek(new Date(), { weekStartsOn: 1});
 
       // ? setting monday on midnight and sunday on 23:59:59
-      monday.setHours(1,0,0,0)
-      sunday.setHours(24,59,59,999)
+      monday.setHours(0,0,0,0)
+      sunday.setHours(23,59,59,999)
 
       const results = [{}] as {id: number, count: number}[];
       const pms = await this.pmRepository.find({
