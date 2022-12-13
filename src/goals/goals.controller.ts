@@ -1,14 +1,16 @@
-import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
+import { SentryInterceptor } from 'src/sentry.interceptor';
 import { UpdateGoalDto } from './dto/update-goal.dto';
 import { Goal } from './entities/goal.entity';
 import { GoalsService } from './goals.service';
 
 @Controller('goals')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@UseInterceptors(SentryInterceptor)
 export class GoalsController {
   constructor(
     private readonly goalsService: GoalsService
