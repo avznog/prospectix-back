@@ -8,32 +8,17 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @UseInterceptors(SentryInterceptor)
 @Controller('google')
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 export class GoogleController {
   constructor(private readonly googleService: GoogleService) {}
 
-  @Post()
-  create(@Body() createGoogleDto: CreateGoogleDto) {
-    return this.googleService.create(createGoogleDto);
-  }
-
   @Get()
-  findAll() {
-    return this.googleService.findAll();
+  test() {
+    return this.googleService.test();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.googleService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGoogleDto: UpdateGoogleDto) {
-    return this.googleService.update(+id, updateGoogleDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.googleService.remove(+id);
+  @Get("add-event")
+  addEvent() {
+    return this.googleService.addEvent();
   }
 }
