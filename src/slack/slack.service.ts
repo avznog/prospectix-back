@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CallsService } from 'src/calls/calls.service';
 import { MeetingsService } from 'src/meetings/meetings.service';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
-import { ProjectManagersService } from 'src/project-managers/project-managers.service';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { Between, Repository } from 'typeorm';
@@ -30,8 +29,7 @@ export class SlackService {
     private readonly reminderRepository: Repository<Reminder>,
 
     private readonly callsService: CallsService,
-    private readonly meetingsService: MeetingsService,
-    private readonly pmService: ProjectManagersService
+    private readonly meetingsService: MeetingsService
   ) {
     // ! changing the url for slack channel if prod / staging or localhost
     if (process.env.BASE_URL.includes("localhost")) {
@@ -116,7 +114,7 @@ export class SlackService {
   }
 
   // ! CRON WORKING EVERY MINUTES, CHECKING IF U HAVE A REMINDER IN 3 H -> then send slack message
-  // @Cron("* * * * *")
+  @Cron("* * * * *")
   async sendPmReminder() {
     try {
       // ! IF PROSPECTIX IS IN DEV OR STAGING -> SENDING MESSAGES TO SLACK ADMIN
@@ -150,7 +148,6 @@ export class SlackService {
       pms.forEach(async pm => {
         if (result.members.find(member => member.name == pm.pseudo)) {
           const slackUser = result.members.find(member => member.name == pm.pseudo)
-          console.log(beginningInterval3h, endInterval3h)
           await this.reminderRepository.findAndCount({
             relations: ["prospect", "prospect.phone"],
             where: {

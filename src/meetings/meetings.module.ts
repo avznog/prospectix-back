@@ -6,6 +6,7 @@ import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { City } from 'src/cities/entities/city.entity';
 import { Country } from 'src/countries/entities/country.entity';
 import { Email } from 'src/emails/entities/email.entity';
+import { GoogleService } from 'src/google/google.service';
 import { Phone } from 'src/phones/entities/phone.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { ProjectManagersService } from 'src/project-managers/project-managers.service';
@@ -20,8 +21,7 @@ import { MeetingsService } from './meetings.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Phone, SentEmail, Website])],
-
   controllers: [MeetingsController],
-  providers: [MeetingsService, ProspectsService, ProjectManagersService]
+  providers: [MeetingsService, ProspectsService, ProjectManagersService, GoogleService]
 })
 export class MeetingsModule {}

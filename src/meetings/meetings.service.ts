@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { lastDayOfWeek } from 'date-fns';
 import { MeetingType } from 'src/constants/meeting.type';
 import { StageType } from 'src/constants/stage.type';
+import { GoogleService } from 'src/google/google.service';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Between, DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
@@ -17,12 +18,15 @@ export class MeetingsService {
     private readonly meetingRepository: Repository<Meeting>,
 
     @InjectRepository(ProjectManager)
-    private readonly pmRepository: Repository<ProjectManager>
+    private readonly pmRepository: Repository<ProjectManager>,
+
+    private readonly googleService: GoogleService
   ){}
 
   async create(createMeetingDto: CreateMeetingDto, user: ProjectManager) : Promise<Meeting> {
     try {
       createMeetingDto.pm = user;
+      this.googleService.createEventOnCalendar(createMeetingDto,  await this.googleService.authorize())
       return await this.meetingRepository.save(createMeetingDto);
     } catch (error) {
       console.log(error)
