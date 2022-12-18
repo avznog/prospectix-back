@@ -9,7 +9,11 @@ const { google } = require('googleapis');
 const TOKEN_PATH = path.join(process.cwd(), 'token.json');
 const SCOPES = [
   'https://www.googleapis.com/auth/calendar',
-  'https://www.googleapis.com/auth/calendar.events'
+  'https://www.googleapis.com/auth/calendar.events',
+  'https://mail.google.com/',
+  'https://www.googleapis.com/auth/gmail.modify',
+  'https://www.googleapis.com/auth/gmail.compose',
+  'https://www.googleapis.com/auth/gmail.send'
 ];
 let CREDENTIALS_PATH = "";
 let CALENDAR_RDV_ID = "";
@@ -127,9 +131,9 @@ export class GoogleService {
   // ! ---------------------------- LOGOUT END ----------------------------
 
 
-
   // ! ------------------------------------------------------------------------------------ METHODS ------------------------------------------------------------------------------------
 
+  // ? Create an event on calendar JISEP -> for meetings
   async createEventOnCalendar(createMeetingDto: CreateMeetingDto, auth?) {
     try {
       const calendar = google.calendar({ version: 'v3', auth });
@@ -168,5 +172,23 @@ export class GoogleService {
       throw new HttpException("Impossible de créer un évènement sur le calendrier", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
+
+
+  async testMailsGoogle(auth) {
+    try {
+      const gmail = google.gmail({version: 'v1',auth})
+      const response = await gmail.users.messages.send({
+        userId: 'bgonzva@juniorisep.com',
+        raw: Buffer.from(`To: bgonzva@juniorisep.com\nSubject: Monsujet\n\nheyyyy`).toString('base64')
+      })
+      fs.writeFile("test.json", JSON.stringify(response))
+      console.log(response.data)
+    } catch (error) {
+      console.error(error)
+      await fs.writeFile("test.json", JSON.stringify(error))
+      
+      throw new HttpException("error", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+    }
 
 }

@@ -18,4 +18,9 @@ export class GoogleController {
     return this.googleService.logout();
   }
 
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("mail")
+  async testMail() {
+    this.googleService.testMailsGoogle(await this.googleService.authorize())
+  }
 }
