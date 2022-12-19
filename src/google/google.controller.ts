@@ -1,4 +1,5 @@
 import { Controller, Get, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -9,6 +10,7 @@ import { GoogleService } from './google.service';
 @UseInterceptors(SentryInterceptor)
 @Controller('google')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiTags("google")
 export class GoogleController {
   constructor(private readonly googleService: GoogleService) {}
 

@@ -7,7 +7,8 @@ import { Between, Repository, UpdateResult } from 'typeorm';
 import { CreateSentEmailDto } from './dto/create-sent-email.dto';
 import { ResearchParamsSentEmailsDto } from './dto/research-params-sent-emails.dto';
 import { SentEmail } from './entities/sent-email.entity';
-
+const Mustache = require("mustache");
+const fs = require('fs').promises;
 @Injectable()
 export class SentEmailsService {
 
@@ -20,13 +21,13 @@ export class SentEmailsService {
 
     @InjectRepository(Prospect)
     private readonly prospectRepository: Repository<Prospect>
-  ) {}
+  ) { }
 
   async findAllPaginated(researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, user: ProjectManager) {
     try {
       await this.checkMailsSynchro()
       return await this.sentEmailRepository.find({
-        relations: ["pm", "prospect", "prospect.activity","prospect.city","prospect.country", "prospect.phone","prospect.email", "prospect.website", "prospect.reminders","prospect.meetings","prospect.events","prospect.bookmarks"],
+        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.phone", "prospect.email", "prospect.website", "prospect.reminders", "prospect.meetings", "prospect.events", "prospect.bookmarks"],
         where: {
           pm: {
             pseudo: user.pseudo
@@ -37,7 +38,7 @@ export class SentEmailsService {
           sent: false
         },
         order: {
-          sendingDate: "ASC" 
+          sendingDate: "ASC"
         },
         take: researchParamsSentEmailsDto.take,
         skip: researchParamsSentEmailsDto.skip
@@ -52,7 +53,7 @@ export class SentEmailsService {
     try {
       await this.checkMailsSynchro();
       return await this.sentEmailRepository.find({
-        relations: ["pm", "prospect", "prospect.activity","prospect.city","prospect.country", "prospect.phone","prospect.email", "prospect.website", "prospect.reminders","prospect.meetings","prospect.events","prospect.bookmarks"],
+        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.phone", "prospect.email", "prospect.website", "prospect.reminders", "prospect.meetings", "prospect.events", "prospect.bookmarks"],
         where: {
           pm: {
             pseudo: user.pseudo
@@ -74,12 +75,12 @@ export class SentEmailsService {
     }
   }
 
-  async markSent(idSentEmail: number) : Promise<UpdateResult> {
+  async markSent(idSentEmail: number): Promise<UpdateResult> {
     try {
-      return await this.sentEmailRepository.update(idSentEmail, { sent: true, sendingDate: new Date()});
+      return await this.sentEmailRepository.update(idSentEmail, { sent: true, sendingDate: new Date() });
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossible de marquer l'email comme envoyé",HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException("Impossible de marquer l'email comme envoyé", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -90,11 +91,11 @@ export class SentEmailsService {
       let sentEmails = await this.sentEmailRepository.find({
         relations: ["prospect"],
       });
-      for(let sentEmail of sentEmails) {
-        if(!sentEmail.date) {
-          this.sentEmailRepository.update(sentEmail.id, { date: sentEmail.sendingDate, sent: true})
-          if(sentEmail.prospect.stage == 4) {
-            this.prospectRepository.update(sentEmail.prospect.id, { stage: 8})
+      for (let sentEmail of sentEmails) {
+        if (!sentEmail.date) {
+          this.sentEmailRepository.update(sentEmail.id, { date: sentEmail.sendingDate, sent: true })
+          if (sentEmail.prospect.stage == 4) {
+            this.prospectRepository.update(sentEmail.prospect.id, { stage: 8 })
           }
         }
       }
@@ -104,7 +105,7 @@ export class SentEmailsService {
     }
   }
 
-  async create(createSentEmailDto: CreateSentEmailDto, user: ProjectManager) : Promise<SentEmail> {
+  async create(createSentEmailDto: CreateSentEmailDto, user: ProjectManager): Promise<SentEmail> {
     try {
       createSentEmailDto.pm = user;
       return await this.sentEmailRepository.save(createSentEmailDto);
@@ -114,7 +115,7 @@ export class SentEmailsService {
     }
   }
 
-  async countSentEmails(user: ProjectManager, researchParamsSentEmailsDto: ResearchParamsSentEmailsDto) : Promise<number> {
+  async countSentEmails(user: ProjectManager, researchParamsSentEmailsDto: ResearchParamsSentEmailsDto): Promise<number> {
     try {
       return await this.sentEmailRepository.count({
         where: {
@@ -133,7 +134,7 @@ export class SentEmailsService {
     }
   }
 
-  async countSentEmailsSent(user: ProjectManager, researchParamsSentEmailsDto: ResearchParamsSentEmailsDto) : Promise<number> {
+  async countSentEmailsSent(user: ProjectManager, researchParamsSentEmailsDto: ResearchParamsSentEmailsDto): Promise<number> {
     try {
       return await this.sentEmailRepository.count({
         where: {
@@ -153,7 +154,7 @@ export class SentEmailsService {
   }
 
 
-  async countWeeklyForMe(user: ProjectManager) : Promise<number> {
+  async countWeeklyForMe(user: ProjectManager): Promise<number> {
     try {
       const today = new Date();
       const firstd = today.getDate() - today.getDay() + 1;
@@ -165,8 +166,8 @@ export class SentEmailsService {
       const sunday = new Date(today.setDate(firstd + 6));
 
       // ? setting monday on midnight and sunday on 23:59:59
-      monday.setHours(1,0,0,0)
-      sunday.setHours(24,59,59,999)
+      monday.setHours(1, 0, 0, 0)
+      sunday.setHours(24, 59, 59, 999)
 
       return await this.sentEmailRepository.count({
         where: {
@@ -178,11 +179,11 @@ export class SentEmailsService {
       })
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossible de récupérer les appels de la derniere semaine",HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException("Impossible de récupérer les appels de la derniere semaine", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async countAllForMe(user: ProjectManager) : Promise<number> {
+  async countAllForMe(user: ProjectManager): Promise<number> {
     try {
       return await this.sentEmailRepository.count({
         where: {
@@ -199,7 +200,7 @@ export class SentEmailsService {
 
   async countAll(interval: { dateDown: Date, dateUp: Date }) {
     try {
-      let results : [{}] = [{}];
+      let results: [{}] = [{}];
       results.pop();
       await this.pmRepository.find({
         relations: ["sentEmails"],
@@ -209,9 +210,9 @@ export class SentEmailsService {
       }).then(pms => {
         pms.forEach(pm => {
           let count = 0;
-          
+
           pm.sentEmails.length && pm.sentEmails.forEach(sentEmail => {
-            if(new Date(interval.dateDown) < new Date(sentEmail.date) && new Date(sentEmail.date) < new Date(interval.dateUp)){
+            if (new Date(interval.dateDown) < new Date(sentEmail.date) && new Date(sentEmail.date) < new Date(interval.dateUp)) {
               count += 1;
             }
           })
@@ -230,7 +231,7 @@ export class SentEmailsService {
 
   async countAllByWeeksForMe(user: ProjectManager) {
     try {
-      let results: { intervals: [{dateDown: Date, dateUp: Date}], data: [number]} = {intervals: [{dateDown: new Date, dateUp: new Date}], data: [0]};
+      let results: { intervals: [{ dateDown: Date, dateUp: Date }], data: [number] } = { intervals: [{ dateDown: new Date, dateUp: new Date }], data: [0] };
       results.data.pop();
       results.intervals.pop();
 
@@ -240,20 +241,20 @@ export class SentEmailsService {
 
       // ! end of history
       let ed = new Date(new Date().setDate(new Date().getDate() - new Date().getDay() + 1 + 6));
-      while(s <= ed) {
-        
+      while (s <= ed) {
+
         // ! each week sunday
         temp.setDate(temp.getDate() + 7)
         results.intervals.push({
           dateDown: new Date(s),
-          dateUp: new Date(temp.setHours(0,59,59,999))
+          dateUp: new Date(temp.setHours(0, 59, 59, 999))
         });
         const count = await this.sentEmailRepository.count({
           where: {
             pm: {
               pseudo: user.pseudo
             },
-            date: Between(s, new Date(temp.setHours(0,59,59,999)))
+            date: Between(s, new Date(temp.setHours(0, 59, 59, 999)))
           }
         })
         results.data.push(count)
@@ -263,6 +264,22 @@ export class SentEmailsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de compter les appels par semaines", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async templates() {
+    try {
+      var t = {
+        titre: "Mon titre",
+        soustitre: "Ceci est mon soustitre"
+      }
+      const template = await fs.readFile('src/sent-emails/sent-emails-templates/template.mustache', "utf-8")
+      var output = Mustache.render(template, t)
+      console.log(output)
+      return output
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de générer les tempaltes", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 }

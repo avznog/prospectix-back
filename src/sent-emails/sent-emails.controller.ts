@@ -79,4 +79,10 @@ export class SentEmailsController {
   countAllByWeeksForMe(@CurrentUser() user: ProjectManager) {
     return this.sentEmailsService.countAllByWeeksForMe(user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("templates")
+  templates() {
+    return this.sentEmailsService.templates();
+  }
 }
