@@ -57,6 +57,13 @@ export class ProjectManager extends BaseEntity {
   })
   mail: string;
 
+  @Column({ nullable: true })
+  @ApiProperty({
+    description: "Téléphone du chef de projet",
+    required: false
+  })
+  phone: string;
+
   @Column()
   @ApiProperty({
     description: "Token email du chef de projet",

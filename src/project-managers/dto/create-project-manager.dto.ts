@@ -22,6 +22,12 @@ export class CreateProjectManagerDto {
   email: Email;
 
   @ApiProperty({
+    description: "Téléphone du chef de projet",
+    required: false
+  })
+  phone: string;
+
+  @ApiProperty({
     description: "Pseudo du Chef de projet",
     required: true
   })
