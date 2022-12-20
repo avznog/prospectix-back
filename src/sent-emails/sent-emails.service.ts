@@ -7,8 +7,6 @@ import { Between, Repository, UpdateResult } from 'typeorm';
 import { CreateSentEmailDto } from './dto/create-sent-email.dto';
 import { ResearchParamsSentEmailsDto } from './dto/research-params-sent-emails.dto';
 import { SentEmail } from './entities/sent-email.entity';
-const Mustache = require("mustache");
-const fs = require('fs').promises;
 @Injectable()
 export class SentEmailsService {
 
@@ -267,19 +265,4 @@ export class SentEmailsService {
     }
   }
 
-  async templates() {
-    try {
-      var t = {
-        titre: "Mon titre",
-        soustitre: "Ceci est mon soustitre"
-      }
-      const template = await fs.readFile('src/sent-emails/sent-emails-templates/template.mustache', "utf-8")
-      var output = Mustache.render(template, t)
-      console.log(output)
-      return output
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de générer les tempaltes", HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-  }
 }

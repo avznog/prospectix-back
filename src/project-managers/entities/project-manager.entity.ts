@@ -3,6 +3,7 @@ import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { Call } from 'src/calls/entities/call.entity';
 import { Event } from 'src/events/entities/event.entity';
 import { Goal } from 'src/goals/entities/goal.entity';
+import { MailTemplate } from 'src/mail-templates/entities/mail-template.entity';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { NegativeAnswer } from 'src/negative-answers/entities/negative-answer.entity';
 import { Reminder } from 'src/reminders/entities/reminder.entity';
@@ -152,4 +153,11 @@ export class ProjectManager extends BaseEntity {
     description: "Apparaît dans les objectifs ou non"
   })
   objectived: boolean;
+  
+  @OneToMany(() => MailTemplate, (mailTemplate) => mailTemplate.pm, {nullable: true})
+  @ApiProperty({
+    required: false,
+    description: "Les mails templates du chef de projet"
+  })
+  mailTemplates: MailTemplate[];
 }

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Email } from 'src/emails/entities/email.entity';
 import { Goal } from 'src/goals/entities/goal.entity';
+import { MailTemplate } from 'src/mail-templates/entities/mail-template.entity';
 
 export class CreateProjectManagerDto {
   @ApiProperty({
@@ -72,4 +73,10 @@ export class CreateProjectManagerDto {
     description: "apparaît dans les objectifs"
   })
   objectived: boolean;
+
+  @ApiProperty({
+    description: "Mails template du chef de projet",
+    required: false
+  })
+  mailTemplates: MailTemplate[]
 }
