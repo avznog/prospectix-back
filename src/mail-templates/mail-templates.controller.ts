@@ -47,6 +47,12 @@ export class MailTemplatesController {
     return this.mailTemplatesService.update(id, updateMailTemplateDto)
   }
 
+  @Get("all")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  findAll() : Promise<MailTemplate[]> {
+    return this.mailTemplatesService.findAll();
+  }
+
   // ! TO DELETE
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("templates")

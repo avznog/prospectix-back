@@ -93,6 +93,17 @@ export class MailTemplatesService {
     }
   }
 
+  async findAll() : Promise<MailTemplate[]> {
+    try {
+      return await this.mailTemplateRepository.find({
+        relations: ["pm"]
+      });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer la totalité des tempaltes", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
   // ! TO DELETE
   async test() {
     try {
