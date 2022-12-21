@@ -17,7 +17,7 @@ export class MailTemplatesService {
     private readonly mailTemplateRepository: Repository<MailTemplate>
   ) {}
 
-  async findAll(pm: ProjectManager) : Promise<MailTemplate[]> {
+  async findAllForMe(pm: ProjectManager) : Promise<MailTemplate[]> {
     try {
       return await this.mailTemplateRepository.find({
         where: {

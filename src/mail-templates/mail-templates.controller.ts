@@ -26,7 +26,7 @@ export class MailTemplatesController {
   @Get()
   @Roles(RolesType.CDP, RolesType.ADMIN)
   findAllForMe(@CurrentUser() pm: ProjectManager) : Promise<MailTemplate[]> {
-    return this.mailTemplatesService.findAll(pm);
+    return this.mailTemplatesService.findAllForMe(pm);
   }
 
   @Post()
