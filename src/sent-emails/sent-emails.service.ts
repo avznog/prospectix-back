@@ -6,6 +6,7 @@ import { Prospect } from 'src/prospects/entities/prospect.entity';
 import { Between, Repository, UpdateResult } from 'typeorm';
 import { CreateSentEmailDto } from './dto/create-sent-email.dto';
 import { ResearchParamsSentEmailsDto } from './dto/research-params-sent-emails.dto';
+import { sendEmailDto } from './dto/send-email.dto';
 import { SentEmail } from './entities/sent-email.entity';
 @Injectable()
 export class SentEmailsService {
@@ -73,9 +74,9 @@ export class SentEmailsService {
     }
   }
 
-  async markSent(idSentEmail: number): Promise<UpdateResult> {
+  async markSent(idSentEmail: number, templateName: string): Promise<UpdateResult> {
     try {
-      return await this.sentEmailRepository.update(idSentEmail, { sent: true, sendingDate: new Date() });
+      return await this.sentEmailRepository.update(idSentEmail, { sent: true, sendingDate: new Date(), templateName: templateName });
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de marquer l'email comme envoyé", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -262,6 +263,17 @@ export class SentEmailsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de compter les appels par semaines", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async send(sendEmailDto: sendEmailDto, pm: ProjectManager, idSentEmail: number) {
+    try {
+      
+      // ! TODO send the email + Call GOOGLE SERVICE
+      await this.markSent(idSentEmail, "TO CHANGE ITNO TEMPLATE NAME");
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible d'envoyer le mail", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
