@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StageType } from 'src/constants/stage.type';
+import { GoogleService } from 'src/google/google.service';
+import { MailTemplate } from 'src/mail-templates/entities/mail-template.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
 import { Between, Repository, UpdateResult } from 'typeorm';
@@ -19,7 +21,12 @@ export class SentEmailsService {
     private readonly pmRepository: Repository<ProjectManager>,
 
     @InjectRepository(Prospect)
-    private readonly prospectRepository: Repository<Prospect>
+    private readonly prospectRepository: Repository<Prospect>,
+
+    @InjectRepository(MailTemplate)
+    private readonly mailTemplateRepository: Repository<MailTemplate>,
+
+    private readonly googleService: GoogleService
   ) { }
 
   async findAllPaginated(researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, user: ProjectManager) {
@@ -268,9 +275,17 @@ export class SentEmailsService {
 
   async send(sendEmailDto: sendEmailDto, pm: ProjectManager, idSentEmail: number) {
     try {
+      const mailTemplate = await this.mailTemplateRepository.findOne({
+        where: {
+          id: sendEmailDto.mailTemplateId
+        }
+      });
       
-      // ! TODO send the email + Call GOOGLE SERVICE
-      await this.markSent(idSentEmail, "TO CHANGE ITNO TEMPLATE NAME");
+      // ? sending the email
+      await this.googleService.sendMail(sendEmailDto, mailTemplate, pm, await this.googleService.authorize())
+
+      // ? marking the email as sent
+      await this.markSent(idSentEmail, mailTemplate.name);
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible d'envoyer le mail", HttpStatus.INTERNAL_SERVER_ERROR)

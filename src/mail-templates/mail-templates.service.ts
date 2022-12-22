@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Mustache from 'mustache';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { sendEmailDto } from 'src/sent-emails/dto/send-email.dto';
 import { DeleteResult, Repository } from 'typeorm';
 import { CreateMailTemplateDto } from './dto/create-mail-template.dto';
 import { UpdateMailTemplateDto } from './dto/update-mail-template.dto';
@@ -66,33 +67,6 @@ export class MailTemplatesService {
     }
   }
 
-  async renderTemplate(idTemplate: number, pm: ProjectManager, to: string) {
-    try {
-      const template = await this.mailTemplateRepository.findOne({
-        where: {
-          id: idTemplate
-        }
-      });
-      let outputMail = await fs.readFile("src/mail-templates/mail-structure.mustache", "utf-8");
-      outputMail.replace("{{mail_content}}", template.content)
-
-      const variables = {
-        pm: {
-          ...pm,
-          nameCaps: pm.name.toUpperCase(),
-          phoneToCall: pm.phone.replace(/ /g, "")
-        },
-        prospect: to
-      }
-
-      const renderedTemplate = Mustache.render(outputMail, variables)
-      return renderedTemplate;
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de fabriquer le template du mail", HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-  }
-
   async findAll() : Promise<MailTemplate[]> {
     try {
       return await this.mailTemplateRepository.find({
@@ -104,26 +78,24 @@ export class MailTemplatesService {
     }
   }
 
-  // ! TO DELETE
-  async test() {
+  // ? generating the content of the mail to send
+  async generateMailContent(pm: ProjectManager, sendEmailDto: sendEmailDto, mailTemplate: MailTemplate) {
     try {
-      var t = {
+      (pm.phone && pm.phone != '') && (pm.phone = "+ 33 " + pm.phone.slice(1));
+      var variables = {
         pm: {
-          firstname: "Benjamin",
-          name: "Gonzva".toUpperCase(),
-          email: "bgonzva@juniorisep.com",
-          phone: "06 84 65 34 54",
-          phoneToCall: "06 84 65 34 54".replace(/ /g, "")
+          ...pm,
+          phoneToCall: (pm.phone && pm.phone != '') ? pm.phone.replace(/ /g, "") : "",
+          nameCaps: pm.name.toUpperCase()
         },
         prospect: {
-          companyName: "L'ecole durable"
+          ...sendEmailDto.prospect,
+          clientName: sendEmailDto.clientName
         }
       }
-      let template = await fs.readFile('src/mail-templates/templates/mail-template.mustache', "utf-8")
-     
-      var output = Mustache.render(template, t)
-      // console.log(output)
-      return output
+      let structureTemplate = await fs.readFile('src/mail-templates/templates/mail-structure.mustache', "utf-8")
+      structureTemplate = structureTemplate.replace("{{mail_content}}", mailTemplate.content)
+      return Mustache.render(structureTemplate, variables)
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de générer les tempaltes", HttpStatus.INTERNAL_SERVER_ERROR)

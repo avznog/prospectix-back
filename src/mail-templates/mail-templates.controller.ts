@@ -52,11 +52,4 @@ export class MailTemplatesController {
   findAll() : Promise<MailTemplate[]> {
     return this.mailTemplatesService.findAll();
   }
-
-  // ! TO DELETE
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("templates")
-  templates() {
-    return this.mailTemplatesService.test();
-  }
 }

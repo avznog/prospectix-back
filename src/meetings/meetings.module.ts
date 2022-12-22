@@ -7,6 +7,8 @@ import { City } from 'src/cities/entities/city.entity';
 import { Country } from 'src/countries/entities/country.entity';
 import { Email } from 'src/emails/entities/email.entity';
 import { GoogleService } from 'src/google/google.service';
+import { MailTemplate } from 'src/mail-templates/entities/mail-template.entity';
+import { MailTemplatesService } from 'src/mail-templates/mail-templates.service';
 import { Phone } from 'src/phones/entities/phone.entity';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { ProjectManagersService } from 'src/project-managers/project-managers.service';
@@ -20,8 +22,8 @@ import { MeetingsController } from './meetings.controller';
 import { MeetingsService } from './meetings.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Phone, SentEmail, Website])],
+  imports: [TypeOrmModule.forFeature([ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Phone, SentEmail, Website, MailTemplate])],
   controllers: [MeetingsController],
-  providers: [MeetingsService, ProspectsService, ProjectManagersService, GoogleService]
+  providers: [MeetingsService, ProspectsService, ProjectManagersService, GoogleService, MailTemplatesService]
 })
 export class MeetingsModule {}

@@ -1,14 +1,17 @@
 import { Module } from '@nestjs/common';
-import { SentEmailsService } from './sent-emails.service';
-import { SentEmailsController } from './sent-emails.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SentEmail } from './entities/sent-email.entity';
+import { GoogleService } from 'src/google/google.service';
+import { MailTemplate } from 'src/mail-templates/entities/mail-template.entity';
+import { MailTemplatesService } from 'src/mail-templates/mail-templates.service';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Prospect } from 'src/prospects/entities/prospect.entity';
+import { SentEmail } from './entities/sent-email.entity';
+import { SentEmailsController } from './sent-emails.controller';
+import { SentEmailsService } from './sent-emails.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SentEmail, ProjectManager, Prospect])],
+  imports: [TypeOrmModule.forFeature([SentEmail, ProjectManager, Prospect, MailTemplate])],
   controllers: [SentEmailsController],
-  providers: [SentEmailsService]
+  providers: [SentEmailsService, GoogleService, MailTemplatesService]
 })
 export class SentEmailsModule {}

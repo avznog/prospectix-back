@@ -1,6 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MeetingType } from 'src/constants/meeting.type';
+import { MailTemplate } from 'src/mail-templates/entities/mail-template.entity';
+import { MailTemplatesService } from 'src/mail-templates/mail-templates.service';
 import { CreateMeetingDto } from 'src/meetings/dto/create-meeting.dto';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
+import { sendEmailDto } from 'src/sent-emails/dto/send-email.dto';
+
+// ! GOOGLE NEEDS
 const fs = require('fs').promises;
 const path = require('path');
 const process = require('process');
@@ -21,7 +27,9 @@ let CALENDAR_TABLE_ID = "";
 @Injectable()
 export class GoogleService {
 
-  constructor() {
+  constructor(
+    private readonly mailTemplatesService: MailTemplatesService
+  ) {
 
     if (process.env.BASE_URL.includes("localhost")) {
       // ! LOCALHOST / DEV
@@ -174,20 +182,23 @@ export class GoogleService {
   }
 
 
-  async testMailsGoogle(auth) {
+  // ! send mail to anyone
+  async sendMail(sendEmailDto: sendEmailDto, mailTemplate: MailTemplate, pm: ProjectManager, auth?) {
     try {
-      const gmail = google.gmail({version: 'v1',auth})
-      const response = await gmail.users.messages.send({
-        userId: 'bgonzva@juniorisep.com',
-        raw: Buffer.from(`To: bgonzva@juniorisep.com\nSubject: Monsujet\n\nheyyyy`).toString('base64')
-      })
-      fs.writeFile("test.json", JSON.stringify(response))
-      console.log(response.data)
+      // ? content of the mail to send
+      const mailContent = await this.mailTemplatesService.generateMailContent(pm, sendEmailDto, mailTemplate)
+
+      // ? sending the mail with Gmail API
+      // const gmail = google.gmail({version: 'v1', auth})
+      // const response = await gmail.users.messages.send({
+      //   userId: 'bgonzva@juniorisep.com',
+      //   raw: Buffer.from(`To: bgonzva@juniorisep.com\nSubject: Monsujet\n\nheyyyy`).toString('base64')
+      // })
+      console.log(mailContent)
+      // return response;
     } catch (error) {
       console.error(error)
-      await fs.writeFile("test.json", JSON.stringify(error))
-      
-      throw new HttpException("error", HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException("Impossible d'envoyer le mail avec l'API Gmail de Google", HttpStatus.INTERNAL_SERVER_ERROR)
     }
     }
 
