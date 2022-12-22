@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
@@ -12,6 +13,7 @@ import { CreateCallDto } from './dto/create-call.dto';
 @UseInterceptors(SentryInterceptor)
 @Controller('calls')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiTags("calls")
 export class CallsController {
   constructor(private readonly callsService: CallsService) {}
 

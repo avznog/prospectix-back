@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
@@ -12,6 +13,7 @@ import { NegativeAnswersService } from './negative-answers.service';
 @UseInterceptors(SentryInterceptor)
 @Controller('negative-answers')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiTags("negative-answers")
 export class NegativeAnswersController {
   constructor(private readonly negativeAnswersService: NegativeAnswersService) {}
 

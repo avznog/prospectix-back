@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Patch, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -11,6 +12,7 @@ import { GoalsService } from './goals.service';
 @Controller('goals')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @UseInterceptors(SentryInterceptor)
+@ApiTags("goals")
 export class GoalsController {
   constructor(
     private readonly goalsService: GoalsService
