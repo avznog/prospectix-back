@@ -79,4 +79,10 @@ export class SentEmailsController {
   countAllByWeeksForMe(@CurrentUser() user: ProjectManager) {
     return this.sentEmailsService.countAllByWeeksForMe(user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Post("send-separately/:idSentEmail")
+  sendSeparately(@Param("idSentEmail") idSentEmail: number, @Body() object: { object: string }) {
+    return this.sentEmailsService.sendSeparately(idSentEmail, object.object)
+  }
 }

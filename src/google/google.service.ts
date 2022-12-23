@@ -214,10 +214,11 @@ export class GoogleService {
       // * options for the mail
       const options = {
         to: ENVIRONMENT != 'prod' ? PROSPECTIX_MAIL : sendEmailDto.prospect.email.email,
-        replyTo: ENVIRONMENT != 'prod' ? PROSPECTIX_MAIL : sendEmailDto.prospect.email.email,
+        replyTo: ENVIRONMENT != 'prod' ? PROSPECTIX_MAIL : pm.mail,
         subject: sendEmailDto.object,
         html: mailContent.toString(),
         textEncoding: 'base64',
+        labels: ["INBOX", "STARRED", "IMPORTANT"],
         attachments: sendEmailDto.withPlaquette && fileAttachments,
         headers: [
           {
@@ -229,6 +230,7 @@ export class GoogleService {
 
       return await gmail.users.messages.send({
         userId: 'me',
+        labelIds: ["INBOX", "STARRED", "IMPORTANT"],
         resource: {
           raw: Buffer.from(await new MailComposer(options).compile().build()).toString("base64")
         }

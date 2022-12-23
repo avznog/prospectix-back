@@ -81,9 +81,9 @@ export class SentEmailsService {
     }
   }
 
-  async markSent(idSentEmail: number, templateName: string): Promise<UpdateResult> {
+  async markSent(idSentEmail: number, templateName: string, object: string): Promise<UpdateResult> {
     try {
-      return await this.sentEmailRepository.update(idSentEmail, { sent: true, sendingDate: new Date(), templateName: templateName });
+      return await this.sentEmailRepository.update(idSentEmail, { sent: true, sendingDate: new Date(), templateName: templateName, object: object });
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de marquer l'email comme envoyé", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -285,11 +285,19 @@ export class SentEmailsService {
       await this.googleService.sendMail(sendEmailDto, mailTemplate, pm, await this.googleService.authorize())
 
       // ? marking the email as sent
-      await this.markSent(idSentEmail, mailTemplate.name);
+      await this.markSent(idSentEmail, mailTemplate.name, sendEmailDto.object);
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible d'envoyer le mail", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
+  async sendSeparately(idSentEmail: number, object: string) {
+    try {
+      return await this.sentEmailRepository.update(idSentEmail, { sent: true, sendingDate: new Date(), templateName: "Envoyé séparément", object: object });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de marquer le mail comme envoyé séparément", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
 }
