@@ -4,4 +4,6 @@ export interface sendEmailDto {
   clientName: string;
   mailTemplateId: number;
   prospect: Prospect;
+  object: string;
+  withPlaquette: boolean;
 }

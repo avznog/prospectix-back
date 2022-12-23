@@ -6,12 +6,17 @@ import { CreateMeetingDto } from 'src/meetings/dto/create-meeting.dto';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { sendEmailDto } from 'src/sent-emails/dto/send-email.dto';
 
-// ! GOOGLE NEEDS
+// ! GOOGLE IMPORTS
 const fs = require('fs').promises;
 const path = require('path');
 const process = require('process');
 const { authenticate } = require('@google-cloud/local-auth');
 const { google } = require('googleapis');
+
+// ! Mail Import
+const MailComposer = require('nodemailer/lib/mail-composer');
+
+// ! GOOGLE IMPORTANT VARIABLES
 const TOKEN_PATH = path.join(process.cwd(), 'token.json');
 const SCOPES = [
   'https://www.googleapis.com/auth/calendar',
@@ -24,6 +29,10 @@ const SCOPES = [
 let CREDENTIALS_PATH = "";
 let CALENDAR_RDV_ID = "";
 let CALENDAR_TABLE_ID = "";
+let PROSPECTIX_MAIL = "prospectix@juniorisep.com";
+
+let ENVIRONMENT = "dev";
+
 @Injectable()
 export class GoogleService {
 
@@ -32,6 +41,7 @@ export class GoogleService {
   ) {
 
     if (process.env.BASE_URL.includes("localhost")) {
+      ENVIRONMENT = "dev";
       // ! LOCALHOST / DEV
       CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.dev.json');
 
@@ -41,6 +51,7 @@ export class GoogleService {
       // ? Calendrier 'Test prospectix'
       CALENDAR_TABLE_ID = "c_ec0400266ff405da7c7d561e44505039ef85262f679bebe499167566a9480072@group.calendar.google.com"
     } else if (process.env.BASE_URL.includes("staging")) {
+      ENVIRONMENT = "staging";
       // ! STAGING
       CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.staging.json');
 
@@ -50,6 +61,7 @@ export class GoogleService {
       // ? Calendrier 'Test prospectix'
       CALENDAR_TABLE_ID = "c_ec0400266ff405da7c7d561e44505039ef85262f679bebe499167566a9480072@group.calendar.google.com"
     } else {
+      ENVIRONMENT = "prod";
       // ! PRODUCTION
       CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.prod.json');
 
@@ -182,24 +194,48 @@ export class GoogleService {
   }
 
 
-  // ! send mail to anyone
+  // ? send mail to client, with template from JISEP AND PM
   async sendMail(sendEmailDto: sendEmailDto, mailTemplate: MailTemplate, pm: ProjectManager, auth?) {
     try {
       // ? content of the mail to send
       const mailContent = await this.mailTemplatesService.generateMailContent(pm, sendEmailDto, mailTemplate)
 
       // ? sending the mail with Gmail API
-      // const gmail = google.gmail({version: 'v1', auth})
-      // const response = await gmail.users.messages.send({
-      //   userId: 'bgonzva@juniorisep.com',
-      //   raw: Buffer.from(`To: bgonzva@juniorisep.com\nSubject: Monsujet\n\nheyyyy`).toString('base64')
-      // })
-      console.log(mailContent)
-      // return response;
+      const gmail = google.gmail({version: 'v1', auth})
+      
+      // * pièces jointes (plaquette)
+      const fileAttachments = [
+        {
+          filename: "Plaquette Junior ISEP.pdf",
+          path: "src/mail-templates/templates/plaquette.pdf",
+        }
+      ]
+
+      // * options for the mail
+      const options = {
+        to: ENVIRONMENT != 'prod' ? PROSPECTIX_MAIL : sendEmailDto.prospect.email.email,
+        replyTo: ENVIRONMENT != 'prod' ? PROSPECTIX_MAIL : sendEmailDto.prospect.email.email,
+        subject: sendEmailDto.object,
+        html: mailContent.toString(),
+        textEncoding: 'base64',
+        attachments: sendEmailDto.withPlaquette && fileAttachments,
+        headers: [
+          {
+            name: "Content-Type",
+            value: "application/json"
+          }
+        ]
+      };
+
+      return await gmail.users.messages.send({
+        userId: 'me',
+        resource: {
+          raw: Buffer.from(await new MailComposer(options).compile().build()).toString("base64")
+        }
+      });
     } catch (error) {
       console.error(error)
       throw new HttpException("Impossible d'envoyer le mail avec l'API Gmail de Google", HttpStatus.INTERNAL_SERVER_ERROR)
     }
-    }
-
+  }
 }

@@ -81,11 +81,15 @@ export class MailTemplatesService {
   // ? generating the content of the mail to send
   async generateMailContent(pm: ProjectManager, sendEmailDto: sendEmailDto, mailTemplate: MailTemplate) {
     try {
-      (pm.phone && pm.phone != '') && (pm.phone = "+ 33 " + pm.phone.slice(1));
+      if(pm.phone && pm.phone != '')  {
+        pm.phone = "+ 33 " + pm.phone.slice(1)
+      } else {
+        pm.phone = "01 42 22 67 44" // ? Numéro de tel de Junior ISEP 
+      }
       var variables = {
         pm: {
           ...pm,
-          phoneToCall: (pm.phone && pm.phone != '') ? pm.phone.replace(/ /g, "") : "",
+          phoneToCall: pm.phone.replace(/ /g, ""),
           nameCaps: pm.name.toUpperCase()
         },
         prospect: {
