@@ -135,12 +135,12 @@ export class GoogleService {
   async logout(user: ProjectManager) {
     try {
       try {
-        const TOKEN_PATH = path.join(process.cwd(), '/src/google/tokens/token_' + user.pseudo + '.join');
+        const TOKEN_PATH = path.join(process.cwd(), '/src/google/tokens/token_' + user.pseudo + '.json');
         await fs.readFile(TOKEN_PATH)
         await fs.unlink(TOKEN_PATH)
-        return "Logged out"
+        return 0 // ? 0 for logged out
       } catch (error) {
-        return "Already logged out"
+        return 1 // ? 1 for already logged out
       }
     } catch (error) {
       console.log(error)
@@ -148,6 +148,25 @@ export class GoogleService {
     }
   }
   // ! ---------------------------- LOGOUT END ----------------------------
+
+  // ! ---------------------------- CHECK IF USER IS GOOGLE LOGGED ----------------------------
+
+  async checkLogged(user: ProjectManager) : Promise<boolean> {
+    try {
+      const TOKEN_PATH = path.join(process.cwd(), '/src/google/tokens/token_' + user.pseudo + '.json');
+      try {
+        await fs.readFile(TOKEN_PATH)
+        return true
+      } catch (error) {
+        return false
+      }
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de vérifier si l'utilisateur est authentififé avec Google", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  // ! ---------------------------- CHECK IF USER IS GOOGLE LOGGED ----------------------------
 
 
   // ! ------------------------------------------------------------------------------------ METHODS ------------------------------------------------------------------------------------

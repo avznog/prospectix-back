@@ -21,4 +21,16 @@ export class GoogleController {
   logout(@CurrentUser() user: ProjectManager) {
     return this.googleService.logout(user);
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("check-logged")
+  checkLogged(@CurrentUser() user: ProjectManager) : Promise<boolean> {
+    return this.googleService.checkLogged(user);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("auth")
+  auth(@CurrentUser() user: ProjectManager) {
+    return this.googleService.authorize(user);
+  }
 }
