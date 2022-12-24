@@ -17,7 +17,6 @@ const { google } = require('googleapis');
 const MailComposer = require('nodemailer/lib/mail-composer');
 
 // ! GOOGLE IMPORTANT VARIABLES
-const TOKEN_PATH = path.join(process.cwd(), 'token.json');
 const SCOPES = [
   'https://www.googleapis.com/auth/calendar',
   'https://www.googleapis.com/auth/calendar.events',
@@ -32,14 +31,12 @@ let CALENDAR_TABLE_ID = "";
 let PROSPECTIX_MAIL = "prospectix@juniorisep.com";
 
 let ENVIRONMENT = "dev";
-
 @Injectable()
 export class GoogleService {
 
   constructor(
     private readonly mailTemplatesService: MailTemplatesService
   ) {
-
     if (process.env.BASE_URL.includes("localhost")) {
       ENVIRONMENT = "dev";
       // ! LOCALHOST / DEV
@@ -80,7 +77,7 @@ export class GoogleService {
    *
    * @return {Promise<OAuth2Client|null>}
    */
-  async loadSavedCredentialsIfExist() {
+  async loadSavedCredentialsIfExist(TOKEN_PATH: string) {
     try {
       const content = await fs.readFile(TOKEN_PATH);
       const credentials = JSON.parse(content);
@@ -96,7 +93,7 @@ export class GoogleService {
    * @param {OAuth2Client} client
    * @return {Promise<void>}
    */
-  async saveCredentials(client) {
+  async saveCredentials(TOKEN_PATH: string, client) {
     const content = await fs.readFile(CREDENTIALS_PATH);
     const keys = JSON.parse(content);
     const key = keys.installed || keys.web;
@@ -113,8 +110,9 @@ export class GoogleService {
    * Load or request or authorization to call APIs.
    *
    */
-  async authorize() {
-    let client = await this.loadSavedCredentialsIfExist();
+  async authorize(user: ProjectManager) {
+    const TOKEN_PATH = path.join(process.cwd(), '/src/google/tokens/token_' + user.pseudo + '.json');
+    let client = await this.loadSavedCredentialsIfExist(TOKEN_PATH);
     if (client) {
       return client;
     }
@@ -123,7 +121,7 @@ export class GoogleService {
       keyfilePath: CREDENTIALS_PATH,
     });
     if (client.credentials) {
-      await this.saveCredentials(client);
+      await this.saveCredentials(TOKEN_PATH, client);
     }
     return client;
   }
@@ -134,9 +132,10 @@ export class GoogleService {
 
   // ! ---------------------------- LOGOUT START ----------------------------
 
-  async logout() {
+  async logout(user: ProjectManager) {
     try {
       try {
+        const TOKEN_PATH = path.join(process.cwd(), '/src/google/tokens/token_' + user.pseudo + '.join');
         await fs.readFile(TOKEN_PATH)
         await fs.unlink(TOKEN_PATH)
         return "Logged out"

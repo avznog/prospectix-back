@@ -282,7 +282,7 @@ export class SentEmailsService {
       });
       
       // ? sending the email
-      await this.googleService.sendMail(sendEmailDto, mailTemplate, pm, await this.googleService.authorize())
+      await this.googleService.sendMail(sendEmailDto, mailTemplate, pm, await this.googleService.authorize(pm))
 
       // ? marking the email as sent
       await this.markSent(idSentEmail, mailTemplate.name, sendEmailDto.object);

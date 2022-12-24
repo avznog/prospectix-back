@@ -1,9 +1,11 @@
 import { Controller, Get, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { GoogleService } from './google.service';
 
@@ -16,7 +18,7 @@ export class GoogleController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("logout")
-  logout() {
-    return this.googleService.logout();
+  logout(@CurrentUser() user: ProjectManager) {
+    return this.googleService.logout(user);
   }
 }

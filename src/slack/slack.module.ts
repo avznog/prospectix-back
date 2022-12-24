@@ -17,6 +17,6 @@ import { SlackService } from './slack.service';
 @Module({
   imports: [HttpModule, TypeOrmModule.forFeature([ProjectManager, Call, Meeting, Reminder, MailTemplate])],
   controllers: [SlackController],
-  providers: [SlackService, CallsService, MeetingsService, ProjectManagersService, GoogleService, MailTemplatesService]
+  providers: [SlackService, CallsService, MeetingsService, ProjectManagersService, GoogleService, MailTemplatesService, Object, ProjectManager]
 })
 export class SlackModule {}
