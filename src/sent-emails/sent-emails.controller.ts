@@ -7,9 +7,9 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { UpdateResult } from 'typeorm';
 import { CreateSentEmailDto } from './dto/create-sent-email.dto';
 import { ResearchParamsSentEmailsDto } from './dto/research-params-sent-emails.dto';
+import { sendEmailDto } from './dto/send-email.dto';
 import { SentEmail } from './entities/sent-email.entity';
 import { SentEmailsService } from './sent-emails.service';
 
@@ -33,9 +33,9 @@ export class SentEmailsController {
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("mark-sent/:id")
-  markSent(@Param("id") id: number) : Promise<UpdateResult>{
-    return this.sentEmailsService.markSent(id);
+  @Post("send/:id")
+  send(@Body() sendEmailDto: sendEmailDto, @CurrentUser() pm: ProjectManager, @Param("id") idSentEmail: number){
+    return this.sentEmailsService.send(sendEmailDto, pm, idSentEmail);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
@@ -78,5 +78,11 @@ export class SentEmailsController {
   @Get("count-all-by-weeks-for-me")
   countAllByWeeksForMe(@CurrentUser() user: ProjectManager) {
     return this.sentEmailsService.countAllByWeeksForMe(user);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Post("send-separately/:idSentEmail")
+  sendSeparately(@Param("idSentEmail") idSentEmail: number, @Body() object: { object: string }) {
+    return this.sentEmailsService.sendSeparately(idSentEmail, object.object)
   }
 }

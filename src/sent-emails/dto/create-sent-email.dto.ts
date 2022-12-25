@@ -22,10 +22,10 @@ export class CreateSentEmailDto {
   object: string;
 
   @ApiProperty({
-    description: "Contenu du mail",
+    description: "Nom du template du mail",
     required: true
   })
-  message: string;
+  templateName: string;
 
   @ApiProperty({
     description: "Date d'envoi de l'email",
