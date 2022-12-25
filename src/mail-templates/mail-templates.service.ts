@@ -84,7 +84,7 @@ export class MailTemplatesService {
       if(pm.phone && pm.phone != '')  {
         pm.phone = "+ 33 " + pm.phone.slice(1)
       } else {
-        pm.phone = "01 42 22 67 44" // ? Numéro de tel de Junior ISEP 
+        pm.phone = "+ 33 1 42 22 67 44" // ? Numéro de tel de Junior ISEP 
       }
       var variables = {
         pm: {
