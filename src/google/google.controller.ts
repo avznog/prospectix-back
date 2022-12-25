@@ -31,6 +31,7 @@ export class GoogleController {
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("auth")
   auth(@CurrentUser() user: ProjectManager) {
+    console.log("starting auth for " + user.pseudo)
     return this.googleService.authorize(user);
   }
 }

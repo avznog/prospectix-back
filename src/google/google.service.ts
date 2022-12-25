@@ -51,7 +51,7 @@ export class GoogleService {
       ENVIRONMENT = "staging";
       // ! STAGING
       CREDENTIALS_PATH = path.join(process.cwd(), '/src/google/credentials/' + 'credentials.staging.json');
-
+      console.log(CREDENTIALS_PATH)
       // ? Calendrier '[Brouillon] Organisation'
       CALENDAR_RDV_ID = "c_ibijclono1jjm07up41ob2t6b8@group.calendar.google.com"
 
@@ -79,8 +79,11 @@ export class GoogleService {
    */
   async loadSavedCredentialsIfExist(TOKEN_PATH: string) {
     try {
+      console.log(TOKEN_PATH)
       const content = await fs.readFile(TOKEN_PATH);
+      console.log("read ?")
       const credentials = JSON.parse(content);
+      console.log("got credentials")
       return google.auth.fromJSON(credentials);
     } catch (err) {
       return null;
@@ -96,6 +99,7 @@ export class GoogleService {
   async saveCredentials(TOKEN_PATH: string, client) {
     const content = await fs.readFile(CREDENTIALS_PATH);
     const keys = JSON.parse(content);
+    console.log("parsed")
     const key = keys.installed || keys.web;
     const payload = JSON.stringify({
       type: 'authorized_user',
@@ -103,7 +107,9 @@ export class GoogleService {
       client_secret: key.client_secret,
       refresh_token: client.credentials.refresh_token,
     });
+    console.log("payload")
     await fs.writeFile(TOKEN_PATH, payload);
+    console.log("file wrote")
   }
 
   /**
@@ -111,7 +117,9 @@ export class GoogleService {
    *
    */
   async authorize(user: ProjectManager) {
+    console.log("here")
     const TOKEN_PATH = path.join(process.cwd(), '/src/google/tokens/token_' + user.pseudo + '.json');
+    console.log(TOKEN_PATH)
     let client = await this.loadSavedCredentialsIfExist(TOKEN_PATH);
     if (client) {
       return client;
@@ -120,6 +128,7 @@ export class GoogleService {
       scopes: SCOPES,
       keyfilePath: CREDENTIALS_PATH,
     });
+    console.log("authenticated" + client)
     if (client.credentials) {
       await this.saveCredentials(TOKEN_PATH, client);
     }
