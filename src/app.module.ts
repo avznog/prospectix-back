@@ -82,7 +82,7 @@ import { MailTemplate } from './mail-templates/entities/mail-template.entity';
       port: +process.env.POSTGRES_PORT,
       username: process.env.POSTGRES_USER || "postgres",
       password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DATABASE ?? 'devgoogle',
+      database: process.env.POSTGRES_DATABASE ?? 'dev',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
       entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Phone, SentEmail, Website, Call, NegativeAnswer, Slack, Goal, GoalTemplate, Google, MailTemplate],
