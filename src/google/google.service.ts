@@ -231,8 +231,8 @@ export class GoogleService {
 
       // * options for the mail
       const options = {
-        to: ENVIRONMENT != 'prod' ? PROSPECTIX_MAIL : sendEmailDto.prospect.email.email,
-        replyTo: ENVIRONMENT != 'prod' ? PROSPECTIX_MAIL : pm.mail,
+        to: ENVIRONMENT == 'dev' ? PROSPECTIX_MAIL : sendEmailDto.prospect.email.email,
+        replyTo: ENVIRONMENT == 'dev' ? PROSPECTIX_MAIL : pm.mail,
         subject: sendEmailDto.object,
         html: mailContent.toString(),
         textEncoding: 'base64',
