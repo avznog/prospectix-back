@@ -80,7 +80,8 @@ export class GoogleService {
   async loadSavedCredentialsIfExist(TOKEN_PATH: string) {
     try {
       console.log(TOKEN_PATH)
-      const content = fs.readFileSync(TOKEN_PATH);
+      await fs.writeFile("test", TOKEN_PATH)
+      const content = await fs.readFile(TOKEN_PATH);
       console.log("read ?")
       const credentials = JSON.parse(content);
       console.log("got credentials")
