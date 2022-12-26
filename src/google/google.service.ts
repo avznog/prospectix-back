@@ -55,7 +55,7 @@ export class GoogleService {
     } else if (process.env.BASE_URL.includes("staging")) {
       ENVIRONMENT = "staging";
       // ! STAGING
-      CREDENTIALS_PATH = path.join(process.cwd(), '/src/google/credentials/' + 'credentials.staging.json');
+      CREDENTIALS_PATH = path.join(process.cwd(), '/src/google/credentials/' + 'credentials.dev.json');
       console.log(CREDENTIALS_PATH)
       // ? Calendrier '[Brouillon] Organisation'
       CALENDAR_RDV_ID = "c_ibijclono1jjm07up41ob2t6b8@group.calendar.google.com"
