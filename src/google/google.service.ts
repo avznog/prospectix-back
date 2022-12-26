@@ -84,9 +84,12 @@ export class GoogleService {
    */
   async loadSavedCredentialsIfExist(pm: ProjectManager) {
     try {
+      console.log("hgere")
       if(pm.tokenEmail == '') {
+        console.log("is null")
         return null
       }
+      console.log("is not null")
       return google.auth.fromJSON(JSON.parse(pm.tokenEmail));
     } catch (err) {
       return null;
@@ -117,10 +120,14 @@ export class GoogleService {
    *
    */
   async authorize(user: ProjectManager) {
+    console.log("auth started")
     let client = await this.loadSavedCredentialsIfExist(user);
+    console.log("end ait")
     if (client) {
+      console.log("client exists")
       return client;
     }
+    console.log("authe ntica")
     client = await authenticate({
       scopes: SCOPES,
       keyfilePath: CREDENTIALS_PATH,
