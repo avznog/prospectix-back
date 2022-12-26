@@ -1,10 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { MeetingType } from 'src/constants/meeting.type';
 import { MailTemplate } from 'src/mail-templates/entities/mail-template.entity';
 import { MailTemplatesService } from 'src/mail-templates/mail-templates.service';
 import { CreateMeetingDto } from 'src/meetings/dto/create-meeting.dto';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { sendEmailDto } from 'src/sent-emails/dto/send-email.dto';
+import { Repository } from 'typeorm';
 
 // ! GOOGLE IMPORTS
 const fs = require('fs').promises;
@@ -35,6 +37,9 @@ let ENVIRONMENT = "dev";
 export class GoogleService {
 
   constructor(
+    @InjectRepository(ProjectManager)
+    private readonly pmRepository: Repository<ProjectManager>,
+
     private readonly mailTemplatesService: MailTemplatesService
   ) {
     if (process.env.BASE_URL.includes("localhost")) {
@@ -77,16 +82,12 @@ export class GoogleService {
    *
    * @return {Promise<OAuth2Client|null>}
    */
-  async loadSavedCredentialsIfExist(TOKEN_PATH: string) {
+  async loadSavedCredentialsIfExist(pm: ProjectManager) {
     try {
-      console.log(TOKEN_PATH)
-      await fs.writeFile("test", TOKEN_PATH)
-      console.log("between")
-      const content = await fs.readFile(TOKEN_PATH);
-      console.log("read ?")
-      const credentials = JSON.parse(content);
-      console.log("got credentials")
-      return google.auth.fromJSON(credentials);
+      if(pm.tokenEmail == '') {
+        return null
+      }
+      return google.auth.fromJSON(JSON.parse(pm.tokenEmail));
     } catch (err) {
       return null;
     }
@@ -98,10 +99,9 @@ export class GoogleService {
    * @param {OAuth2Client} client
    * @return {Promise<void>}
    */
-  async saveCredentials(TOKEN_PATH: string, client) {
+  async saveCredentials(pm, client) {
     const content = await fs.readFile(CREDENTIALS_PATH);
     const keys = JSON.parse(content);
-    console.log("parsed")
     const key = keys.installed || keys.web;
     const payload = JSON.stringify({
       type: 'authorized_user',
@@ -109,9 +109,7 @@ export class GoogleService {
       client_secret: key.client_secret,
       refresh_token: client.credentials.refresh_token,
     });
-    console.log("payload")
-    await fs.writeFile(TOKEN_PATH, payload);
-    console.log("file wrote")
+    await this.pmRepository.update(pm.id, { tokenEmail: payload })
   }
 
   /**
@@ -119,10 +117,7 @@ export class GoogleService {
    *
    */
   async authorize(user: ProjectManager) {
-    console.log("here")
-    const TOKEN_PATH = path.join(process.cwd(), '/src/google/tokens/token_' + user.pseudo + '.json');
-    console.log(TOKEN_PATH)
-    let client = await this.loadSavedCredentialsIfExist(TOKEN_PATH);
+    let client = await this.loadSavedCredentialsIfExist(user);
     if (client) {
       return client;
     }
@@ -132,7 +127,7 @@ export class GoogleService {
     });
     console.log("authenticated" + client)
     if (client.credentials) {
-      await this.saveCredentials(TOKEN_PATH, client);
+      await this.saveCredentials(user, client);
     }
     return client;
   }
@@ -145,13 +140,11 @@ export class GoogleService {
 
   async logout(user: ProjectManager) {
     try {
-      try {
-        const TOKEN_PATH = path.join(process.cwd(), '/src/google/tokens/token_' + user.pseudo + '.json');
-        await fs.readFile(TOKEN_PATH)
-        await fs.unlink(TOKEN_PATH)
-        return 0 // ? 0 for logged out
-      } catch (error) {
-        return 1 // ? 1 for already logged out
+      if(user.tokenEmail == '') {
+        return 1
+      } else {
+        await this.pmRepository.update(user.id, { tokenEmail: '' })
+        return 0;
       }
     } catch (error) {
       console.log(error)
@@ -164,13 +157,7 @@ export class GoogleService {
 
   async checkLogged(user: ProjectManager) : Promise<boolean> {
     try {
-      const TOKEN_PATH = path.join(process.cwd(), '/src/google/tokens/token_' + user.pseudo + '.json');
-      try {
-        await fs.readFile(TOKEN_PATH)
-        return true
-      } catch (error) {
-        return false
-      }
+      return user.tokenEmail != '';
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de vérifier si l'utilisateur est authentififé avec Google", HttpStatus.INTERNAL_SERVER_ERROR)
