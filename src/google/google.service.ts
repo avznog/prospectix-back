@@ -81,6 +81,7 @@ export class GoogleService {
     try {
       console.log(TOKEN_PATH)
       await fs.writeFile("test", TOKEN_PATH)
+      console.log("between")
       const content = await fs.readFile(TOKEN_PATH);
       console.log("read ?")
       const credentials = JSON.parse(content);
