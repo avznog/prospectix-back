@@ -97,7 +97,7 @@ export class MailTemplatesService {
           clientName: sendEmailDto.clientName
         }
       }
-      let structureTemplate = await fs.readFile('src/mail-templates/templates/mail-structure.mustache', "utf-8")
+      let structureTemplate = await fs.readFile('src/templates/mail-structure.mustache', "utf-8")
       structureTemplate = structureTemplate.replace("{{mail_content}}", mailTemplate.content)
       return Mustache.render(structureTemplate, variables)
     } catch (error) {
