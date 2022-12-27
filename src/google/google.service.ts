@@ -129,7 +129,7 @@ export class GoogleService {
     console.log("authe ntica")
     console.log(CREDENTIALS_PATH)
     console.log(process.cwd())
-    client = await authenticate({
+    client = authenticate({
       scopes: SCOPES,
       keyfilePath: CREDENTIALS_PATH,
     });
