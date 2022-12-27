@@ -12,7 +12,7 @@ import { Repository } from 'typeorm';
 const fs = require('fs').promises;
 const path = require('path');
 const process = require('process');
-const { authenticate } = require('@google-cloud/local-auth');
+import { authenticate } from '@google-cloud/local-auth';
 const { google } = require('googleapis');
 
 // ! Mail Import
@@ -128,15 +128,18 @@ export class GoogleService {
       return client;
     }
     console.log("authe ntica")
-    client = authenticate({
+    authenticate({
       scopes: SCOPES,
       keyfilePath: CREDENTIALS_PATH,
-    });
-    console.log("authenticated" + client)
+    }).then( async c => {
+      client = c;
+      console.log("authenticated" + client)
     if (client.credentials) {
       await this.saveCredentials(user, client);
     }
     return client;
+    });
+    
   }
 
 
