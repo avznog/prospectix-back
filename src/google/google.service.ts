@@ -45,8 +45,7 @@ export class GoogleService {
     if (process.env.BASE_URL.includes("localhost")) {
       ENVIRONMENT = "dev";
       // ! LOCALHOST / DEV
-      CREDENTIALS_PATH = path.join(process.cwd(), '/src/credentials/credentials.dev.json');
-
+      CREDENTIALS_PATH = path.join(process.cwd() + process.env.CREDENTIALS_DEV_PATH);
       // ? Calendrier '[Brouillon] Organisation'
       CALENDAR_RDV_ID = "c_ibijclono1jjm07up41ob2t6b8@group.calendar.google.com"
 
@@ -55,7 +54,7 @@ export class GoogleService {
     } else if (process.env.BASE_URL.includes("staging")) {
       ENVIRONMENT = "staging";
       // ! STAGING
-      CREDENTIALS_PATH = path.join(process.cwd(), '/src/credentials/credentials.staging.json');
+      CREDENTIALS_PATH =path.join(process.cwd() + process.env.CREDENTIALS_STAGING_PATH);
       console.log(CREDENTIALS_PATH)
       // ? Calendrier '[Brouillon] Organisation'
       CALENDAR_RDV_ID = "c_ibijclono1jjm07up41ob2t6b8@group.calendar.google.com"
@@ -65,7 +64,7 @@ export class GoogleService {
     } else {
       ENVIRONMENT = "prod";
       // ! PRODUCTION
-      CREDENTIALS_PATH = path.join(process.cwd(), '/src/credentials/credentials.prod.json');
+      CREDENTIALS_PATH = path.join(process.cwd() + process.env.CREDENTIALS_PROD_PATH);
 
       // ? Calendrier 'RDV'
       CALENDAR_RDV_ID = "juniorisep.com_pjiviq7iqt5ahefn4jg55ql8ec@group.calendar.google.com"
@@ -128,6 +127,8 @@ export class GoogleService {
       return client;
     }
     console.log("authe ntica")
+    console.log(CREDENTIALS_PATH)
+    console.log(process.cwd())
     client = await authenticate({
       scopes: SCOPES,
       keyfilePath: CREDENTIALS_PATH,
