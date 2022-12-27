@@ -128,17 +128,15 @@ export class GoogleService {
       return client;
     }
     console.log("authe ntica")
-    authenticate({
+    client = await authenticate({
       scopes: SCOPES,
       keyfilePath: CREDENTIALS_PATH,
-    }).then( async c => {
-      client = c;
-      console.log("authenticated" + client)
+    });
+    console.log("authenticated" + client)
     if (client.credentials) {
       await this.saveCredentials(user, client);
     }
     return client;
-    });
     
   }
 

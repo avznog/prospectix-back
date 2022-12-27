@@ -371,10 +371,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@google-cloud/local-auth@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@google-cloud/local-auth/-/local-auth-2.1.0.tgz#5cb441e5016ce95996b14522e06fb4d9896a6ed0"
-  integrity sha512-ymZ1XuyKcRcro0aiMYz3hVGbZ+QZmN5V1Eyjvw2k1xqq76PwmDer0DIPxdxkLzfW9Inr8+g+MS9t9fZ7dOlTOQ==
+"@google-cloud/local-auth@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@google-cloud/local-auth/-/local-auth-2.1.1.tgz#fa790813cd8e45402a2681ff662c62f11bdb0c4c"
+  integrity sha512-tOJ73TSyPxelUEVN2AdHVzFG857U5i3wZHMUGgm6wRtz9WN4O3D761eYORB9jXfIggA3+v5BUw+VIE5wAKHhkg==
   dependencies:
     arrify "^2.0.1"
     google-auth-library "^8.0.2"
