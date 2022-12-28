@@ -20,7 +20,6 @@ const MailComposer = require('nodemailer/lib/mail-composer');
 
 // ! GOOGLE IMPORTANT VARIABLES
 const SCOPES = [
-  'https://www.googleapis.com/auth/userinfo.profile',
   'https://www.googleapis.com/auth/calendar',
   'https://www.googleapis.com/auth/calendar.events',
   'https://mail.google.com/',
@@ -34,6 +33,20 @@ let CALENDAR_TABLE_ID = "";
 let PROSPECTIX_MAIL = "prospectix@juniorisep.com";
 
 let ENVIRONMENT = "dev";
+
+
+
+//  ! GOOGLE V2
+const clientId = "584890804744-79qstprc6i7vo1a6j6ldmk75s5fr6fe9.apps.googleusercontent.com";
+      const client_secret = "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";
+      const redirectURI = ["http://localhost:4200/oauth2callback"]
+
+const oauth2Client = new google.auth.OAuth2(
+  clientId,
+  client_secret,
+  redirectURI
+);
+
 @Injectable()
 export class GoogleService {
 
@@ -85,12 +98,12 @@ export class GoogleService {
   async loadSavedCredentialsIfExist(pm: ProjectManager) {
     try {
       console.log("hgere")
-      if(pm.tokenEmail == '') {
+      if(pm.tokenGoogle == '') {
         console.log("is null")
         return null
       }
       console.log("is not null")
-      return google.auth.fromJSON(JSON.parse(pm.tokenEmail));
+      return google.auth.fromJSON(JSON.parse(pm.tokenGoogle));
     } catch (err) {
       return null;
     }
@@ -112,7 +125,7 @@ export class GoogleService {
       client_secret: key.client_secret,
       refresh_token: client.credentials.refresh_token,
     });
-    await this.pmRepository.update(pm.id, { tokenEmail: payload })
+    await this.pmRepository.update(pm.id, { tokenGoogle: payload })
   }
 
   /**
@@ -142,6 +155,34 @@ export class GoogleService {
     
   }
 
+   auth() {
+    try {
+      
+      const url = oauth2Client.generateAuthUrl({
+        access_type: "offline",
+        scope: SCOPES
+      })
+
+      
+      return {url: url}
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Can t auth", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async retrieveTokens(code: string, pm: ProjectManager) {
+    try {
+      const { tokens } = await oauth2Client.getToken(code);
+      await this.pmRepository.update(pm.id, { tokenGoogle: JSON.stringify(tokens)})
+      console.log(tokens)
+      return true;
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer les tokens", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  } 
+
 
   // ! ---------------------------- Google Authentication Methods END ----------------------------
 
@@ -150,10 +191,10 @@ export class GoogleService {
 
   async logout(user: ProjectManager) {
     try {
-      if(user.tokenEmail == '') {
+      if(user.tokenGoogle == '') {
         return 1
       } else {
-        await this.pmRepository.update(user.id, { tokenEmail: '' })
+        await this.pmRepository.update(user.id, { tokenGoogle: '' })
         return 0;
       }
     } catch (error) {
@@ -167,7 +208,7 @@ export class GoogleService {
 
   async checkLogged(user: ProjectManager) : Promise<boolean> {
     try {
-      return user.tokenEmail != '';
+      return user.tokenGoogle != '';
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de vérifier si l'utilisateur est authentififé avec Google", HttpStatus.INTERNAL_SERVER_ERROR)
@@ -225,9 +266,8 @@ export class GoogleService {
     try {
       // ? content of the mail to send
       const mailContent = await this.mailTemplatesService.generateMailContent(pm, sendEmailDto, mailTemplate)
-
       // ? sending the mail with Gmail API
-      const gmail = google.gmail({version: 'v1', auth})
+      const gmail = google.gmail({version: 'v1'})
       
       // * pièces jointes (plaquette)
       const fileAttachments = [
@@ -256,6 +296,7 @@ export class GoogleService {
 
       return await gmail.users.messages.send({
         userId: 'me',
+        access_token: JSON.parse(pm.tokenGoogle).access_token,
         labelIds: ["INBOX", "STARRED", "IMPORTANT"],
         resource: {
           raw: Buffer.from(await new MailComposer(options).compile().build()).toString("base64")
