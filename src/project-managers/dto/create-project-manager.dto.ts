@@ -38,7 +38,7 @@ export class CreateProjectManagerDto {
     description: "Token de l'email du chef de projet",
     required: true
   })
-  tokenEmail: string;
+  tokenGoogle: string;
 
   @ApiProperty({
     description: "Booléan qui indique si le chef de projet a le rôle admin ou non",
