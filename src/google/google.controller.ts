@@ -30,8 +30,8 @@ export class GoogleController {
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("autah")
-  auth(@CurrentUser() user: ProjectManager) {
+  @Get("auth")
+  auth() {
     return this.googleService.auth()
   }
 
