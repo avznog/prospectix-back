@@ -59,7 +59,7 @@ export class ProspectsService {
       name: "admin",
       firstname: "admin",
       mail: "admin@juniorisep.com",
-      tokenEmail: "",
+      tokenGoogle: "",
       disabled: false,
       statsEnabled: false
     }));
