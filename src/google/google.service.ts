@@ -157,13 +157,11 @@ export class GoogleService {
 
    auth() {
     try {
-      
       const url = oauth2Client.generateAuthUrl({
         access_type: "offline",
-        scope: SCOPES
+        scope: SCOPES,
+        prompt: 'consent'
       })
-
-      
       return {url: url}
     } catch (error) {
       console.log(error)
@@ -297,6 +295,7 @@ export class GoogleService {
       return await gmail.users.messages.send({
         userId: 'me',
         access_token: JSON.parse(pm.tokenGoogle).access_token,
+        refresh_token: JSON.parse(pm.tokenGoogle).refresh_token,
         labelIds: ["INBOX", "STARRED", "IMPORTANT"],
         resource: {
           raw: Buffer.from(await new MailComposer(options).compile().build()).toString("base64")
