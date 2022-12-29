@@ -1,5 +1,5 @@
 import * as Joi from '@hapi/joi';
-import { HttpService } from '@nestjs/axios';
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -52,6 +52,7 @@ import { CitiesService } from './services/cities/cities.service';
 import { CountriesService } from './services/countries/countries.service';
 import { EmailsService } from './services/emails/emails.service';
 import { EventsService } from './services/events/events.service';
+import { GoalTemplatesService } from './services/goal-templates/goal-templates.service';
 import { GoalsService } from './services/goals/goals.service';
 import { GoogleService } from './services/google/google.service';
 import { MailTemplatesService } from './services/mail-templates/mail-templates.service';
@@ -64,10 +65,14 @@ import { RemindersService } from './services/reminders/reminders.service';
 import { SentEmailsService } from './services/sent-emails/sent-emails.service';
 import { SlackService } from './services/slack/slack.service';
 import { WebsitesService } from './services/websites/websites.service';
+import { GoalTemplatesController } from './controllers/goal-templates/goal-templates.controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-   TypeOrmModule.forFeature([Activity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website]),
+    AuthModule,
+    HttpModule,
+    TypeOrmModule.forFeature([Activity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website]),
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
@@ -87,12 +92,12 @@ import { WebsitesService } from './services/websites/websites.service';
       synchronize: true,
       entities: [Activity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website],
     }),
-    
+
     ScheduleModule.forRoot(),
-    
+
   ],
-  controllers: [AppController, ActivitiesController, BookmarksController, CitiesController, CallsController, CountriesController, EmailsController, EventsController, GoalTemplate, GoalsController, GoogleController, MailTemplatesController, MeetingsController, NegativeAnswersController, PhonesController, ProjectManagersController, ProspectsController, RemindersController, SentEmailsController, SlackController, WebsitesController],
-  providers: [AppService, ActivitiesService, BookmarksService, CitiesService, CallsService, CountriesService, EmailsService, EventsService, GoalTemplate, GoalsService, GoogleService, MailTemplatesService, MeetingsService, NegativeAnswersService, PhonesService, ProjectManagersService, ProspectsService, RemindersService, SentEmailsService, SlackService, WebsitesService, HttpService ],
+  controllers: [AppController, ActivitiesController, BookmarksController, CitiesController, CallsController, CountriesController, EmailsController, EventsController, GoalTemplatesController, GoalsController, GoogleController, MailTemplatesController, MeetingsController, NegativeAnswersController, PhonesController, ProjectManagersController, ProspectsController, RemindersController, SentEmailsController, SlackController, WebsitesController],
+  providers: [AppService, ActivitiesService, BookmarksService, CitiesService, CallsService, CountriesService, EmailsService, EventsService, GoalTemplatesService, GoalsService, GoogleService, MailTemplatesService, MeetingsService, NegativeAnswersService, PhonesService, ProjectManagersService, ProspectsService, RemindersService, SentEmailsService, SlackService, WebsitesService],
 
 })
 export class AppModule { }
