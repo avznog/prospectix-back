@@ -1,5 +1,5 @@
 import { Controller, Get, UseGuards, UseInterceptors } from '@nestjs/common';
-import { Param, Query } from '@nestjs/common/decorators';
+import { Param } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
