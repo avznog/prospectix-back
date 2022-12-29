@@ -68,7 +68,13 @@ export class GoogleService {
   async retrieveTokens(code: string, pm: ProjectManager) {
     try {
       const { tokens } = await oauth2Client.getToken(code);
-      await this.pmRepository.update(pm.id, { tokenGoogle: JSON.stringify(tokens)})
+      if(pm.tokenGoogle == '') {
+        await this.pmRepository.update(pm.id, { tokenGoogle: JSON.stringify(tokens)})
+      } else if (!tokens.refresh_token && JSON.parse(pm.tokenGoogle).refresh_token) {
+        await this.pmRepository.update(pm.id, { tokenGoogle: JSON.stringify({ refresh_token: JSON.parse(pm.tokenGoogle).refresh_token, ...tokens})})
+      } else {
+        await this.pmRepository.update(pm.id, { tokenGoogle: JSON.stringify(tokens)})
+      }
       return true;
     } catch (error) {
       console.log(error)
@@ -111,44 +117,65 @@ export class GoogleService {
   // ! ---------------------------- CHECK IF USER IS GOOGLE LOGGED ----------------------------
 
 
+  prepareGoogleAPICall(pm: ProjectManager) {
+    try {
+      console.log(pm)
+      if(pm.tokenGoogle == '') {
+        
+        return false
+      } else {
+        oauth2Client.setCredentials(JSON.parse(pm.tokenGoogle))
+        return true
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   // ! ------------------------------------------------------------------------------------ METHODS ------------------------------------------------------------------------------------
 
   // ? Create an event on calendar JISEP -> for meetings
   async createEventOnCalendar(createMeetingDto: CreateMeetingDto, pm: ProjectManager) {
     try {
-      const calendar = google.calendar({ version: 'v3' });
-      var event = {
-        summary: `[${createMeetingDto.prospect.companyName}] - ${createMeetingDto.pm.firstname.charAt(0).toUpperCase() + createMeetingDto.pm.firstname.slice(1).toLowerCase()} ${createMeetingDto.pm.name.toUpperCase()}`, // ? Nom de l'évènement
-        location: createMeetingDto.prospect.streetAddress != '' && `${createMeetingDto.prospect.streetAddress}, ${createMeetingDto.prospect.city.zipcode} ${createMeetingDto.prospect.city.name}, ${createMeetingDto.prospect.country.name}`, // ? Lieu de l'évènement -> adresse du prospect
-        start: {
-          dateTime: `${new Date(createMeetingDto.date).toISOString()}`, // ? Heure de début du rendez-vous
-          timeZone: 'Europe/Paris',
-        },
-        end: {
-          dateTime: `${new Date(new Date(createMeetingDto.date).setHours(new Date(createMeetingDto.date).getHours() + 1)).toISOString()}`, // ? Heure de fin du rendez-vous
-          timeZone: 'Europe/Paris',
-        },
-        attendees: [ // ? Invités
-          { email: `${createMeetingDto.pm.mail}`, 'responseStatus': 'accepted' }, // ? email du chef de projet
-          createMeetingDto.prospect.email.email && createMeetingDto.prospect.email.email != '' && { 'email': `${createMeetingDto.prospect.email.email}` } // ? email du client
-        ],
-        conferenceData: {
-          createRequest: {
-            requestId: `${createMeetingDto.pm.pseudo.slice(3) + createMeetingDto.prospect.companyName.slice(3)}`,
-            conferenceSolutionKey: {
-              type: "hangoutsMeet",
+      if(!this.prepareGoogleAPICall(pm)) {
+        console.log("false")
+        return false
+      } else {
+        console.log("still")
+        const calendar = google.calendar({ version: 'v3' });
+        var event = {
+          summary: `[${createMeetingDto.prospect.companyName}] - ${createMeetingDto.pm.firstname.charAt(0).toUpperCase() + createMeetingDto.pm.firstname.slice(1).toLowerCase()} ${createMeetingDto.pm.name.toUpperCase()}`, // ? Nom de l'évènement
+          location: createMeetingDto.prospect.streetAddress != '' && `${createMeetingDto.prospect.streetAddress}, ${createMeetingDto.prospect.city.zipcode} ${createMeetingDto.prospect.city.name}, ${createMeetingDto.prospect.country.name}`, // ? Lieu de l'évènement -> adresse du prospect
+          start: {
+            dateTime: `${new Date(createMeetingDto.date).toISOString()}`, // ? Heure de début du rendez-vous
+            timeZone: 'Europe/Paris',
+          },
+          end: {
+            dateTime: `${new Date(new Date(createMeetingDto.date).setHours(new Date(createMeetingDto.date).getHours() + 1)).toISOString()}`, // ? Heure de fin du rendez-vous
+            timeZone: 'Europe/Paris',
+          },
+          attendees: [ // ? Invités
+            { email: `${createMeetingDto.pm.mail}`, 'responseStatus': 'accepted' }, // ? email du chef de projet
+            createMeetingDto.prospect.email.email && createMeetingDto.prospect.email.email != '' && { 'email': `${createMeetingDto.prospect.email.email}` } // ? email du client
+          ],
+          conferenceData: {
+            createRequest: {
+              requestId: `${createMeetingDto.pm.pseudo.slice(3) + createMeetingDto.prospect.companyName.slice(3)}`,
+              conferenceSolutionKey: {
+                type: "hangoutsMeet",
+              }
             }
           }
-        }
-      };
-      return await calendar.events.insert({
-        calendarId: createMeetingDto.type == MeetingType.MEETING_TABLE ? CALENDAR_TABLE_ID : CALENDAR_RDV_ID,
-        resource: event,
-        sendUpdates: 'all',
-        access_token: JSON.parse(pm.tokenGoogle).access_token,
-        refresh_token: JSON.parse(pm.tokenGoogle).refresh_token,
-        conferenceDataVersion: createMeetingDto.type == MeetingType.TEL_VISIO ? 1 : 0
-      })
+        };
+        return await calendar.events.insert({
+          calendarId: createMeetingDto.type == MeetingType.MEETING_TABLE ? CALENDAR_TABLE_ID : CALENDAR_RDV_ID,
+          resource: event,
+          sendUpdates: 'all',
+          access_token: JSON.parse(pm.tokenGoogle).access_token,
+          refresh_token: JSON.parse(pm.tokenGoogle).refresh_token,
+          conferenceDataVersion: createMeetingDto.type == MeetingType.TEL_VISIO ? 1 : 0
+        })
+      }
+      
     } catch (error) {
       console.error(error)
       throw new HttpException("Impossible de créer un évènement sur le calendrier", HttpStatus.INTERNAL_SERVER_ERROR)
