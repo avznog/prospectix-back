@@ -70,7 +70,7 @@ export class ProjectManager extends BaseEntity {
     description: "Token email du chef de projet",
     required: true
   })
-  tokenEmail: string;
+  tokenGoogle: string;
 
   @Column()
   @ApiProperty({

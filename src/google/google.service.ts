@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { OAuth2Client } from 'google-auth-library';
 import { MeetingType } from 'src/constants/meeting.type';
 import { MailTemplate } from 'src/mail-templates/entities/mail-template.entity';
 import { MailTemplatesService } from 'src/mail-templates/mail-templates.service';
@@ -9,10 +10,7 @@ import { sendEmailDto } from 'src/sent-emails/dto/send-email.dto';
 import { Repository } from 'typeorm';
 
 // ! GOOGLE IMPORTS
-const fs = require('fs').promises;
-const path = require('path');
-const process = require('process');
-import { authenticate } from '@google-cloud/local-auth';
+const path = require("path");
 const { google } = require('googleapis');
 
 // ! Mail Import
@@ -20,7 +18,6 @@ const MailComposer = require('nodemailer/lib/mail-composer');
 
 // ! GOOGLE IMPORTANT VARIABLES
 const SCOPES = [
-  'https://www.googleapis.com/auth/userinfo.profile',
   'https://www.googleapis.com/auth/calendar',
   'https://www.googleapis.com/auth/calendar.events',
   'https://mail.google.com/',
@@ -28,12 +25,11 @@ const SCOPES = [
   'https://www.googleapis.com/auth/gmail.compose',
   'https://www.googleapis.com/auth/gmail.send'
 ];
-let CREDENTIALS_PATH = "";
+
 let CALENDAR_RDV_ID = "";
 let CALENDAR_TABLE_ID = "";
-let PROSPECTIX_MAIL = "prospectix@juniorisep.com";
+let oauth2Client!: OAuth2Client;
 
-let ENVIRONMENT = "dev";
 @Injectable()
 export class GoogleService {
 
@@ -43,117 +39,78 @@ export class GoogleService {
 
     private readonly mailTemplatesService: MailTemplatesService
   ) {
-    if (process.env.BASE_URL.includes("localhost")) {
-      ENVIRONMENT = "dev";
-      // ! LOCALHOST / DEV
-      CREDENTIALS_PATH = path.join(process.cwd() + process.env.CREDENTIALS_DEV_PATH);
-      // ? Calendrier '[Brouillon] Organisation'
-      CALENDAR_RDV_ID = "c_ibijclono1jjm07up41ob2t6b8@group.calendar.google.com"
 
-      // ? Calendrier 'Test prospectix'
-      CALENDAR_TABLE_ID = "c_ec0400266ff405da7c7d561e44505039ef85262f679bebe499167566a9480072@group.calendar.google.com"
-    } else if (process.env.BASE_URL.includes("staging")) {
-      ENVIRONMENT = "staging";
-      // ! STAGING
-      CREDENTIALS_PATH =path.join(process.cwd() + process.env.CREDENTIALS_STAGING_PATH);
-      console.log(CREDENTIALS_PATH)
-      // ? Calendrier '[Brouillon] Organisation'
-      CALENDAR_RDV_ID = "c_ibijclono1jjm07up41ob2t6b8@group.calendar.google.com"
-
-      // ? Calendrier 'Test prospectix'
-      CALENDAR_TABLE_ID = "c_ec0400266ff405da7c7d561e44505039ef85262f679bebe499167566a9480072@group.calendar.google.com"
-    } else {
-      ENVIRONMENT = "prod";
-      // ! PRODUCTION
-      CREDENTIALS_PATH = path.join(process.cwd() + process.env.CREDENTIALS_PROD_PATH);
-
-      // ? Calendrier 'RDV'
-      CALENDAR_RDV_ID = "juniorisep.com_pjiviq7iqt5ahefn4jg55ql8ec@group.calendar.google.com"
-
-      // ? Calendrier 'Table de Réunion'
-      CALENDAR_TABLE_ID = "juniorisep.com_cgoeun5k5ipq6idaq2kbf10r18@group.calendar.google.com"
-    }
+    const credentials = require(path.join(process.cwd(), process.env.CREDENTIALS_PATH))
+    oauth2Client = new google.auth.OAuth2(
+      credentials.web.client_id,
+      credentials.web.client_secret,
+      credentials.web.redirect_uris
+    );
+    CALENDAR_RDV_ID = process.env.CALENDAR_RDV_ID;
+    CALENDAR_TABLE_ID = process.env.CALENDAR_TABLE_ID;
   }
 
   // ! ---------------------------- Google Authentication Methods ----------------------------
 
-  /**
-   * Reads previously authorized credentials from the save file.
-   *
-   * @return {Promise<OAuth2Client|null>}
-   */
-  async loadSavedCredentialsIfExist(pm: ProjectManager) {
+  // ? Generate consent window url
+   auth() {
     try {
-      console.log("hgere")
-      if(pm.tokenEmail == '') {
-        console.log("is null")
-        return null
-      }
-      console.log("is not null")
-      return google.auth.fromJSON(JSON.parse(pm.tokenEmail));
-    } catch (err) {
-      return null;
+      const url = oauth2Client.generateAuthUrl({
+        access_type: "offline",
+        scope: SCOPES,
+        prompt: 'consent'
+      });
+      return {url: url}
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Authentication failed", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
-  /**
-   * Serializes credentials to a file compatible with GoogleAUth.fromJSON.
-   *
-   * @param {OAuth2Client} client
-   * @return {Promise<void>}
-   */
-  async saveCredentials(pm, client) {
-    const content = await fs.readFile(CREDENTIALS_PATH);
-    const keys = JSON.parse(content);
-    const key = keys.installed || keys.web;
-    const payload = JSON.stringify({
-      type: 'authorized_user',
-      client_id: key.client_id,
-      client_secret: key.client_secret,
-      refresh_token: client.credentials.refresh_token,
-    });
-    await this.pmRepository.update(pm.id, { tokenEmail: payload })
+  // ? Retrieve tokens from code generated by user + saving credentials in db
+  async retrieveTokens(code: string, pm: ProjectManager) {
+    try {
+      const { tokens } = await oauth2Client.getToken(code);
+      await this.pmRepository.update(pm.id, { tokenGoogle: JSON.stringify(tokens)})
+      return true
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer les tokens", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
+  
+  // ? Update access token so it is up to date
+  async updateTokens(pm: ProjectManager) {
+    try {
+      if(pm.tokenGoogle != '' && JSON.parse(pm.tokenGoogle).refresh_token) {
 
-  /**
-   * Load or request or authorization to call APIs.
-   *
-   */
-  async authorize(user: ProjectManager) {
-    console.log("auth started")
-    let client = await this.loadSavedCredentialsIfExist(user);
-    console.log("end ait")
-    if (client) {
-      console.log("client exists")
-      return client;
+        oauth2Client.setCredentials({refresh_token: JSON.parse(pm.tokenGoogle).refresh_token});
+        const newToken = await oauth2Client.getAccessToken();
+
+        const newTokenGoogle = { ...JSON.parse(pm.tokenGoogle), access_token: newToken.token };
+        
+        await this.pmRepository.update(pm.id, { tokenGoogle: JSON.stringify(newTokenGoogle)});
+        pm.tokenGoogle = JSON.stringify(newTokenGoogle);
+        return pm;
+      } 
+      return pm
+    } catch (error) {
+      console.log(error)
     }
-    console.log("authe ntica")
-    console.log(CREDENTIALS_PATH)
-    console.log(process.cwd())
-    client = await authenticate({
-      scopes: SCOPES,
-      keyfilePath: CREDENTIALS_PATH,
-    });
-    console.log("authenticated" + client)
-    if (client.credentials) {
-      await this.saveCredentials(user, client);
-    }
-    return client;
-    
   }
 
 
   // ! ---------------------------- Google Authentication Methods END ----------------------------
 
 
-  // ! ---------------------------- LOGOUT START ----------------------------
+  // ! ---------------------------- LOGOUT  ----------------------------
 
   async logout(user: ProjectManager) {
     try {
-      if(user.tokenEmail == '') {
+      if(user.tokenGoogle == '') {
         return 1
       } else {
-        await this.pmRepository.update(user.id, { tokenEmail: '' })
+        await this.pmRepository.update(user.id, { tokenGoogle: '' })
         return 0;
       }
     } catch (error) {
@@ -161,13 +118,13 @@ export class GoogleService {
       throw new HttpException("Impossible de se déconnecter", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  // ! ---------------------------- LOGOUT END ----------------------------
+  // ! ---------------------------- LOGOUT  ----------------------------
 
   // ! ---------------------------- CHECK IF USER IS GOOGLE LOGGED ----------------------------
 
   async checkLogged(user: ProjectManager) : Promise<boolean> {
     try {
-      return user.tokenEmail != '';
+      return user.tokenGoogle != '';
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de vérifier si l'utilisateur est authentififé avec Google", HttpStatus.INTERNAL_SERVER_ERROR)
@@ -176,43 +133,44 @@ export class GoogleService {
 
   // ! ---------------------------- CHECK IF USER IS GOOGLE LOGGED ----------------------------
 
-
   // ! ------------------------------------------------------------------------------------ METHODS ------------------------------------------------------------------------------------
 
   // ? Create an event on calendar JISEP -> for meetings
-  async createEventOnCalendar(createMeetingDto: CreateMeetingDto, auth?) {
+  async createEventOnCalendar(createMeetingDto: CreateMeetingDto, pm: ProjectManager) {
     try {
-      const calendar = google.calendar({ version: 'v3', auth });
-      var event = {
-        summary: `[${createMeetingDto.prospect.companyName}] - ${createMeetingDto.pm.firstname.charAt(0).toUpperCase() + createMeetingDto.pm.firstname.slice(1).toLowerCase()} ${createMeetingDto.pm.name.toUpperCase()}`, // ? Nom de l'évènement
-        location: createMeetingDto.prospect.streetAddress != '' && `${createMeetingDto.prospect.streetAddress}, ${createMeetingDto.prospect.city.zipcode} ${createMeetingDto.prospect.city.name}, ${createMeetingDto.prospect.country.name}`, // ? Lieu de l'évènement -> adresse du prospect
-        start: {
-          dateTime: `${new Date(createMeetingDto.date).toISOString()}`, // ? Heure de début du rendez-vous
-          timeZone: 'Europe/Paris',
-        },
-        end: {
-          dateTime: `${new Date(new Date(createMeetingDto.date).setHours(new Date(createMeetingDto.date).getHours() + 1)).toISOString()}`, // ? Heure de fin du rendez-vous
-          timeZone: 'Europe/Paris',
-        },
-        attendees: [ // ? Invités
-          { email: `${createMeetingDto.pm.mail}`, 'responseStatus': 'accepted' }, // ? email du chef de projet
-          createMeetingDto.prospect.email.email && createMeetingDto.prospect.email.email != '' && { 'email': `${createMeetingDto.prospect.email.email}` } // ? email du client
-        ],
-        conferenceData: {
-          createRequest: {
-            requestId: `${createMeetingDto.pm.pseudo.slice(3) + createMeetingDto.prospect.companyName.slice(3)}`,
-            conferenceSolutionKey: {
-              type: "hangoutsMeet",
+        const calendar = google.calendar({ version: 'v3'});
+        var event = {
+          summary: `[${createMeetingDto.prospect.companyName}] - ${createMeetingDto.pm.firstname.charAt(0).toUpperCase() + createMeetingDto.pm.firstname.slice(1).toLowerCase()} ${createMeetingDto.pm.name.toUpperCase()}`, // ? Nom de l'évènement
+          location: createMeetingDto.prospect.streetAddress != '' && `${createMeetingDto.prospect.streetAddress}, ${createMeetingDto.prospect.city.zipcode} ${createMeetingDto.prospect.city.name}, ${createMeetingDto.prospect.country.name}`, // ? Lieu de l'évènement -> adresse du prospect
+          start: {
+            dateTime: `${new Date(createMeetingDto.date).toISOString()}`, // ? Heure de début du rendez-vous
+            timeZone: 'Europe/Paris',
+          },
+          end: {
+            dateTime: `${new Date(new Date(createMeetingDto.date).setHours(new Date(createMeetingDto.date).getHours() + 1)).toISOString()}`, // ? Heure de fin du rendez-vous
+            timeZone: 'Europe/Paris',
+          },
+          attendees: [ // ? Invités
+            { email: `${createMeetingDto.pm.mail}`, 'responseStatus': 'accepted' }, // ? email du chef de projet
+            createMeetingDto.prospect.email.email && createMeetingDto.prospect.email.email != '' && { 'email': `${createMeetingDto.prospect.email.email}` } // ? email du client
+          ],
+          conferenceData: {
+            createRequest: {
+              requestId: `${createMeetingDto.pm.pseudo.slice(3) + createMeetingDto.prospect.companyName.slice(3)}`,
+              conferenceSolutionKey: {
+                type: "hangoutsMeet",
+              }
             }
           }
-        }
-      };
-      return await calendar.events.insert({
-        calendarId: createMeetingDto.type == MeetingType.MEETING_TABLE ? CALENDAR_TABLE_ID : CALENDAR_RDV_ID,
-        resource: event,
-        sendUpdates: 'all',
-        conferenceDataVersion: createMeetingDto.type == MeetingType.TEL_VISIO ? 1 : 0
-      })
+        };
+        return await calendar.events.insert({
+          calendarId: createMeetingDto.type == MeetingType.MEETING_TABLE ? CALENDAR_TABLE_ID : CALENDAR_RDV_ID,
+          resource: event,
+          sendUpdates: 'all',
+          access_token: JSON.parse(pm.tokenGoogle).access_token,
+          conferenceDataVersion: createMeetingDto.type == MeetingType.TEL_VISIO ? 1 : 0
+        })
+      
     } catch (error) {
       console.error(error)
       throw new HttpException("Impossible de créer un évènement sur le calendrier", HttpStatus.INTERNAL_SERVER_ERROR)
@@ -221,13 +179,13 @@ export class GoogleService {
 
 
   // ? send mail to client, with template from JISEP AND PM
-  async sendMail(sendEmailDto: sendEmailDto, mailTemplate: MailTemplate, pm: ProjectManager, auth?) {
+  async sendMail(sendEmailDto: sendEmailDto, mailTemplate: MailTemplate, pm: ProjectManager) {
     try {
       // ? content of the mail to send
       const mailContent = await this.mailTemplatesService.generateMailContent(pm, sendEmailDto, mailTemplate)
 
       // ? sending the mail with Gmail API
-      const gmail = google.gmail({version: 'v1', auth})
+      const gmail = google.gmail({version: 'v1'})
       
       // * pièces jointes (plaquette)
       const fileAttachments = [
@@ -239,8 +197,8 @@ export class GoogleService {
 
       // * options for the mail
       const options = {
-        to: ENVIRONMENT == 'dev' ? PROSPECTIX_MAIL : sendEmailDto.prospect.email.email,
-        replyTo: ENVIRONMENT == 'dev' ? PROSPECTIX_MAIL : pm.mail,
+        to: sendEmailDto.prospect.email.email,
+        replyTo: pm.mail,
         subject: sendEmailDto.object,
         html: mailContent.toString(),
         textEncoding: 'base64',
@@ -256,6 +214,7 @@ export class GoogleService {
 
       return await gmail.users.messages.send({
         userId: 'me',
+        access_token: JSON.parse(pm.tokenGoogle).access_token,
         labelIds: ["INBOX", "STARRED", "IMPORTANT"],
         resource: {
           raw: Buffer.from(await new MailComposer(options).compile().build()).toString("base64")

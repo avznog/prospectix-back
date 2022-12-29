@@ -1,4 +1,5 @@
 import { Controller, Get, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Param } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
@@ -30,8 +31,13 @@ export class GoogleController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("auth")
-  async auth(@CurrentUser() user: ProjectManager) {
-    console.log("starting auth for " + user.pseudo)
-    return await this.googleService.authorize(user);
+  auth() {
+    return this.googleService.auth()
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("oauth2callback/:code")
+  aouth2callback(@Param("code") code: string, @CurrentUser() user: ProjectManager) {
+    return this.googleService.retrieveTokens(code, user);
   }
 }
