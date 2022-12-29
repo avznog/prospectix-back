@@ -5,6 +5,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
+import { GoogleService } from 'src/google/google.service';
 import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { CreateSentEmailDto } from './dto/create-sent-email.dto';
@@ -18,7 +19,10 @@ import { SentEmailsService } from './sent-emails.service';
 @ApiTags("sent-emails")
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class SentEmailsController {
-  constructor(private readonly sentEmailsService: SentEmailsService) {}
+  constructor(
+    private readonly sentEmailsService: SentEmailsService,
+    private readonly googleService: GoogleService
+    ) {}
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
@@ -34,7 +38,8 @@ export class SentEmailsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post("send/:id")
-  send(@Body() sendEmailDto: sendEmailDto, @CurrentUser() pm: ProjectManager, @Param("id") idSentEmail: number){
+  async send(@Body() sendEmailDto: sendEmailDto, @CurrentUser() pm: ProjectManager, @Param("id") idSentEmail: number){
+    pm = await this.googleService.updateTokens(pm);
     return this.sentEmailsService.send(sendEmailDto, pm, idSentEmail);
   }
 

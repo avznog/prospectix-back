@@ -68,14 +68,8 @@ export class GoogleService {
   async retrieveTokens(code: string, pm: ProjectManager) {
     try {
       const { tokens } = await oauth2Client.getToken(code);
-      if(pm.tokenGoogle == '') {
-        await this.pmRepository.update(pm.id, { tokenGoogle: JSON.stringify(tokens)})
-      } else if (!tokens.refresh_token && JSON.parse(pm.tokenGoogle).refresh_token) {
-        await this.pmRepository.update(pm.id, { tokenGoogle: JSON.stringify({ refresh_token: JSON.parse(pm.tokenGoogle).refresh_token, ...tokens})})
-      } else {
-        await this.pmRepository.update(pm.id, { tokenGoogle: JSON.stringify(tokens)})
-      }
-      return true;
+      await this.pmRepository.update(pm.id, { tokenGoogle: JSON.stringify(tokens)})
+      return true
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récupérer les tokens", HttpStatus.INTERNAL_SERVER_ERROR)
@@ -116,17 +110,20 @@ export class GoogleService {
 
   // ! ---------------------------- CHECK IF USER IS GOOGLE LOGGED ----------------------------
 
-
-  prepareGoogleAPICall(pm: ProjectManager) {
+  async updateTokens(pm: ProjectManager) {
     try {
-      console.log(pm)
-      if(pm.tokenGoogle == '') {
+      if(pm.tokenGoogle != '' && JSON.parse(pm.tokenGoogle).refresh_token) {
+
+        oauth2Client.setCredentials({refresh_token: JSON.parse(pm.tokenGoogle).refresh_token});
+        const newToken = await oauth2Client.getAccessToken();
+
+        const newTokenGoogle = { ...JSON.parse(pm.tokenGoogle), access_token: newToken.token };
         
-        return false
-      } else {
-        oauth2Client.setCredentials(JSON.parse(pm.tokenGoogle))
-        return true
-      }
+        await this.pmRepository.update(pm.id, { tokenGoogle: JSON.stringify(newTokenGoogle)});
+        pm.tokenGoogle = JSON.stringify(newTokenGoogle);
+        return pm;
+      } 
+      return pm
     } catch (error) {
       console.log(error)
     }
@@ -136,12 +133,7 @@ export class GoogleService {
   // ? Create an event on calendar JISEP -> for meetings
   async createEventOnCalendar(createMeetingDto: CreateMeetingDto, pm: ProjectManager) {
     try {
-      if(!this.prepareGoogleAPICall(pm)) {
-        console.log("false")
-        return false
-      } else {
-        console.log("still")
-        const calendar = google.calendar({ version: 'v3' });
+        const calendar = google.calendar({ version: 'v3'});
         var event = {
           summary: `[${createMeetingDto.prospect.companyName}] - ${createMeetingDto.pm.firstname.charAt(0).toUpperCase() + createMeetingDto.pm.firstname.slice(1).toLowerCase()} ${createMeetingDto.pm.name.toUpperCase()}`, // ? Nom de l'évènement
           location: createMeetingDto.prospect.streetAddress != '' && `${createMeetingDto.prospect.streetAddress}, ${createMeetingDto.prospect.city.zipcode} ${createMeetingDto.prospect.city.name}, ${createMeetingDto.prospect.country.name}`, // ? Lieu de l'évènement -> adresse du prospect
@@ -171,10 +163,9 @@ export class GoogleService {
           resource: event,
           sendUpdates: 'all',
           access_token: JSON.parse(pm.tokenGoogle).access_token,
-          refresh_token: JSON.parse(pm.tokenGoogle).refresh_token,
+          // refresh_token: JSON.parse(pm.tokenGoogle).refresh_token,
           conferenceDataVersion: createMeetingDto.type == MeetingType.TEL_VISIO ? 1 : 0
         })
-      }
       
     } catch (error) {
       console.error(error)
