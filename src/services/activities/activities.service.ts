@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateActivityDto } from 'src/dto/activities/create-activity.dto';
 import { Activity } from 'src/entities/activities/activity.entity';
 import { Repository } from 'typeorm';
 

@@ -4,7 +4,7 @@ import { lastDayOfWeek } from 'date-fns';
 import { MeetingType } from 'src/constants/meeting.type';
 import { StageType } from 'src/constants/stage.type';
 import { CreateMeetingDto } from 'src/dto/meetings/create-meeting.dto';
-import { ResearchParamsMeetingsDto } from 'src/dto/meetings/research-parmas-meetings.dto';
+import { ResearchParamsMeetingsDto } from 'src/dto/meetings/research-params-meetings.dto';
 import { UpdateMeetingDto } from 'src/dto/meetings/update-meeting.dto';
 import { Meeting } from 'src/entities/meetings/meeting.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
