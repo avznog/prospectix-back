@@ -8,7 +8,15 @@ export class SentryInterceptor implements NestInterceptor {
     return next
       .handle()
       .pipe(
-        tap(null, (exception) => {
+        tap(null, async (exception) => {
+          console.log("flenflkznflnelzkfzefz")
+          const response = context.switchToHttp().getResponse().headers
+          console.log(response)
+          console.log(exception)
+          Sentry.setContext("User", {
+            name: "myusername",
+            version: "versio de prod"
+          })
           Sentry.captureException(exception);
         })
       )

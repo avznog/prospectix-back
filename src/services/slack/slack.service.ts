@@ -176,4 +176,13 @@ export class SlackService {
       throw new HttpException("Impossible d'envoyer la notification personnalisée au chef de projet pour les rappels", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
+
+  test() {
+try {
+  throw new Error
+} catch (error) {
+  console.log(error)
+  throw new HttpException("Erreur test", HttpStatus.INTERNAL_SERVER_ERROR)
+
+}  }
 }

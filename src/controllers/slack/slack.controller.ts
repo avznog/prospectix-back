@@ -9,10 +9,10 @@ import { ProjectManager } from 'src/entities/project-managers/project-manager.en
 import { Prospect } from 'src/entities/prospects/prospect.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { SlackService } from 'src/services/slack/slack.service';
-
+import * as Sentry from '@sentry/node'
 @UseInterceptors(SentryInterceptor)
 @Controller('slack')
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags("slack")
 export class SlackController {
   constructor(private readonly slackService: SlackService) {}
@@ -21,6 +21,14 @@ export class SlackController {
   @Post("send-fraud")
   sendFraud(@CurrentUser() user: ProjectManager, @Body() prospect: Prospect) {
     return this.slackService.sendFraud(prospect, user);
+  }
+  @Get("testsentry") 
+  testsentry() {
+    Sentry.setContext("User",{
+      name: "bgonzva"
+    })
+
+    return this.slackService.test()
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
