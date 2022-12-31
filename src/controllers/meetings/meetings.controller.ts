@@ -12,6 +12,7 @@ import { Meeting } from 'src/entities/meetings/meeting.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { MeetingsService } from 'src/services/meetings/meetings.service';
+import { SentryService } from 'src/services/sentry/sentry/sentry.service';
 import { DeleteResult, UpdateResult } from 'typeorm';
 
 @UseInterceptors(SentryInterceptor)
@@ -20,90 +21,105 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class MeetingsController {
   constructor(
-    private readonly meetingsService: MeetingsService
+    private readonly meetingsService: MeetingsService,
+    private readonly sentryService: SentryService
     ) {}
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post()
   create(@Body() createMeetingDto: CreateMeetingDto, @CurrentUser() user: ProjectManager) : Promise<Meeting> {
+    this.sentryService.setSentryUser(user);
     return this.meetingsService.create(createMeetingDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Delete("delete/:id")
-  delete(@Param("id") idMeeting: number) : Promise<DeleteResult> {
+  delete(@Param("id") idMeeting: number, @CurrentUser() user: ProjectManager) : Promise<DeleteResult> {
+    this.sentryService.setSentryUser(user);
     return this.meetingsService.delete(idMeeting);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("mark-done/:id")
-  markDone(@Param("id") idMeeting: number) : Promise<UpdateResult> {
+  markDone(@Param("id") idMeeting: number, @CurrentUser() user: ProjectManager) : Promise<UpdateResult> {
+    this.sentryService.setSentryUser(user);
     return this.meetingsService.markDone(idMeeting);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("mark-undone/:id")
-  markUndone(@Param("id") idMeeting: number) : Promise<UpdateResult> {
+  markUndone(@Param("id") idMeeting: number, @CurrentUser() user: ProjectManager) : Promise<UpdateResult> {
+    this.sentryService.setSentryUser(user);
     return this.meetingsService.markUndone(idMeeting);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<Meeting[]> {  
+  findAllPaginated(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<Meeting[]> {
+    this.sentryService.setSentryUser(user);
     return this.meetingsService.findAllPaginated(researchParamsMeetingsDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-meetings-done")
   findAllMeetingsDone(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<Meeting[]> {
+    this.sentryService.setSentryUser(user);
     return this.meetingsService.findAllMeetingsDone(researchParamsMeetingsDto, user)
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-meetings")
   countMeetings(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<number> {
+    this.sentryService.setSentryUser(user);
     return this.meetingsService.countMeetings(researchParamsMeetingsDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-all-for-me")
   countAllForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    this.sentryService.setSentryUser(user);
     return this.meetingsService.countAllForMe(user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-all")
-  countAll(@Query() interval: { dateDown: Date, dateUp: Date }) {
+  countAll(@Query() interval: { dateDown: Date, dateUp: Date }, @CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.meetingsService.countAll(interval);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-weekly-for-me")
   countWeeklyForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    this.sentryService.setSentryUser(user);
     return this.meetingsService.countWeeklyForMe(user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-all-for-everyone")
-  countAllForEveryone() {
+  countAllForEveryone(@CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.meetingsService.countAllForEveryOne();
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-all-by-weeks-for-me")
   countAllByWeeksForMe(@CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.meetingsService.countAllByWeeksForMe(user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Patch(":id")
-  update(@Param("id") id: number, @Body() updateMeetingDto: UpdateMeetingDto) : Promise<UpdateResult> {
+  update(@Param("id") id: number, @Body() updateMeetingDto: UpdateMeetingDto, @CurrentUser() user: ProjectManager) : Promise<UpdateResult> {
+    this.sentryService.setSentryUser(user);
     return this.meetingsService.update(id, updateMeetingDto);
   }
   
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-weekly-all")
-  countWeeklyAll() : Promise<{id: number, count: number}[]> {
+  countWeeklyAll(@CurrentUser() user: ProjectManager) : Promise<{id: number, count: number}[]> {
+    this.sentryService.setSentryUser(user);
     return this.meetingsService.countWeeklyAll();
   }
 }

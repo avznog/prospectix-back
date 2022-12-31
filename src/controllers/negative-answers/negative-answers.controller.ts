@@ -9,41 +9,50 @@ import { CreateNegativeAnswerDto } from 'src/dto/negative-answers/create-negativ
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { NegativeAnswersService } from 'src/services/negative-answers/negative-answers.service';
+import { SentryService } from 'src/services/sentry/sentry/sentry.service';
 
 @UseInterceptors(SentryInterceptor)
 @Controller('negative-answers')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags("negative-answers")
 export class NegativeAnswersController {
-  constructor(private readonly negativeAnswersService: NegativeAnswersService) {}
+  constructor(
+    private readonly negativeAnswersService: NegativeAnswersService,
+    private readonly sentryService: SentryService
+    ) {}
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post()
-  create(@Body() createNegativeAnswerDto: CreateNegativeAnswerDto) {
+  create(@Body() createNegativeAnswerDto: CreateNegativeAnswerDto, @CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.negativeAnswersService.create(createNegativeAnswerDto);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post("create-for-me")
   createForMe(@Body() createNegativeAnswerDto: CreateNegativeAnswerDto, @CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.negativeAnswersService.createForMe(createNegativeAnswerDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-all-for-me")
   countAllForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    this.sentryService.setSentryUser(user);
     return this.negativeAnswersService.countAllForMe(user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-weekly-for-me")
   countWeeklyForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    this.sentryService.setSentryUser(user);
     return this.negativeAnswersService.countWeeklyForMe(user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-all-by-weeks-for-me")
   countAllByWeeksForMe(@CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.negativeAnswersService.countAllByWeeksForMe(user);
   }
 }

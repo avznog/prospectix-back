@@ -11,6 +11,7 @@ import { Bookmark } from 'src/entities/bookmarks/bookmark.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { BookmarksService } from 'src/services/bookmarks/bookmarks.service';
+import { SentryService } from 'src/services/sentry/sentry/sentry.service';
 import { DeleteResult } from 'typeorm';
 
 @UseInterceptors(SentryInterceptor)
@@ -18,29 +19,36 @@ import { DeleteResult } from 'typeorm';
 @ApiTags("bookmarks")
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class BookmarksController {
-  constructor(private readonly bookmarksService: BookmarksService) {}
+  constructor(
+    private readonly bookmarksService: BookmarksService,
+    private readonly sentryService: SentryService
+  ) { }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post()
-  create(@Body() createBookmarkDto: CreateBookmarkDto, @CurrentUser() user) : Promise<Bookmark> {
-    return this.bookmarksService.create(createBookmarkDto, user.id);
+  create(@Body() createBookmarkDto: CreateBookmarkDto, @CurrentUser() user: ProjectManager): Promise<Bookmark> {
+    this.sentryService.setSentryUser(user)
+    return this.bookmarksService.create(createBookmarkDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Delete("/:idBookmark")
-  delete(@Param("idBookmark") idBookmark : number) : Promise<DeleteResult> {
+  delete(@Param("idBookmark") idBookmark: number, @CurrentUser() user: ProjectManager): Promise<DeleteResult> {
+    this.sentryService.setSentryUser(user);
     return this.bookmarksService.delete(idBookmark);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
   findAllPaginated(@Query() researchParamsBookmarksDto: ResearchParamsBookmarksDto, @CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.bookmarksService.findAllPaginated(researchParamsBookmarksDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-bookmarks")
-  countBookmarks(@Query() researchParamsBookmarksDto: ResearchParamsBookmarksDto, @CurrentUser() user: ProjectManager) : Promise<number> {
+  countBookmarks(@Query() researchParamsBookmarksDto: ResearchParamsBookmarksDto, @CurrentUser() user: ProjectManager): Promise<number> {
+    this.sentryService.setSentryUser(user);
     return this.bookmarksService.countBookmarks(researchParamsBookmarksDto, user);
   }
 }

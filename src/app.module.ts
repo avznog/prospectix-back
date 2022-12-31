@@ -67,6 +67,7 @@ import { SlackService } from './services/slack/slack.service';
 import { WebsitesService } from './services/websites/websites.service';
 import { GoalTemplatesController } from './controllers/goal-templates/goal-templates.controller';
 import { AuthModule } from './auth/auth.module';
+import { SentryService } from './services/sentry/sentry/sentry.service';
 
 @Module({
   imports: [
@@ -97,7 +98,7 @@ import { AuthModule } from './auth/auth.module';
 
   ],
   controllers: [AppController, ActivitiesController, BookmarksController, CitiesController, CallsController, CountriesController, EmailsController, EventsController, GoalTemplatesController, GoalsController, GoogleController, MailTemplatesController, MeetingsController, NegativeAnswersController, PhonesController, ProjectManagersController, ProspectsController, RemindersController, SentEmailsController, SlackController, WebsitesController],
-  providers: [AppService, ActivitiesService, BookmarksService, CitiesService, CallsService, CountriesService, EmailsService, EventsService, GoalTemplatesService, GoalsService, GoogleService, MailTemplatesService, MeetingsService, NegativeAnswersService, PhonesService, ProjectManagersService, ProspectsService, RemindersService, SentEmailsService, SlackService, WebsitesService],
+  providers: [AppService, ActivitiesService, BookmarksService, CitiesService, CallsService, CountriesService, EmailsService, EventsService, GoalTemplatesService, GoalsService, GoogleService, MailTemplatesService, MeetingsService, NegativeAnswersService, PhonesService, ProjectManagersService, ProspectsService, RemindersService, SentEmailsService, SlackService, WebsitesService, SentryService],
 
 })
 export class AppModule { }
