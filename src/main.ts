@@ -9,7 +9,8 @@ async function bootstrap() {
 
   // Sentry configuration
   Sentry.init({
-    dsn: process.env.SENTRYDSN
+    dsn: process.env.SENTRYDSN || "https://601b8ece82ff4a42b7e10b6354c15c27@o231724.ingest.sentry.io/4504414245421056", // ? If no sentry dns on env, use prosepctix dev sentry
+    environment: process.env.BASE_URL == "https://staging.prospectix.juniorisep.com"? "staging" : process.env.BASE_URL == "https://prospectix.juniorisep.com" ? "production" : "dev"
   });
   app.use(cookieParser());
   app.enableCors({

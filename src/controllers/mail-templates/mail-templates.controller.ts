@@ -12,6 +12,7 @@ import { MailTemplate } from 'src/entities/mail-templates/mail-template.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { MailTemplatesService } from 'src/services/mail-templates/mail-templates.service';
+import { SentryService } from 'src/services/sentry/sentry/sentry.service';
 import { DeleteResult } from 'typeorm';
 
 @Controller('mail-templates')
@@ -20,36 +21,42 @@ import { DeleteResult } from 'typeorm';
 @ApiTags("mail-templates")
 export class MailTemplatesController {
   constructor(
-    private readonly mailTemplatesService: MailTemplatesService
+    private readonly mailTemplatesService: MailTemplatesService,
+    private readonly sentryService: SentryService
     ) {}
 
   @Get()
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  findAllForMe(@CurrentUser() pm: ProjectManager) : Promise<MailTemplate[]> {
-    return this.mailTemplatesService.findAllForMe(pm);
+  findAllForMe(@CurrentUser() user: ProjectManager) : Promise<MailTemplate[]> {
+    this.sentryService.setSentryUser(user);
+    return this.mailTemplatesService.findAllForMe(user);
   }
 
   @Post()
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  create(@Body() createMailTemplateDto: CreateMailTemplateDto, @CurrentUser() pm: ProjectManager) : Promise<MailTemplate> {
-    return this.mailTemplatesService.create(createMailTemplateDto, pm);
+  create(@Body() createMailTemplateDto: CreateMailTemplateDto, @CurrentUser() user: ProjectManager) : Promise<MailTemplate> {
+    this.sentryService.setSentryUser(user);
+    return this.mailTemplatesService.create(createMailTemplateDto, user);
   }
 
   @Delete(":id")
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  delete(@Param("id") id: number) : Promise<DeleteResult> {
+  delete(@Param("id") id: number, @CurrentUser() user: ProjectManager) : Promise<DeleteResult> {
+    this.sentryService.setSentryUser(user);
     return this.mailTemplatesService.delete(id);
   }
 
   @Patch(":id")
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  update(@Param("id") id: number, @Body() updateMailTemplateDto: UpdateMailTemplateDto) : Promise<MailTemplate> {
+  update(@Param("id") id: number, @Body() updateMailTemplateDto: UpdateMailTemplateDto, @CurrentUser() user: ProjectManager) : Promise<MailTemplate> {
+    this.sentryService.setSentryUser(user);
     return this.mailTemplatesService.update(id, updateMailTemplateDto)
   }
 
   @Get("all")
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  findAll() : Promise<MailTemplate[]> {
+  findAll(@CurrentUser() user: ProjectManager) : Promise<MailTemplate[]> {
+    this.sentryService.setSentryUser(user);
     return this.mailTemplatesService.findAll();
   }
 }

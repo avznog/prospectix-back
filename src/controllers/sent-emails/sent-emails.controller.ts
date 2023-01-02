@@ -13,6 +13,7 @@ import { SentEmail } from 'src/entities/sent-emails/sent-email.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { GoogleService } from 'src/services/google/google.service';
 import { SentEmailsService } from 'src/services/sent-emails/sent-emails.service';
+import { SentryService } from 'src/services/sentry/sentry/sentry.service';
 
 @UseInterceptors(SentryInterceptor)
 @Controller('sent-emails')
@@ -21,73 +22,85 @@ import { SentEmailsService } from 'src/services/sent-emails/sent-emails.service'
 export class SentEmailsController {
   constructor(
     private readonly sentEmailsService: SentEmailsService,
-    private readonly googleService: GoogleService
+    private readonly googleService: GoogleService,
+    private readonly sentryService: SentryService
     ) {}
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
   findAllPaginated(@Query() researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, @CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.sentEmailsService.findAllPaginated(researchParamsSentEmailsDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated-sent")
   findAllPaginatedSent(@Query() researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, @CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.sentEmailsService.findAllPaginatedSent(researchParamsSentEmailsDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post("send/:id")
-  async send(@Body() sendEmailDto: sendEmailDto, @CurrentUser() pm: ProjectManager, @Param("id") idSentEmail: number){
-    pm = await this.googleService.updateTokens(pm);
-    return this.sentEmailsService.send(sendEmailDto, pm, idSentEmail);
+  async send(@Body() sendEmailDto: sendEmailDto, @CurrentUser() user: ProjectManager, @Param("id") idSentEmail: number){
+    this.sentryService.setSentryUser(user);
+    user = await this.googleService.updateTokens(user);
+    return this.sentEmailsService.send(sendEmailDto, user, idSentEmail);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post()
-  create(@Body() createSentEmailDto: CreateSentEmailDto, @CurrentUser() user) : Promise<SentEmail> {
+  create(@Body() createSentEmailDto: CreateSentEmailDto, @CurrentUser() user: ProjectManager) : Promise<SentEmail> {
+    this.sentryService.setSentryUser(user);
     return this.sentEmailsService.create(createSentEmailDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-sent-emails")
   countSentEmails(@CurrentUser() user: ProjectManager, @Query() researchParamsSentEmails: ResearchParamsSentEmailsDto) : Promise<number> {
+    this.sentryService.setSentryUser(user);
     return this.sentEmailsService.countSentEmails(user, researchParamsSentEmails);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-sent-emails-sent")
   countSentEmailsSent(@CurrentUser() user: ProjectManager, @Query() researchParamsSentEmails: ResearchParamsSentEmailsDto) : Promise<number> {
+    this.sentryService.setSentryUser(user);
     return this.sentEmailsService.countSentEmailsSent(user, researchParamsSentEmails)
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-all-for-me")
   countAllForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    this.sentryService.setSentryUser(user);
     return this.sentEmailsService.countAllForMe(user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-all")
-  countAll(@Query() interval: { dateDown: Date, dateUp: Date }) {
+  countAll(@Query() interval: { dateDown: Date, dateUp: Date }, @CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.sentEmailsService.countAll(interval);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-weekly-for-me")
   countWeeklyForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
+    this.sentryService.setSentryUser(user);
     return this.sentEmailsService.countWeeklyForMe(user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-all-by-weeks-for-me")
   countAllByWeeksForMe(@CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.sentEmailsService.countAllByWeeksForMe(user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post("send-separately/:idSentEmail")
-  sendSeparately(@Param("idSentEmail") idSentEmail: number, @Body() object: { object: string }) {
+  sendSeparately(@Param("idSentEmail") idSentEmail: number, @Body() object: { object: string }, @CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.sentEmailsService.sendSeparately(idSentEmail, object.object)
   }
 }

@@ -9,35 +9,43 @@ import { RolesType } from 'src/auth/role.type';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { GoogleService } from 'src/services/google/google.service';
+import { SentryService } from 'src/services/sentry/sentry/sentry.service';
 
 @UseInterceptors(SentryInterceptor)
 @Controller('google')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags("google")
 export class GoogleController {
-  constructor(private readonly googleService: GoogleService) {}
+  constructor(
+    private readonly googleService: GoogleService,
+    private readonly sentryService: SentryService
+    ) {}
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("logout")
   logout(@CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.googleService.logout(user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("check-logged")
   checkLogged(@CurrentUser() user: ProjectManager) : Promise<boolean> {
+    this.sentryService.setSentryUser(user);
     return this.googleService.checkLogged(user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("auth")
-  auth() {
+  auth(@CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.googleService.auth()
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("oauth2callback/:code")
   aouth2callback(@Param("code") code: string, @CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.googleService.retrieveTokens(code, user);
   }
 }

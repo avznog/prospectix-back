@@ -11,6 +11,7 @@ import { UpdateProjectManagerDto } from 'src/dto/project-managers/update-project
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { ProjectManagersService } from 'src/services/project-managers/project-managers.service';
+import { SentryService } from 'src/services/sentry/sentry/sentry.service';
 import { UpdateResult } from 'typeorm';
 
 @UseInterceptors(SentryInterceptor)
@@ -18,47 +19,57 @@ import { UpdateResult } from 'typeorm';
 @ApiTags('project-managers')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProjectManagersController {
-  constructor(private readonly pmService: ProjectManagersService) {}
+  constructor(
+    private readonly pmService: ProjectManagersService,
+    private readonly sentryService: SentryService
+    ) {}
 
   @Post()
   @Roles(RolesType.ADMIN)
-  create(@Body() createProjectManagerDto: CreateProjectManagerDto) : Promise<ProjectManager> {
+  create(@Body() createProjectManagerDto: CreateProjectManagerDto, @CurrentUser() user: ProjectManager) : Promise<ProjectManager> {
+    this.sentryService.setSentryUser(user);
     return this.pmService.create(createProjectManagerDto);
   }
 
   @Get("findAll")
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  findAll() : Promise<ProjectManager[]> {
+  findAll(@CurrentUser() user: ProjectManager) : Promise<ProjectManager[]> {
+    this.sentryService.setSentryUser(user);
     return this.pmService.findAll();
   }
 
   @Get("me")
   @Roles(RolesType.CDP, RolesType.ADMIN)
   me(@CurrentUser() user: ProjectManager) : ProjectManager {
+    this.sentryService.setSentryUser(user);
     return user;
   }
 
   @Get("find-all-paginated")
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  findAllPaginated(@Query() researchParamsProjectManagersDto: ResearchParamsProjectManagersDto) : Promise<ProjectManager[]> {
+  findAllPaginated(@Query() researchParamsProjectManagersDto: ResearchParamsProjectManagersDto, @CurrentUser() user: ProjectManager) : Promise<ProjectManager[]> {
+    this.sentryService.setSentryUser(user);
     return this.pmService.findAllPaginated(researchParamsProjectManagersDto);
   }
 
   @Patch(":id")
   @Roles(RolesType.ADMIN)
-  update(@Param("id") id: number, @Body() updateProjectManagerDto: UpdateProjectManagerDto) : Promise<UpdateResult> {
+  update(@Param("id") id: number, @Body() updateProjectManagerDto: UpdateProjectManagerDto, @CurrentUser() user: ProjectManager) : Promise<UpdateResult> {
+    this.sentryService.setSentryUser(user);
     return this.pmService.update(id, updateProjectManagerDto);
   }
 
   @Patch("disable/:id")
   @Roles(RolesType.ADMIN)
-  disable(@Param("id") id: number) : Promise<UpdateResult> {
+  disable(@Param("id") id: number, @CurrentUser() user: ProjectManager) : Promise<UpdateResult> {
+    this.sentryService.setSentryUser(user);
     return this.pmService.disable(id);
   }
 
   @Patch("enable/:id")
   @Roles(RolesType.ADMIN)
-  enable(@Param("id") id : number) : Promise<UpdateResult> {
+  enable(@Param("id") id : number, @CurrentUser() user: ProjectManager) : Promise<UpdateResult> {
+    this.sentryService.setSentryUser(user);
     return this.pmService.enable(id);
   }
 }

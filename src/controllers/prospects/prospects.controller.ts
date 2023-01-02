@@ -13,6 +13,7 @@ import { ProjectManager } from 'src/entities/project-managers/project-manager.en
 import { Prospect } from 'src/entities/prospects/prospect.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { ProspectsService } from 'src/services/prospects/prospects.service';
+import { SentryService } from 'src/services/sentry/sentry/sentry.service';
 import { UpdateResult } from 'typeorm';
 
 @UseInterceptors(SentryInterceptor)
@@ -20,7 +21,10 @@ import { UpdateResult } from 'typeorm';
 @ApiTags('prospects')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProspectsController {
-  constructor(private readonly prospectsService: ProspectsService) {
+  constructor(
+    private readonly prospectsService: ProspectsService,
+    private readonly sentryService: SentryService
+    ) {
   }
 
   @Roles(RolesType.ADMIN)
@@ -42,70 +46,78 @@ export class ProspectsController {
   
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post("create")
-  create(@Body() createProspectDto: CreateProspectDto, @CurrentUser() pm: ProjectManager) : Promise<Prospect> {
-    return this.prospectsService.create(createProspectDto, pm);
+  create(@Body() createProspectDto: CreateProspectDto, @CurrentUser() user: ProjectManager) : Promise<Prospect> {
+    this.sentryService.setSentryUser(user);
+    return this.prospectsService.create(createProspectDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-    findAllPaginated(@Query() researchParamsProspectDto: ResearchParamsProspectDto) : Promise<Prospect[]> {
+    findAllPaginated(@Query() researchParamsProspectDto: ResearchParamsProspectDto, @CurrentUser() user: ProjectManager) : Promise<Prospect[]> {
+      this.sentryService.setSentryUser(user);
     return this.prospectsService.findAllPaginated(researchParamsProspectDto);
   }
 
   @Patch(':id')
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  update(
-    @Param('id') id: string,
-    @Body() updateProspectDto: UpdateProspectDto,
-  ) : Promise<UpdateResult>{
+  update(@Param('id') id: string, @Body() updateProspectDto: UpdateProspectDto, @CurrentUser() user: ProjectManager) : Promise<UpdateResult>{
+    this.sentryService.setSentryUser(user);
     return this.prospectsService.update(+id, updateProspectDto);
   }
 
   @Patch("all-prospect/:id")
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  updateAllProspect(@Param("id") id: number, @Body() updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
+  updateAllProspect(@Param("id") id: number, @Body() updateProspectDto: UpdateProspectDto, @CurrentUser() user: ProjectManager) : Promise<UpdateResult> {
+    this.sentryService.setSentryUser(user);
     return this.prospectsService.updateAllProspect(id, updateProspectDto);
   }
 
   @Get('by-city/:id/:cityName')
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  updateByCity(@Param('id') id: string, @Param("cityName") cityName: string) : Promise<UpdateResult>{
+  updateByCity(@Param('id') id: string, @Param("cityName") cityName: string, @CurrentUser() user: ProjectManager) : Promise<UpdateResult>{
+    this.sentryService.setSentryUser(user);
     return this.prospectsService.updateByCity(+id, cityName);
   }
 
   @Get('by-activity/:id/:activityName')
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  updateByActivity(@Param('id') id: string, @Param("activityName") activityName: string) : Promise<UpdateResult>{
+  updateByActivity(@Param('id') id: string, @Param("activityName") activityName: string, @CurrentUser() user: ProjectManager) : Promise<UpdateResult>{
+    this.sentryService.setSentryUser(user);
     return this.prospectsService.updateByActivity(+id, activityName);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get('disable/:id/:reason')
-  remove(@Param('id') id: number, @Param("reason") reason: ReasonDisabledType) : Promise<UpdateResult>{
+  remove(@Param('id') id: number, @Param("reason") reason: ReasonDisabledType, @CurrentUser() user: ProjectManager) : Promise<UpdateResult>{
+    this.sentryService.setSentryUser(user);
     return this.prospectsService.disable(id, reason);
   }
 
   @Roles(RolesType.ADMIN)
   @Get("enable/:id")
-  enable(@Param("id") id: number) : Promise<UpdateResult> {
+  enable(@Param("id") id: number, @CurrentUser() user: ProjectManager) : Promise<UpdateResult> {
+    this.sentryService.setSentryUser(user);
     return this.prospectsService.enable(id);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-for-domains")
-  countForDomains() {
+  countForDomains(@CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.prospectsService.countForDomains();
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-for-cities")
-  countForCities() {
+  countForCities(@CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
     return this.prospectsService.countForCities();
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-prospects")
-  countProspects(@Query() researchParamsProspectDto: ResearchParamsProspectDto) : Promise<number> {
+  countProspects(@Query() researchParamsProspectDto: ResearchParamsProspectDto, @CurrentUser() user: ProjectManager) : Promise<number> {
+    this.sentryService.setSentryUser(user);
     return this.prospectsService.countProspects(researchParamsProspectDto);
   }
 }

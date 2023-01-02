@@ -8,7 +8,7 @@ export class SentryInterceptor implements NestInterceptor {
     return next
       .handle()
       .pipe(
-        tap(null, (exception) => {
+        tap(null, async (exception) => {
           Sentry.captureException(exception);
         })
       )
