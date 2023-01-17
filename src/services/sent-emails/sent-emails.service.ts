@@ -285,7 +285,7 @@ export class SentEmailsService {
       await this.googleService.sendMail(sendEmailDto, mailTemplate, pm)
 
       // ? marking the email as sent
-      await this.markSent(idSentEmail, mailTemplate.name, sendEmailDto.object);
+      idSentEmail != -1 && await this.markSent(idSentEmail, mailTemplate.name, sendEmailDto.object);
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible d'envoyer le mail", HttpStatus.INTERNAL_SERVER_ERROR)
