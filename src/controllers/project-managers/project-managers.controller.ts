@@ -53,7 +53,7 @@ export class ProjectManagersController {
   }
 
   @Patch(":id")
-  @Roles(RolesType.ADMIN)
+  @Roles(RolesType.ADMIN, RolesType.CDP)
   update(@Param("id") id: number, @Body() updateProjectManagerDto: UpdateProjectManagerDto, @CurrentUser() user: ProjectManager) : Promise<UpdateResult> {
     this.sentryService.setSentryUser(user);
     return this.pmService.update(id, updateProjectManagerDto);
