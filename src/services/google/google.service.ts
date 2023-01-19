@@ -82,7 +82,7 @@ export class GoogleService {
   // ? Update access token so it is up to date
   async updateTokens(pm: ProjectManager) {
     try {
-      if(pm.tokenGoogle != '' && JSON.parse(pm.tokenGoogle).refresh_token) {
+      if((pm.tokenGoogle != '' && pm.tokenGoogle != null) && JSON.parse(pm.tokenGoogle).refresh_token) {
 
         oauth2Client.setCredentials({refresh_token: JSON.parse(pm.tokenGoogle).refresh_token});
         const newToken = await oauth2Client.getAccessToken();
@@ -107,7 +107,7 @@ export class GoogleService {
 
   async logout(user: ProjectManager) {
     try {
-      if(user.tokenGoogle == '') {
+      if(user.tokenGoogle == '' || !user.tokenGoogle) {
         return 1
       } else {
         await this.pmRepository.update(user.id, { tokenGoogle: '' })
@@ -124,7 +124,7 @@ export class GoogleService {
 
   async checkLogged(user: ProjectManager) : Promise<boolean> {
     try {
-      return user.tokenGoogle != '';
+      return user.tokenGoogle && user.tokenGoogle != '';
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de vérifier si l'utilisateur est authentififé avec Google", HttpStatus.INTERNAL_SERVER_ERROR)
