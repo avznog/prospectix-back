@@ -2,8 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Request } from "express";
 import { ExtractJwt, Strategy } from "passport-jwt";
-import { ProjectManager } from "src/entities/project-managers/project-manager.entity";
-import { ProjectManagersService } from "src/services/project-managers/project-managers.service";
+import { ProjectManager } from "src/project-managers/entities/project-manager.entity";
+import { ProjectManagersService } from "src/project-managers/project-managers.service";
 import TokenPayload from "./interfaces/tokenPayload.interface";
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, "jwt-refresh-token") {

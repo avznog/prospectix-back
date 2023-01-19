@@ -1,79 +1,69 @@
 import * as Joi from '@hapi/joi';
-import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ActivitiesModule } from './activities/activities.module';
+import { Activity } from './activities/entities/activity.entity';
+import { AgendaLinksModule } from './agenda-links/agenda-links.module';
+import { AgendaLink } from './agenda-links/entities/agenda-link.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ActivitiesController } from './controllers/activities/activities.controller';
-import { BookmarksController } from './controllers/bookmarks/bookmarks.controller';
-import { CallsController } from './controllers/calls/calls.controller';
-import { CitiesController } from './controllers/cities/cities.controller';
-import { CountriesController } from './controllers/countries/countries.controller';
-import { EmailsController } from './controllers/emails/emails.controller';
-import { EventsController } from './controllers/events/events.controller';
-import { GoalsController } from './controllers/goals/goals.controller';
-import { GoogleController } from './controllers/google/google.controller';
-import { MailTemplatesController } from './controllers/mail-templates/mail-templates.controller';
-import { MeetingsController } from './controllers/meetings/meetings.controller';
-import { NegativeAnswersController } from './controllers/negative-answers/negative-answers.controller';
-import { PhonesController } from './controllers/phones/phones.controller';
-import { ProjectManagersController } from './controllers/project-managers/project-managers.controller';
-import { ProspectsController } from './controllers/prospects/prospects.controller';
-import { RemindersController } from './controllers/reminders/reminders.controller';
-import { SentEmailsController } from './controllers/sent-emails/sent-emails.controller';
-import { SlackController } from './controllers/slack/slack.controller';
-import { WebsitesController } from './controllers/websites/websites.controller';
-import { Activity } from './entities/activities/activity.entity';
-import { Bookmark } from './entities/bookmarks/bookmark.entity';
-import { Call } from './entities/calls/call.entity';
-import { City } from './entities/cities/city.entity';
-import { Country } from './entities/countries/country.entity';
-import { Email } from './entities/emails/email.entity';
-import { Event } from './entities/events/event.entity';
-import { GoalTemplate } from './entities/goal-templates/goal-template.entity';
-import { Goal } from './entities/goals/goal.entity';
-import { Google } from './entities/google/google.entity';
-import { MailTemplate } from './entities/mail-templates/mail-template.entity';
-import { Meeting } from './entities/meetings/meeting.entity';
-import { NegativeAnswer } from './entities/negative-answers/negative-answer.entity';
-import { Phone } from './entities/phones/phone.entity';
-import { ProjectManager } from './entities/project-managers/project-manager.entity';
-import { Prospect } from './entities/prospects/prospect.entity';
-import { Reminder } from './entities/reminders/reminder.entity';
-import { SentEmail } from './entities/sent-emails/sent-email.entity';
-import { Slack } from './entities/slack/slack.entity';
-import { Website } from './entities/websites/website.entity';
-import { ActivitiesService } from './services/activities/activities.service';
-import { BookmarksService } from './services/bookmarks/bookmarks.service';
-import { CallsService } from './services/calls/calls.service';
-import { CitiesService } from './services/cities/cities.service';
-import { CountriesService } from './services/countries/countries.service';
-import { EmailsService } from './services/emails/emails.service';
-import { EventsService } from './services/events/events.service';
-import { GoalTemplatesService } from './services/goal-templates/goal-templates.service';
-import { GoalsService } from './services/goals/goals.service';
-import { GoogleService } from './services/google/google.service';
-import { MailTemplatesService } from './services/mail-templates/mail-templates.service';
-import { MeetingsService } from './services/meetings/meetings.service';
-import { NegativeAnswersService } from './services/negative-answers/negative-answers.service';
-import { PhonesService } from './services/phones/phones.service';
-import { ProjectManagersService } from './services/project-managers/project-managers.service';
-import { ProspectsService } from './services/prospects/prospects.service';
-import { RemindersService } from './services/reminders/reminders.service';
-import { SentEmailsService } from './services/sent-emails/sent-emails.service';
-import { SlackService } from './services/slack/slack.service';
-import { WebsitesService } from './services/websites/websites.service';
-import { GoalTemplatesController } from './controllers/goal-templates/goal-templates.controller';
 import { AuthModule } from './auth/auth.module';
-import { SentryService } from './services/sentry/sentry/sentry.service';
-
+import { Auth } from './auth/entities/auth.entity';
+import { BookmarksModule } from './bookmarks/bookmarks.module';
+import { Bookmark } from './bookmarks/entities/bookmark.entity';
+import { CallsModule } from './calls/calls.module';
+import { Call } from './calls/entities/call.entity';
+import { CitiesModule } from './cities/cities.module';
+import { City } from './cities/entities/city.entity';
+import { CountriesModule } from './countries/countries.module';
+import { Country } from './countries/entities/country.entity';
+import { EmailsModule } from './emails/emails.module';
+import { Email } from './emails/entities/email.entity';
+import { Event } from './events/entities/event.entity';
+import { EventsModule } from './events/events.module';
+import { Meeting } from './meetings/entities/meeting.entity';
+import { MeetingsModule } from './meetings/meetings.module';
+import { NegativeAnswer } from './negative-answers/entities/negative-answer.entity';
+import { NegativeAnswersModule } from './negative-answers/negative-answers.module';
+import { Phone } from './phones/entities/phone.entity';
+import { PhonesModule } from './phones/phones.module';
+import { ProjectManager } from './project-managers/entities/project-manager.entity';
+import { ProjectManagersModule } from './project-managers/project-managers.module';
+import { Prospect } from './prospects/entities/prospect.entity';
+import { ProspectsModule } from './prospects/prospects.module';
+import { Reminder } from './reminders/entities/reminder.entity';
+import { RemindersModule } from './reminders/reminders.module';
+import { SentEmail } from './sent-emails/entities/sent-email.entity';
+import { SentEmailsModule } from './sent-emails/sent-emails.module';
+import { Slack } from './slack/entities/slack.entity';
+import { SlackModule } from './slack/slack.module';
+import { Website } from './websites/entities/website.entity';
+import { WebsitesModule } from './websites/websites.module';
+import { GoalTemplatesModule } from './goal-templates/goal-templates.module';
+import { GoalsModule } from './goals/goals.module';
+import { Goal } from './goals/entities/goal.entity';
+import { GoalTemplate } from './goal-templates/entities/goal-template.entity';
 @Module({
   imports: [
     AuthModule,
-    HttpModule,
-    TypeOrmModule.forFeature([Activity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website]),
+    ProjectManagersModule,
+    ProspectsModule,
+    RemindersModule,
+    MeetingsModule,
+    ActivitiesModule,
+    AgendaLinksModule,
+    BookmarksModule,
+    CitiesModule,
+    CountriesModule,
+    EmailsModule,
+    PhonesModule,
+    SentEmailsModule,
+    EventsModule,
+    WebsitesModule,
+    CallsModule,
+    NegativeAnswersModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
@@ -91,14 +81,14 @@ import { SentryService } from './services/sentry/sentry/sentry.service';
       database: process.env.POSTGRES_DATABASE ?? 'dev',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
-      entities: [Activity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website],
+      entities: [Auth, ProjectManager, Prospect, Reminder, Meeting, Activity, AgendaLink, Bookmark, City, Country, Email, Event, Phone, SentEmail, Website, Call, NegativeAnswer, Slack, Goal, GoalTemplate],
     }),
-
+    SlackModule,
     ScheduleModule.forRoot(),
-
+    GoalTemplatesModule,
+    GoalsModule
   ],
-  controllers: [AppController, ActivitiesController, BookmarksController, CitiesController, CallsController, CountriesController, EmailsController, EventsController, GoalTemplatesController, GoalsController, GoogleController, MailTemplatesController, MeetingsController, NegativeAnswersController, PhonesController, ProjectManagersController, ProspectsController, RemindersController, SentEmailsController, SlackController, WebsitesController],
-  providers: [AppService, ActivitiesService, BookmarksService, CitiesService, CallsService, CountriesService, EmailsService, EventsService, GoalTemplatesService, GoalsService, GoogleService, MailTemplatesService, MeetingsService, NegativeAnswersService, PhonesService, ProjectManagersService, ProspectsService, RemindersService, SentEmailsService, SlackService, WebsitesService, SentryService],
-
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule { }
