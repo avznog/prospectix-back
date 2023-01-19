@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
+import { ProjectManager } from 'src/project-managers/entities/project-manager.entity';
 import { Repository } from 'typeorm';
 import { LoginPmDto } from '../dto/login-project-manager.dto';
 const { authenticate } = require('ldap-authentication');

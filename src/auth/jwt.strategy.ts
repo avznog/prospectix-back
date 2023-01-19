@@ -2,8 +2,8 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Request } from "express";
 import { ExtractJwt, Strategy } from "passport-jwt";
-import { ProjectManagerDto } from "src/dto/project-managers/project-manager.dto";
-import { ProjectManagersService } from "src/services/project-managers/project-managers.service";
+import { ProjectManagerDto } from "src/project-managers/dto/project-manager.dto";
+import { ProjectManagersService } from "src/project-managers/project-managers.service";
 import TokenPayload from "./interfaces/tokenPayload.interface";
 
 @Injectable()

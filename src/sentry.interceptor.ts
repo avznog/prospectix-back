@@ -8,8 +8,7 @@ export class SentryInterceptor implements NestInterceptor {
     return next
       .handle()
       .pipe(
-        tap(null, async (exception) => {
-          context.switchToHttp().getRequest().headers && Sentry.setContext("Request headers", context.switchToHttp().getRequest().headers)
+        tap(null, (exception) => {
           Sentry.captureException(exception);
         })
       )
