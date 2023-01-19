@@ -332,21 +332,26 @@ export class ProspectsService {
 
   async updateAllProspect(idProspect: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
     try {
-      updateProspectDto.phone && await this.phoneRepository.update(updateProspectDto.phone.id, { number: updateProspectDto.phone.number })
-      updateProspectDto.website && await this.websiteRepository.update(updateProspectDto.website.id, { website: updateProspectDto.website.website })
-      updateProspectDto.email && await this.emailRepository.update(updateProspectDto.email.id, { email: updateProspectDto.email.email })
-      updateProspectDto.city = await this.cityRepository.findOne({
-        where: {
-          name: updateProspectDto.city.name,
-          zipcode: updateProspectDto.city.zipcode
-        }
-      });
+      console.log(updateProspectDto)
+      updateProspectDto.phone && await this.phoneRepository.update(updateProspectDto.phone.id, { number: updateProspectDto.phone.number });
+      updateProspectDto.website && await this.websiteRepository.update(updateProspectDto.website.id, { website: updateProspectDto.website.website });
+      updateProspectDto.email && await this.emailRepository.update(updateProspectDto.email.id, { email: updateProspectDto.email.email });
+      updateProspectDto.city && (
+        updateProspectDto.city = await this.cityRepository.findOne({
+          where: {
+            name: updateProspectDto.city.name,
+            zipcode: updateProspectDto.city.zipcode
+          }
+        })
+      );
 
-      updateProspectDto.activity = await this.activityRepository.findOne({
-        where: {
-          name: updateProspectDto.activity.name
-        }
-      });
+      updateProspectDto.activity && (
+        updateProspectDto.activity = await this.activityRepository.findOne({
+          where: {
+            name: updateProspectDto.activity.name
+          }
+        })
+      );
       return await this.prospectRepository.update(idProspect, updateProspectDto);  
     } catch (error) {
       console.log(error)
