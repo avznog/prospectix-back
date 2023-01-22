@@ -94,7 +94,7 @@ export class MailTemplatesService {
         },
         prospect: {
           ...sendEmailDto.prospect,
-          clientName: sendEmailDto.clientName
+          clientName: sendEmailDto.clientName == '' ? '' : " " + sendEmailDto.clientName
         }
       }
       let structureTemplate = await fs.readFile('src/templates/mail-structure.mustache', "utf-8")
