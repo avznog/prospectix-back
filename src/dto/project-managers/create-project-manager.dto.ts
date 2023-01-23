@@ -41,6 +41,12 @@ export class CreateProjectManagerDto {
   tokenGoogle: string;
 
   @ApiProperty({
+    description: "Lien de la photo de profil",
+    required: false
+  })
+  profilePictureLink: string;
+
+  @ApiProperty({
     description: "Booléan qui indique si le chef de projet a le rôle admin ou non",
     required: true
   })

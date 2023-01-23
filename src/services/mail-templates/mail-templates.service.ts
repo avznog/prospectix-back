@@ -90,7 +90,8 @@ export class MailTemplatesService {
         pm: {
           ...pm,
           phoneToCall: pm.phone.replace(/ /g, ""),
-          nameCaps: pm.name.toUpperCase()
+          nameCaps: pm.name.toUpperCase(),
+          profilePictureLink: pm.profilePictureLink != '' ? pm.profilePictureLink : "https://mcusercontent.com/33983ec548c38e7bcdc3d8a00/images/efe3b4a4-4a75-0e21-98a3-f1ed9573b5cc.png"
         },
         prospect: {
           ...sendEmailDto.prospect,
