@@ -47,6 +47,28 @@ build-staging:
   only:
     - staging
 
+build-dev:
+  stage: build
+  image: node:16.13-alpine
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - .yarn/
+      - yarn.lock
+  before_script:
+    - yarn set version berry
+  script:
+    - yarn install --immutable
+    - yarn run build
+  artifacts:
+    paths:
+      - dist/
+  except:
+    - master
+    - staging
+
 # DOCKER STAGE
 docker-staging:
   stage: docker
@@ -73,6 +95,17 @@ docker-prod:
     - build-prod
   only:
     - master
+
+docker-dev:
+  stage: docker
+  image: docker:latest
+  script:
+    - docker build --tag $CI_REGISTRY_IMAGE:dev .
+  dependencies:
+    - build-dev
+  except:
+    - master
+    - staging
 
 
 #DEPLOY STAGE
