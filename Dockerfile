@@ -1,16 +1,10 @@
-FROM node:latest
+FROM node:alpine
 WORKDIR /usr/src/app
-COPY package.json yarn.lock .yarn .yarnrc.yml ./
+COPY package.json yarn.lock .yarn .yarnrc.yml /usr/src/app/
 RUN yarn install
-COPY . .
-COPY src/credentials.web.dev.json src/credentials.web.staging.json src/credentials.web.prod.json ./dist/
 COPY /usr/src/app/dist ./dist
-# FROM node:alpine
-# WORKDIR /usr/src/app
-# COPY package.json yarn.lock /usr/src/app/
+COPY src/credentials.web.dev.json src/credentials.web.staging.json src/credentials.web.prod.json ./dist/
 # RUN yarn set version berry --silent
-# RUN yarn install
-# COPY . .
-
-# RUN yarn build
-# CMD ["yarn","start"]
+COPY . .
+RUN yarn build
+CMD ["yarn","start"]
