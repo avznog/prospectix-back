@@ -37,6 +37,8 @@ lerna-debug.log*
 # Conf file
 .env
 
+# yarn files
+.pnp.*
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
