@@ -72,6 +72,13 @@ export class ProjectManager extends BaseEntity {
   })
   tokenGoogle: string;
 
+  @Column({default: ""})
+  @ApiProperty({
+    description: "Lien de la photo de profil",
+    required: false
+  })
+  profilePictureLink: string;
+
   @Column()
   @ApiProperty({
     description: "Boolean indiquant si le chef de projet / compte est désactivé (supprimé pour les utilisateurs)",
