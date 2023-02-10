@@ -188,12 +188,18 @@ export class GoogleService {
       const gmail = google.gmail({version: 'v1'})
       
       // * pièces jointes (plaquette)
-      const fileAttachments = [
-        {
-          filename: "Plaquette Junior ISEP.pdf",
-          path: "src/templates/plaquette.pdf",
-        }
-      ]
+      const filePlaquetteJisep = {
+        filename: "Plaquette Junior ISEP.pdf",
+        path: "src/templates/plaquette_jisep.pdf",
+      };
+
+      const filePlaquetteSkema = {
+        filename: "Plaquette Skema Consulting.pdf",
+        path: "src/templates/plaquette_skema.pdf"
+      }
+      const fileAttachments = []
+      sendEmailDto.withPlaquetteJisep && fileAttachments.push(filePlaquetteJisep);
+      sendEmailDto.withPlaquetteSkema && fileAttachments.push(filePlaquetteSkema)
 
       // * options for the mail
       const options = {
@@ -203,7 +209,7 @@ export class GoogleService {
         html: mailContent.toString(),
         textEncoding: 'base64',
         labels: ["INBOX", "STARRED", "IMPORTANT"],
-        attachments: sendEmailDto.withPlaquette && fileAttachments,
+        attachments: fileAttachments,
         headers: [
           {
             name: "Content-Type",
