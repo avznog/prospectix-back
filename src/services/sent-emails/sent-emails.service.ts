@@ -281,6 +281,9 @@ export class SentEmailsService {
           id: sendEmailDto.mailTemplateId
         }
       });
+      if(sendEmailDto.mailTemplateModified) {
+        mailTemplate.content = sendEmailDto.mailTemplateModified;
+      }
       
       // ? sending the email
       await this.googleService.sendMail(sendEmailDto, mailTemplate, pm)
