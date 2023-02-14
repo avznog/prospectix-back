@@ -122,4 +122,11 @@ export class MeetingsController {
     this.sentryService.setSentryUser(user);
     return this.meetingsService.countWeeklyAll();
   }
+
+  @Roles(RolesType.ADMIN)
+  @Get("count-meetings-for-week-all-pm")
+  countMeetingsForWeekAllPm(@CurrentUser() user: ProjectManager, @Query() interval: { dateDown: Date, dateUp: Date }) : Promise<{id: number, count: number}[]> {
+    this.sentryService.setSentryUser(user);
+    return this.meetingsService.countMeetingsForWeekAllPm(interval);
+  }
 }

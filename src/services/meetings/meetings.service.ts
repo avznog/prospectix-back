@@ -398,4 +398,23 @@ export class MeetingsService {
       throw new HttpException("Impossible de récupérer le nombre de rendez)ous de la semaine de tous les cdp", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
+
+  async countMeetingsForWeekAllPm(interval: { dateDown: Date, dateUp: Date}) : Promise<{id: number, count: number}[]> {
+    try {
+      const results : {id: number, count: number}[] = [];
+      const pms = await this.pmRepository.find({
+        relations: ["meetings"],
+        where: {
+          objectived: true
+        }
+      });
+      await pms.forEach(async (pm: ProjectManager) => {
+        results.push({id: pm.id, count: pm.meetings.filter(meeting => new Date(interval.dateDown) <= meeting.creationDate && meeting.creationDate <= new Date(interval.dateUp)).length ?? 0})
+      })
+      return results
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Error whilst getting all meetings for one week for all pm", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
 }
