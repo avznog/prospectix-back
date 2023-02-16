@@ -265,4 +265,23 @@ export class CallsService {
       throw new HttpException("Impossible de récupérer le nombre d'appels de la semaine de tous les cdp", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
+
+  async countCallsForWeekAllPm(interval: { dateDown: Date, dateUp: Date}) : Promise<{id: number, count: number}[]> {
+    try {
+      const results : {id: number, count: number}[] = [];
+      const pms = await this.pmRepository.find({
+        relations: ["calls"],
+        where: {
+          objectived: true
+        }
+      });
+      await pms.forEach(async (pm: ProjectManager) => {
+        results.push({id: pm.id, count: pm.calls.filter(call => new Date(interval.dateDown) <= call.date && call.date <= new Date(interval.dateUp)).length ?? 0})
+      })
+      return results
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Error whilst getting all calls for one week for all pm", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
 }

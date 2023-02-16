@@ -56,6 +56,7 @@ export class CallsController {
     return this.callsService.countWeeklyForMe(user);
   }
 
+  // ? calls ordered by weeks for all cdp
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-all-for-everyone")
   countAllForEveryOne(@CurrentUser() user: ProjectManager) {
@@ -76,4 +77,11 @@ export class CallsController {
     this.sentryService.setSentryUser(user);
     return this.callsService.countWeeklyAll();
   }
+
+  @Roles(RolesType.ADMIN)
+  @Get("count-calls-for-week-all-pm")
+  countCallsForWeekAllPm(@CurrentUser() user: ProjectManager, @Query() interval: {dateDown: Date, dateUp: Date }) : Promise<{id: number, count: number}[]> {
+    this.sentryService.setSentryUser(user);
+    return this.callsService.countCallsForWeekAllPm(interval);
+  } 
 }
