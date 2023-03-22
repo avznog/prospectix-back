@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Email } from 'src/entities/emails/email.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
+import { Prospect } from 'src/entities/prospects/prospect.entity';
 
 export class CreateSentEmailDto {
   @ApiProperty({
@@ -42,4 +43,9 @@ export class CreateSentEmailDto {
     description: "Si l'email est déjà envoyé ou non"
   })
   sent: boolean;
+
+  @ApiProperty({
+    description: "Le prospect lié au mail ajouté"
+  })
+  prospect: Prospect
 }

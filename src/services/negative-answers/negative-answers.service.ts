@@ -4,13 +4,16 @@ import { CreateNegativeAnswerDto } from 'src/dto/negative-answers/create-negativ
 import { NegativeAnswer } from 'src/entities/negative-answers/negative-answer.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Between, MoreThan, Repository } from 'typeorm';
+import { ActivitiesService } from '../activities/activities.service';
 
 @Injectable()
 export class NegativeAnswersService {
 
   constructor(
     @InjectRepository(NegativeAnswer)
-    private readonly negativeAnswerRepository: Repository<NegativeAnswer>
+    private readonly negativeAnswerRepository: Repository<NegativeAnswer>,
+    
+    private readonly activitiesService: ActivitiesService
   ) {}
 
   async create(createNegativeAnswerDto: CreateNegativeAnswerDto) {
@@ -25,6 +28,7 @@ export class NegativeAnswersService {
   async createForMe(createNegativeAnswerDto: CreateNegativeAnswerDto, user: ProjectManager) : Promise<NegativeAnswer> {
     try {
       createNegativeAnswerDto.pm = user;
+      await this.activitiesService.adjustWeight(createNegativeAnswerDto.prospect.activity.id, createNegativeAnswerDto.prospect.activity.weight, 0)
       return await this.negativeAnswerRepository.save(this.negativeAnswerRepository.create(createNegativeAnswerDto));
     } catch (error) {
       console.log(error)

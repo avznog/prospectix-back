@@ -32,4 +32,34 @@ export class ActivitiesService {
       throw new HttpException("Impossible de créer l'activité", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async adjustWeight(id: number, weight: number, toAdd: number) {
+    try {
+      console.log(id, weight, toAdd)
+      console.log((weight+toAdd)/2)
+      await this.activityRepository.update(id, { weight: Number(((weight+toAdd)/2).toFixed(4)) ?? toAdd });
+      return await this.activityRepository.findOne({
+        where: {
+          id: id
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(`Failure while updating the weight of this acitivity with id : ${id}`, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async adjustWeightNbNo(id: number) {
+    try {
+      const activity = await this.activityRepository.findOne({
+        where: {
+          id: id
+        }
+      });
+      return await this.adjustWeight(id, activity.weight, 0.05)
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(`Failure while updating the weight of this acitivity with id : ${id}`, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
 }
