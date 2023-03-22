@@ -26,6 +26,7 @@ export class MeetingsService {
   async create(createMeetingDto: CreateMeetingDto, user: ProjectManager) : Promise<Meeting> {
     try {
       createMeetingDto.pm = await this.googleService.updateTokens(user);
+      
       this.googleService.createEventOnCalendar(createMeetingDto, user)
       return await this.meetingRepository.save(createMeetingDto);
     } catch (error) {

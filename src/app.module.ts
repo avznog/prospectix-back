@@ -88,7 +88,7 @@ import { SentryService } from './services/sentry/sentry/sentry.service';
       port: +process.env.POSTGRES_PORT,
       username: process.env.POSTGRES_USER || "postgres",
       password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DATABASE ?? 'dev',
+      database: process.env.POSTGRES_DATABASE ?? 'devia',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
       entities: [Activity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website],
