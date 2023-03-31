@@ -35,9 +35,7 @@ export class ActivitiesService {
 
   async adjustWeight(id: number, weight: number, toAdd: number) {
     try {
-      console.log(id, weight, toAdd)
-      console.log((weight+toAdd)/2)
-      await this.activityRepository.update(id, { weight: Number(((weight+toAdd)/2).toFixed(4)) ?? toAdd });
+      await this.activityRepository.update(id, { weight: Number(((Number(weight)+toAdd)/2).toFixed(5)) ?? toAdd });
       return await this.activityRepository.findOne({
         where: {
           id: id

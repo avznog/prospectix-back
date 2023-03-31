@@ -117,7 +117,8 @@ export class SentEmailsService {
   async create(createSentEmailDto: CreateSentEmailDto, user: ProjectManager): Promise<SentEmail> {
     try {
       createSentEmailDto.pm = user;
-      this.activitiesService.adjustWeight(createSentEmailDto.prospect.activity.id, createSentEmailDto.prospect.activity.weight, 0.09)
+      console.log(createSentEmailDto)
+      this.activitiesService.adjustWeight(createSentEmailDto.prospect.activity.id,createSentEmailDto.prospect.activity.weight, 0.09)
       return await this.sentEmailRepository.save(createSentEmailDto);
     } catch (error) {
       console.log(error)
