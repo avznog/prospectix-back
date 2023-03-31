@@ -10,6 +10,7 @@ import { ProjectManager } from 'src/entities/project-managers/project-manager.en
 import { Prospect } from 'src/entities/prospects/prospect.entity';
 import { SentEmail } from 'src/entities/sent-emails/sent-email.entity';
 import { Between, Repository, UpdateResult } from 'typeorm';
+import { ActivitiesService } from '../activities/activities.service';
 import { GoogleService } from '../google/google.service';
 @Injectable()
 export class SentEmailsService {
@@ -27,7 +28,8 @@ export class SentEmailsService {
     @InjectRepository(MailTemplate)
     private readonly mailTemplateRepository: Repository<MailTemplate>,
 
-    private readonly googleService: GoogleService
+    private readonly googleService: GoogleService,
+    private readonly activitiesService: ActivitiesService
   ) { }
 
   async findAllPaginated(researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, user: ProjectManager) {
@@ -115,6 +117,8 @@ export class SentEmailsService {
   async create(createSentEmailDto: CreateSentEmailDto, user: ProjectManager): Promise<SentEmail> {
     try {
       createSentEmailDto.pm = user;
+      console.log(createSentEmailDto)
+      this.activitiesService.adjustWeight(createSentEmailDto.prospect.activity.id,createSentEmailDto.prospect.activity.weight, 0.09)
       return await this.sentEmailRepository.save(createSentEmailDto);
     } catch (error) {
       console.log(error)

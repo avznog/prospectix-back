@@ -6,4 +6,10 @@ export class CreateActivityDto {
     required: true
   })
   name: string;
+
+  @ApiProperty({
+    description: "Poids de la catégorie. Plus le poids est haut, plus la catégorie a de la valeur",
+    required: true
+  })
+  weight: number;
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, UseInterceptors, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
@@ -34,5 +34,12 @@ export class ActivitiesController {
   create(@Body() createActivityDto: CreateActivityDto, @CurrentUser() user: ProjectManager) {
     this.sentryService.setSentryUser(user)
     return this.activitiesService.create(createActivityDto);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("adjustWeightNbNo/:id")
+  adjustWeightNbNo(@Param("id") id: number, @CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
+    this.activitiesService.adjustWeightNbNo(id);
   }
 }

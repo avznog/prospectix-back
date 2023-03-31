@@ -9,6 +9,7 @@ import { UpdateMeetingDto } from 'src/dto/meetings/update-meeting.dto';
 import { Meeting } from 'src/entities/meetings/meeting.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Between, DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { ActivitiesService } from '../activities/activities.service';
 import { GoogleService } from '../google/google.service';
 
 @Injectable()
@@ -20,13 +21,15 @@ export class MeetingsService {
     @InjectRepository(ProjectManager)
     private readonly pmRepository: Repository<ProjectManager>,
 
-    private readonly googleService: GoogleService
+    private readonly googleService: GoogleService,
+    private readonly activitiesService: ActivitiesService
   ){}
 
   async create(createMeetingDto: CreateMeetingDto, user: ProjectManager) : Promise<Meeting> {
     try {
       createMeetingDto.pm = await this.googleService.updateTokens(user);
-      this.googleService.createEventOnCalendar(createMeetingDto, user)
+      this.activitiesService.adjustWeight(createMeetingDto.prospect.activity.id, createMeetingDto.prospect.activity.weight, 1)
+      this.googleService.createEventOnCalendar(createMeetingDto, user);
       return await this.meetingRepository.save(createMeetingDto);
     } catch (error) {
       console.log(error)
