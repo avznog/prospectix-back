@@ -23,7 +23,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn
 } from 'typeorm';
-import { Activity } from '../activities/activity.entity';
+import { SecondaryActivity } from '../secondary-activities/secondary-activity.entity';
 
 @Entity()
 export class Prospect extends BaseEntity {
@@ -41,8 +41,8 @@ export class Prospect extends BaseEntity {
   })
   companyName: string;
 
-  @ManyToOne(() => Activity, { cascade: ["insert"], nullable: true})
-  activity: Activity;
+  @ManyToOne(() => SecondaryActivity, (secondaryActivity: SecondaryActivity) => secondaryActivity.prospects, { cascade: ["insert"], nullable: true})
+  secondaryActivity: SecondaryActivity;
 
   @Column({ nullable: true })
   @ApiProperty({

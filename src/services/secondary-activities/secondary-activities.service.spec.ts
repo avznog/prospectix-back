@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ActivitiesService } from './activities.service';
+import { ActivitiesService } from './secondary-activities.service';
 
-describe('ActivitiesService', () => {
+describe('SecondaryActivitiesService', () => {
   let service: ActivitiesService;
 
   beforeEach(async () => {

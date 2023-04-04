@@ -25,7 +25,7 @@ import { RemindersController } from './controllers/reminders/reminders.controlle
 import { SentEmailsController } from './controllers/sent-emails/sent-emails.controller';
 import { SlackController } from './controllers/slack/slack.controller';
 import { WebsitesController } from './controllers/websites/websites.controller';
-import { Activity } from './entities/activities/activity.entity';
+import { SecondaryActivity } from './entities/secondary-activities/secondary-activity.entity';
 import { Bookmark } from './entities/bookmarks/bookmark.entity';
 import { Call } from './entities/calls/call.entity';
 import { City } from './entities/cities/city.entity';
@@ -45,7 +45,7 @@ import { Reminder } from './entities/reminders/reminder.entity';
 import { SentEmail } from './entities/sent-emails/sent-email.entity';
 import { Slack } from './entities/slack/slack.entity';
 import { Website } from './entities/websites/website.entity';
-import { ActivitiesService } from './services/activities/activities.service';
+import { ActivitiesService } from './services/secondary-activities/secondary-activities.service';
 import { BookmarksService } from './services/bookmarks/bookmarks.service';
 import { CallsService } from './services/calls/calls.service';
 import { CitiesService } from './services/cities/cities.service';
@@ -68,12 +68,15 @@ import { WebsitesService } from './services/websites/websites.service';
 import { GoalTemplatesController } from './controllers/goal-templates/goal-templates.controller';
 import { AuthModule } from './auth/auth.module';
 import { SentryService } from './services/sentry/sentry/sentry.service';
+import { PrimaryActivityController } from './controllers/primary-activity/primary-activity/primary-activity.controller';
+import { PrimaryActivityService } from './services/primary-activity/primary-activity/primary-activity.service';
+import { PrimaryActivity } from './entities/primary-activity/primary-activity.entity';
 
 @Module({
   imports: [
     AuthModule,
     HttpModule,
-    TypeOrmModule.forFeature([Activity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website]),
+    TypeOrmModule.forFeature([SecondaryActivity, PrimaryActivity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website]),
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
@@ -88,17 +91,17 @@ import { SentryService } from './services/sentry/sentry/sentry.service';
       port: +process.env.POSTGRES_PORT,
       username: process.env.POSTGRES_USER || "postgres",
       password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DATABASE ?? 'newcat',
+      database: process.env.POSTGRES_DATABASE ?? 'secacti',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
-      entities: [Activity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website],
+      entities: [PrimaryActivity, SecondaryActivity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website],
     }),
 
     ScheduleModule.forRoot(),
 
   ],
-  controllers: [AppController, ActivitiesController, BookmarksController, CitiesController, CallsController, CountriesController, EmailsController, EventsController, GoalTemplatesController, GoalsController, GoogleController, MailTemplatesController, MeetingsController, NegativeAnswersController, PhonesController, ProjectManagersController, ProspectsController, RemindersController, SentEmailsController, SlackController, WebsitesController],
-  providers: [AppService, ActivitiesService, BookmarksService, CitiesService, CallsService, CountriesService, EmailsService, EventsService, GoalTemplatesService, GoalsService, GoogleService, MailTemplatesService, MeetingsService, NegativeAnswersService, PhonesService, ProjectManagersService, ProspectsService, RemindersService, SentEmailsService, SlackService, WebsitesService, SentryService],
+  controllers: [AppController, ActivitiesController, BookmarksController, CitiesController, CallsController, CountriesController, EmailsController, EventsController, GoalTemplatesController, GoalsController, GoogleController, MailTemplatesController, MeetingsController, NegativeAnswersController, PhonesController, ProjectManagersController, ProspectsController, RemindersController, SentEmailsController, SlackController, WebsitesController, PrimaryActivityController],
+  providers: [AppService, ActivitiesService, BookmarksService, CitiesService, CallsService, CountriesService, EmailsService, EventsService, GoalTemplatesService, GoalsService, GoogleService, MailTemplatesService, MeetingsService, NegativeAnswersService, PhonesService, ProjectManagersService, ProspectsService, RemindersService, SentEmailsService, SlackService, WebsitesService, SentryService, PrimaryActivityService],
 
 })
 export class AppModule { }

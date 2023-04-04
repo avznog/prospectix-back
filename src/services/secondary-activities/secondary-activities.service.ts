@@ -1,17 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateActivityDto } from 'src/dto/activities/create-activity.dto';
-import { Activity } from 'src/entities/activities/activity.entity';
+import { CreateSecondaryActivityDto } from 'src/dto/secondary-activities/create-secondary-activity.dto';
+import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class ActivitiesService {
   constructor(
-    @InjectRepository(Activity)
-    private readonly activityRepository: Repository<Activity>
+    @InjectRepository(SecondaryActivity)
+    private readonly activityRepository: Repository<SecondaryActivity>
   ) {}
 
-  async findAll() : Promise<Activity[]> {
+  async findAll() : Promise<SecondaryActivity[]> {
     try {
       return await this.activityRepository.find({
         order: {
@@ -24,7 +24,7 @@ export class ActivitiesService {
     }
   }
 
-  async create(createActivityDto: CreateActivityDto) : Promise<Activity> {
+  async create(createActivityDto: CreateSecondaryActivityDto) : Promise<SecondaryActivity> {
     try {
       return await this.activityRepository.save(createActivityDto);
     } catch (error) {

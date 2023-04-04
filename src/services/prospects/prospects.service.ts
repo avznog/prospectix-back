@@ -7,7 +7,7 @@ import { StageType } from 'src/constants/stage.type';
 import { CreateProspectDto } from 'src/dto/prospects/create-prospect.dto';
 import { ResearchParamsProspectDto } from 'src/dto/prospects/research-params-prospect.dto';
 import { UpdateProspectDto } from 'src/dto/prospects/update-prospect.dto';
-import { Activity } from 'src/entities/activities/activity.entity';
+import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
 import { City } from 'src/entities/cities/city.entity';
 import { Country } from 'src/entities/countries/country.entity';
 import { Email } from 'src/entities/emails/email.entity';
@@ -24,8 +24,8 @@ export class ProspectsService {
     @InjectRepository(Prospect)
     private readonly prospectRepository: Repository<Prospect>,
 
-    @InjectRepository(Activity)
-    private readonly activityRepository: Repository<Activity>,
+    @InjectRepository(SecondaryActivity)
+    private readonly secondaryActivityRepository: Repository<SecondaryActivity>,
 
     @InjectRepository(City)
     private readonly cityRepository: Repository<City>,
@@ -85,7 +85,7 @@ export class ProspectsService {
     console.time("filter")
     const alreadyPhone = []
     prospectsScrapped = (prospectsScrapped as any[]).filter(prospect => {
-      if(prospect.activity.name.trim().length == 0 || alreadyPhone.includes(prospect.phone.number))
+      if(prospect.secondaryActivity.name.trim().length == 0 || alreadyPhone.includes(prospect.phone.number))
         return false
       
       if(isNaN(+prospect.city.zipcode))
@@ -102,8 +102,8 @@ export class ProspectsService {
         cities.set(+prospect.city.zipcode, prospect.city.name[0].toUpperCase()+prospect.city.name.toLowerCase().slice(1))
 
       // adding activities to array
-      if(prospect.activity.name.trim().length)
-        activitiesFiltered.add(prospect.activity.name) 
+      if(prospect.secondaryActivity.name.trim().length)
+        activitiesFiltered.add(prospect.secondaryActivity.name) 
     }
     console.log("Chargement des villes et acti finies")
     
@@ -128,12 +128,12 @@ export class ProspectsService {
       added++
       if(added % 50 == 0)
         console.log("acti", added, "/", len)
-      this.activityRepository.save(this.activityRepository.create({
+      this.secondaryActivityRepository.save(this.secondaryActivityRepository.create({
         name: activity
       }))
     })
 
-    const activitiesCache: {[key: string]: Activity} = {}
+    const activitiesCache: {[key: string]: SecondaryActivity} = {}
     const cityCache: {[key: string]: City} = {}
     const countryCache: {[key: string]: Country} = {}
 
@@ -161,7 +161,7 @@ export class ProspectsService {
           name: "",
           zipcode: 0
         },
-        activity: {
+        secondaryActivity: {
           name: ""
         },
         country: {
@@ -181,13 +181,13 @@ export class ProspectsService {
       newProspect.city = city;
 
       // get activity
-      const activity = activitiesCache[prospect.activity.name] ?? (activitiesCache[prospect.activity.name] = await this.activityRepository.findOne({
+      const activity = activitiesCache[prospect.secondaryActivity.name] ?? (activitiesCache[prospect.secondaryActivity.name] = await this.secondaryActivityRepository.findOne({
         where: {
-          name: prospect.activity.name
+          name: prospect.secondaryActivity.name
         }
       }))
 
-      newProspect.activity = activity;
+      newProspect.secondaryActivity = activity;
 
       // get country // ! default France
       const country = countryCache["France"] ?? (countryCache["France"] = await this.countryRepository.findOne({
@@ -257,28 +257,28 @@ export class ProspectsService {
       return await this.prospectRepository.find({
         relations: ["activity", "city", "country", "events", "meetings", "phone", "reminders", "website", "email", "bookmarks", "bookmarks.pm"],
         where: [
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode != -1000 && researchParamsProspectDto.activity! != "allActivities" && {
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode != -1000 && researchParamsProspectDto.secondaryActivity! != "allActivities" && {
             stage: StageType.RESEARCH,
             disabled: false,
             city: {
               zipcode: researchParamsProspectDto.zipcode
             },
-            activity: {
-              name: researchParamsProspectDto.activity
+            secondaryActivity: {
+              name: researchParamsProspectDto.secondaryActivity
             }
           },
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode == -1000 && researchParamsProspectDto.activity! != "allActivities" && {
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode == -1000 && researchParamsProspectDto.secondaryActivity! != "allActivities" && {
             stage: StageType.RESEARCH,
             disabled: false,
-            activity: {
-              name: researchParamsProspectDto.activity
+            secondaryActivity: {
+              name: researchParamsProspectDto.secondaryActivity
             }
           },
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.activity! == "allActivities" && researchParamsProspectDto.zipcode == -1000 && {
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.secondaryActivity! == "allActivities" && researchParamsProspectDto.zipcode == -1000 && {
             stage: StageType.RESEARCH,
             disabled: false,
           },
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.activity! == "allActivities" && researchParamsProspectDto.zipcode != -1000 && {
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.secondaryActivity! == "allActivities" && researchParamsProspectDto.zipcode != -1000 && {
             stage: StageType.RESEARCH,
             disabled: false,
             city: {
@@ -300,7 +300,7 @@ export class ProspectsService {
           researchParamsProspectDto.keyword! != "" && {
             stage: StageType.RESEARCH,
             disabled: false,
-            activity: {
+            secondaryActivity: {
               name: ILike(`%${researchParamsProspectDto.keyword}%`)
             }
           },
@@ -344,10 +344,10 @@ export class ProspectsService {
         })
       );
 
-      updateProspectDto.activity && (
-        updateProspectDto.activity = await this.activityRepository.findOne({
+      updateProspectDto.secondaryActivity && (
+        updateProspectDto.secondaryActivity = await this.secondaryActivityRepository.findOne({
           where: {
-            name: updateProspectDto.activity.name
+            name: updateProspectDto.secondaryActivity.name
           }
         })
       );
@@ -377,12 +377,12 @@ export class ProspectsService {
   async updateByActivity(idProspect: number, activityName: string) : Promise<UpdateResult> {
     try {
       const updateProspectDto = new UpdateProspectDto()
-      const activity = await this.activityRepository.findOne({
+      const activity = await this.secondaryActivityRepository.findOne({
         where: {
           name: activityName
         }
       });
-      updateProspectDto.activity = activity;
+      updateProspectDto.secondaryActivity = activity;
       return await this.prospectRepository.update(idProspect, updateProspectDto);  
     } catch (error) {
       console.log(error)
@@ -417,11 +417,11 @@ export class ProspectsService {
     try {
       let countDomains: [{}] = [{}];
       countDomains.pop()
-      let activities = await this.activityRepository.find();
+      let activities = await this.secondaryActivityRepository.find();
       for(let activity of activities) {
         let count = await this.prospectRepository.count({
           where: {
-            activity: {
+            secondaryActivity: {
               id: activity.id
             },
             stage: StageType.RESEARCH
@@ -461,28 +461,28 @@ export class ProspectsService {
     try {
       return await this.prospectRepository.count({
         where: [
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode != -1000 && researchParamsProspectDto.activity! != "allActivities" && {
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode != -1000 && researchParamsProspectDto.secondaryActivity! != "allActivities" && {
             stage: StageType.RESEARCH,
             disabled: false,
             city: {
               zipcode: researchParamsProspectDto.zipcode
             },
-            activity: {
-              name: researchParamsProspectDto.activity
+            secondaryActivity: {
+              name: researchParamsProspectDto.secondaryActivity
             }
           },
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode == -1000 && researchParamsProspectDto.activity! != "allActivities" && {
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode == -1000 && researchParamsProspectDto.secondaryActivity! != "allActivities" && {
             stage: StageType.RESEARCH,
             disabled: false,
-            activity: {
-              name: researchParamsProspectDto.activity
+            secondaryActivity: {
+              name: researchParamsProspectDto.secondaryActivity
             }
           },
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.activity! == "allActivities" && researchParamsProspectDto.zipcode == -1000 && {
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.secondaryActivity! == "allActivities" && researchParamsProspectDto.zipcode == -1000 && {
             stage: StageType.RESEARCH,
             disabled: false,
           },
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.activity! == "allActivities" && researchParamsProspectDto.zipcode != -1000 && {
+          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.secondaryActivity! == "allActivities" && researchParamsProspectDto.zipcode != -1000 && {
             stage: StageType.RESEARCH,
             disabled: false,
             city: {
@@ -504,7 +504,7 @@ export class ProspectsService {
           researchParamsProspectDto.keyword! != "" && {
             stage: StageType.RESEARCH,
             disabled: false,
-            activity: {
+            secondaryActivity: {
               name: ILike(`%${researchParamsProspectDto.keyword}%`)
             }
           },

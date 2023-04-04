@@ -3,7 +3,7 @@ import { Reminder } from 'src/entities/reminders/reminder.entity';
 import { Bookmark } from 'src/entities/bookmarks/bookmark.entity';
 import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
 import { StageType } from 'src/constants/stage.type';
-import { Activity } from 'src/entities/activities/activity.entity';
+import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
 import { City } from 'src/entities/cities/city.entity';
 import { Country } from 'src/entities/countries/country.entity';
 import { Email } from 'src/entities/emails/email.entity';
@@ -23,7 +23,7 @@ export class CreateProspectDto {
     description: "Domaine d'activité de l'entreprise",
     required: true,
   })
-  activity: Activity;
+  secondaryActivity: SecondaryActivity;
 
   @ApiProperty({
     description: 'Adresse postale',

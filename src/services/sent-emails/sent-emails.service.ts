@@ -10,7 +10,7 @@ import { ProjectManager } from 'src/entities/project-managers/project-manager.en
 import { Prospect } from 'src/entities/prospects/prospect.entity';
 import { SentEmail } from 'src/entities/sent-emails/sent-email.entity';
 import { Between, Repository, UpdateResult } from 'typeorm';
-import { ActivitiesService } from '../activities/activities.service';
+import { ActivitiesService } from '../secondary-activities/secondary-activities.service';
 import { GoogleService } from '../google/google.service';
 @Injectable()
 export class SentEmailsService {
@@ -36,7 +36,7 @@ export class SentEmailsService {
     try {
       await this.checkMailsSynchro()
       return await this.sentEmailRepository.find({
-        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.phone", "prospect.email", "prospect.website", "prospect.reminders", "prospect.meetings", "prospect.events", "prospect.bookmarks"],
+        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.phone", "prospect.email", "prospect.website", "prospect.reminders", "prospect.meetings", "prospect.events", "prospect.bookmarks"],
         where: {
           pm: {
             pseudo: user.pseudo
@@ -62,7 +62,7 @@ export class SentEmailsService {
     try {
       await this.checkMailsSynchro();
       return await this.sentEmailRepository.find({
-        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.phone", "prospect.email", "prospect.website", "prospect.reminders", "prospect.meetings", "prospect.events", "prospect.bookmarks"],
+        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.phone", "prospect.email", "prospect.website", "prospect.reminders", "prospect.meetings", "prospect.events", "prospect.bookmarks"],
         where: {
           pm: {
             pseudo: user.pseudo
@@ -118,7 +118,7 @@ export class SentEmailsService {
     try {
       createSentEmailDto.pm = user;
       console.log(createSentEmailDto)
-      this.activitiesService.adjustWeight(createSentEmailDto.prospect.activity.id,createSentEmailDto.prospect.activity.weight, 0.09)
+      this.activitiesService.adjustWeight(createSentEmailDto.prospect.secondaryActivity.id,createSentEmailDto.prospect.secondaryActivity.weight, 0.09)
       return await this.sentEmailRepository.save(createSentEmailDto);
     } catch (error) {
       console.log(error)

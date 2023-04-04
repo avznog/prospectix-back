@@ -8,7 +8,7 @@ import { UpdateReminderDto } from 'src/dto/reminders/update-reminder.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Reminder } from 'src/entities/reminders/reminder.entity';
 import { Between, DeleteResult, In, Repository, UpdateResult } from 'typeorm';
-import { ActivitiesService } from '../activities/activities.service';
+import { ActivitiesService } from '../secondary-activities/secondary-activities.service';
 
 @Injectable()
 export class RemindersService {
@@ -34,7 +34,7 @@ export class RemindersService {
   async create(createReminderDto: CreateReminderDto, user: ProjectManager) : Promise<Reminder>{
     try {
       createReminderDto.pm = user;
-      this.activitiesService.adjustWeight(createReminderDto.prospect.activity.id, createReminderDto.prospect.activity.weight, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);
+      this.activitiesService.adjustWeight(createReminderDto.prospect.secondaryActivity.id, createReminderDto.prospect.secondaryActivity.weight, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);
       return await this.reminderRepository.save(createReminderDto);
     } catch (error) {
       console.log(error)
@@ -46,7 +46,7 @@ export class RemindersService {
   async findAllByProspect(idProspect: number): Promise<Reminder[]> {
     try {
       return await this.reminderRepository.find({
-        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.meetings", "prospect.phone", "prospect.website", "prospect.email"],
+        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.meetings", "prospect.phone", "prospect.website", "prospect.email"],
         where: {
           prospect: {
             id: idProspect
@@ -81,7 +81,7 @@ export class RemindersService {
   async findAllPaginated(researchParamsRemindersDto: ResearchParamsRemindersDto, user: ProjectManager) : Promise<Reminder[]> {
     try {
       return await this.reminderRepository.find({
-        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.activity","prospect.city","prospect.country","prospect.website","prospect.email","prospect.meetings","prospect.bookmarks","prospect.reminders"],
+        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.secondaryActivity","prospect.city","prospect.country","prospect.website","prospect.email","prospect.meetings","prospect.bookmarks","prospect.reminders"],
         where: [
           researchParamsRemindersDto.priority != 0 && {
             prospect: {

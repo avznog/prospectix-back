@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { PrimaryActivity } from "src/entities/primary-activity/primary-activity.entity";
 
-export class CreateActivityDto {
+export class CreateSecondaryActivityDto {
   @ApiProperty({
     description: "Nom de l'activité",
     required: true
@@ -12,4 +13,12 @@ export class CreateActivityDto {
     required: true
   })
   weight: number;
+
+  @ApiProperty({
+    description: "L'activité principale reliée à cette activité secondaire",
+    required: true
+  })
+  primaryActivity: PrimaryActivity;
 }
+
+  

@@ -9,7 +9,7 @@ import { UpdateMeetingDto } from 'src/dto/meetings/update-meeting.dto';
 import { Meeting } from 'src/entities/meetings/meeting.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Between, DeleteResult, Repository, UpdateResult } from 'typeorm';
-import { ActivitiesService } from '../activities/activities.service';
+import { ActivitiesService } from '../secondary-activities/secondary-activities.service';
 import { GoogleService } from '../google/google.service';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class MeetingsService {
   async create(createMeetingDto: CreateMeetingDto, user: ProjectManager) : Promise<Meeting> {
     try {
       createMeetingDto.pm = await this.googleService.updateTokens(user);
-      this.activitiesService.adjustWeight(createMeetingDto.prospect.activity.id, createMeetingDto.prospect.activity.weight, 1)
+      this.activitiesService.adjustWeight(createMeetingDto.prospect.secondaryActivity.id, createMeetingDto.prospect.secondaryActivity.weight, 1)
       this.googleService.createEventOnCalendar(createMeetingDto, user);
       return await this.meetingRepository.save(createMeetingDto);
     } catch (error) {
@@ -68,7 +68,7 @@ export class MeetingsService {
   async findAllPaginated(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<Meeting[]>{
     try {
       return await this.meetingRepository.find({
-        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
+        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
         where: [
           researchParamsMeetingsDto.type != "" && {
             prospect: {
@@ -105,7 +105,7 @@ export class MeetingsService {
   async findAllMeetingsDone(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<Meeting[]> {
     try {
       return await this.meetingRepository.find({
-        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
+        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
         where: [
           researchParamsMeetingsDto.type != "" && {
             pm: {

@@ -37,16 +37,16 @@ export class BookmarksService {
     try {
       researchParamsBookmarksDto.zipcode = +researchParamsBookmarksDto.zipcode
       return await this.bookmarkRepository.find({
-        relations: ["prospect", "pm", "prospect.activity", "prospect.city", "prospect.country", "prospect.events", "prospect.meetings", "prospect.phone", "prospect.reminders", "prospect.website", "prospect.email"],
+        relations: ["prospect", "pm", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.events", "prospect.meetings", "prospect.phone", "prospect.reminders", "prospect.website", "prospect.email"],
         where: [
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode != -1000 && researchParamsBookmarksDto.activity! != "allActivities" && {
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode != -1000 && researchParamsBookmarksDto.secondaryActivity! != "allActivities" && {
             prospect: {
               stage: StageType.BOOKMARK,
               city: {
                 zipcode: researchParamsBookmarksDto.zipcode
               },
-              activity: {
-                name: researchParamsBookmarksDto.activity
+              secondaryActivity: {
+                name: researchParamsBookmarksDto.secondaryActivity
               }
               
             },
@@ -55,18 +55,18 @@ export class BookmarksService {
             }
             
           },
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode == -1000 && researchParamsBookmarksDto.activity! != "allActivities" && {
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode == -1000 && researchParamsBookmarksDto.secondaryActivity! != "allActivities" && {
             prospect: {
               stage: StageType.BOOKMARK,
-            activity: {
-              name: researchParamsBookmarksDto.activity
+            secondaryActivity: {
+              name: researchParamsBookmarksDto.secondaryActivity
             }
             },
             pm: {
               pseudo: user.pseudo
             }
           },
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.activity! == "allActivities" && researchParamsBookmarksDto.zipcode == -1000 && {
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.secondaryActivity! == "allActivities" && researchParamsBookmarksDto.zipcode == -1000 && {
             prospect: {
               stage: StageType.BOOKMARK
             },
@@ -74,7 +74,7 @@ export class BookmarksService {
               pseudo: user.pseudo
             }
           },
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.activity! == "allActivities" && researchParamsBookmarksDto.zipcode != -1000 && {
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.secondaryActivity! == "allActivities" && researchParamsBookmarksDto.zipcode != -1000 && {
             prospect: {
               stage: StageType.BOOKMARK,
             city: {
@@ -108,7 +108,7 @@ export class BookmarksService {
           researchParamsBookmarksDto.keyword != "" && {
             prospect: {
               stage: StageType.BOOKMARK,
-              activity: {
+              secondaryActivity: {
                 name: ILike(`%${researchParamsBookmarksDto.keyword}%`)
               }
             },
@@ -140,14 +140,14 @@ export class BookmarksService {
     try {
       return await this.bookmarkRepository.count({
         where: [
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode != -1000 && researchParamsBookmarksDto.activity! != "allActivities" && {
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode != -1000 && researchParamsBookmarksDto.secondaryActivity! != "allActivities" && {
             prospect: {
               stage: StageType.BOOKMARK,
               city: {
                 zipcode: researchParamsBookmarksDto.zipcode
               },
-              activity: {
-                name: researchParamsBookmarksDto.activity
+              secondaryActivity: {
+                name: researchParamsBookmarksDto.secondaryActivity
               }
               
             },
@@ -156,18 +156,18 @@ export class BookmarksService {
             }
             
           },
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode == -1000 && researchParamsBookmarksDto.activity! != "allActivities" && {
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode == -1000 && researchParamsBookmarksDto.secondaryActivity! != "allActivities" && {
             prospect: {
               stage: StageType.BOOKMARK,
-            activity: {
-              name: researchParamsBookmarksDto.activity
+            secondaryActivity: {
+              name: researchParamsBookmarksDto.secondaryActivity
             }
             },
             pm: {
               pseudo: user.pseudo
             }
           },
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.activity! == "allActivities" && researchParamsBookmarksDto.zipcode == -1000 && {
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.secondaryActivity! == "allActivities" && researchParamsBookmarksDto.zipcode == -1000 && {
             prospect: {
               stage: StageType.BOOKMARK
             },
@@ -175,7 +175,7 @@ export class BookmarksService {
               pseudo: user.pseudo
             }
           },
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.activity! == "allActivities" && researchParamsBookmarksDto.zipcode != -1000 && {
+          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.secondaryActivity! == "allActivities" && researchParamsBookmarksDto.zipcode != -1000 && {
             prospect: {
               stage: StageType.BOOKMARK,
             city: {
@@ -209,7 +209,7 @@ export class BookmarksService {
           researchParamsBookmarksDto.keyword != "" && {
             prospect: {
               stage: StageType.BOOKMARK,
-              activity: {
+              secondaryActivity: {
                 name: ILike(`%${researchParamsBookmarksDto.keyword}%`)
               }
             },
