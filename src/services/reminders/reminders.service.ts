@@ -8,7 +8,7 @@ import { UpdateReminderDto } from 'src/dto/reminders/update-reminder.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Reminder } from 'src/entities/reminders/reminder.entity';
 import { Between, DeleteResult, In, Repository, UpdateResult } from 'typeorm';
-import { ActivitiesService } from '../secondary-activities/secondary-activities.service';
+import { SecondaryActivitiesService } from '../secondary-activities/secondary-activities.service';
 
 @Injectable()
 export class RemindersService {
@@ -19,7 +19,7 @@ export class RemindersService {
     @InjectRepository(ProjectManager)
     private pmRepository: Repository<ProjectManager>,
 
-    private readonly activitiesService: ActivitiesService
+    private readonly secondaryActivitiesService: SecondaryActivitiesService
   ){}
   
   async update(id: number, updateReminderDto: UpdateReminderDto) {
@@ -34,7 +34,7 @@ export class RemindersService {
   async create(createReminderDto: CreateReminderDto, user: ProjectManager) : Promise<Reminder>{
     try {
       createReminderDto.pm = user;
-      this.activitiesService.adjustWeight(createReminderDto.prospect.secondaryActivity.id, createReminderDto.prospect.secondaryActivity.weight, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);
+      this.secondaryActivitiesService.adjustWeight(createReminderDto.prospect.secondaryActivity.id, createReminderDto.prospect.secondaryActivity.weight, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);
       return await this.reminderRepository.save(createReminderDto);
     } catch (error) {
       console.log(error)
@@ -117,7 +117,7 @@ export class RemindersService {
   async findAllRemindersDone(researchParamsRemindersDto: ResearchParamsRemindersDto, user: ProjectManager) : Promise<Reminder[]> {
     try {
       return await this.reminderRepository.find({
-        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.activity","prospect.city","prospect.country","prospect.website","prospect.email","prospect.meetings","prospect.bookmarks","prospect.reminders"],
+        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.secondaryActivity","prospect.city","prospect.country","prospect.website","prospect.email","prospect.meetings","prospect.bookmarks","prospect.reminders"],
         where: [
           researchParamsRemindersDto.priority != 0 && {
           done: true,

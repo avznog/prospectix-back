@@ -6,7 +6,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ActivitiesController } from './controllers/activities/activities.controller';
+import { SecondaryActivitiesController } from './controllers/secondary-activities/secondary-activities.controller';
 import { BookmarksController } from './controllers/bookmarks/bookmarks.controller';
 import { CallsController } from './controllers/calls/calls.controller';
 import { CitiesController } from './controllers/cities/cities.controller';
@@ -45,7 +45,7 @@ import { Reminder } from './entities/reminders/reminder.entity';
 import { SentEmail } from './entities/sent-emails/sent-email.entity';
 import { Slack } from './entities/slack/slack.entity';
 import { Website } from './entities/websites/website.entity';
-import { ActivitiesService } from './services/secondary-activities/secondary-activities.service';
+import { SecondaryActivitiesService } from './services/secondary-activities/secondary-activities.service';
 import { BookmarksService } from './services/bookmarks/bookmarks.service';
 import { CallsService } from './services/calls/calls.service';
 import { CitiesService } from './services/cities/cities.service';
@@ -100,8 +100,8 @@ import { PrimaryActivity } from './entities/primary-activity/primary-activity.en
     ScheduleModule.forRoot(),
 
   ],
-  controllers: [AppController, ActivitiesController, BookmarksController, CitiesController, CallsController, CountriesController, EmailsController, EventsController, GoalTemplatesController, GoalsController, GoogleController, MailTemplatesController, MeetingsController, NegativeAnswersController, PhonesController, ProjectManagersController, ProspectsController, RemindersController, SentEmailsController, SlackController, WebsitesController, PrimaryActivityController],
-  providers: [AppService, ActivitiesService, BookmarksService, CitiesService, CallsService, CountriesService, EmailsService, EventsService, GoalTemplatesService, GoalsService, GoogleService, MailTemplatesService, MeetingsService, NegativeAnswersService, PhonesService, ProjectManagersService, ProspectsService, RemindersService, SentEmailsService, SlackService, WebsitesService, SentryService, PrimaryActivityService],
+  controllers: [AppController, SecondaryActivitiesController, BookmarksController, CitiesController, CallsController, CountriesController, EmailsController, EventsController, GoalTemplatesController, GoalsController, GoogleController, MailTemplatesController, MeetingsController, NegativeAnswersController, PhonesController, ProjectManagersController, ProspectsController, RemindersController, SentEmailsController, SlackController, WebsitesController, PrimaryActivityController],
+  providers: [AppService, SecondaryActivitiesService, BookmarksService, CitiesService, CallsService, CountriesService, EmailsService, EventsService, GoalTemplatesService, GoalsService, GoogleService, MailTemplatesService, MeetingsService, NegativeAnswersService, PhonesService, ProjectManagersService, ProspectsService, RemindersService, SentEmailsService, SlackService, WebsitesService, SentryService, PrimaryActivityService],
 
 })
 export class AppModule { }

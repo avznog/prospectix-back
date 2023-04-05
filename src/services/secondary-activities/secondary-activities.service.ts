@@ -5,15 +5,15 @@ import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-a
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class ActivitiesService {
+export class SecondaryActivitiesService {
   constructor(
     @InjectRepository(SecondaryActivity)
-    private readonly activityRepository: Repository<SecondaryActivity>
+    private readonly secondaryActivityRepository: Repository<SecondaryActivity>
   ) {}
 
   async findAll() : Promise<SecondaryActivity[]> {
     try {
-      return await this.activityRepository.find({
+      return await this.secondaryActivityRepository.find({
         order: {
           name: "ASC"
         }
@@ -24,9 +24,9 @@ export class ActivitiesService {
     }
   }
 
-  async create(createActivityDto: CreateSecondaryActivityDto) : Promise<SecondaryActivity> {
+  async create(createSecondaryActivityDto: CreateSecondaryActivityDto) : Promise<SecondaryActivity> {
     try {
-      return await this.activityRepository.save(createActivityDto);
+      return await this.secondaryActivityRepository.save(createSecondaryActivityDto);
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de créer l'activité", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -35,8 +35,8 @@ export class ActivitiesService {
 
   async adjustWeight(id: number, weight: number, toAdd: number) {
     try {
-      await this.activityRepository.update(id, { weight: Number(((Number(weight)+toAdd)/2).toFixed(5)) ?? toAdd });
-      return await this.activityRepository.findOne({
+      await this.secondaryActivityRepository.update(id, { weight: Number(((Number(weight)+toAdd)/2).toFixed(5)) ?? toAdd });
+      return await this.secondaryActivityRepository.findOne({
         where: {
           id: id
         }
@@ -49,12 +49,12 @@ export class ActivitiesService {
 
   async adjustWeightNbNo(id: number) {
     try {
-      const activity = await this.activityRepository.findOne({
+      const secondaryActivity = await this.secondaryActivityRepository.findOne({
         where: {
           id: id
         }
       });
-      return await this.adjustWeight(id, activity.weight, 0.05)
+      return await this.adjustWeight(id, secondaryActivity.weight, 0.05)
     } catch (error) {
       console.log(error)
       throw new HttpException(`Failure while updating the weight of this acitivity with id : ${id}`, HttpStatus.INTERNAL_SERVER_ERROR)

@@ -79,11 +79,11 @@ export class ProspectsController {
     return this.prospectsService.updateByCity(+id, cityName);
   }
 
-  @Get('by-activity/:id/:activityName')
+  @Get('by-secondary-activity/:id/:activityName')
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  updateByActivity(@Param('id') id: string, @Param("activityName") activityName: string, @CurrentUser() user: ProjectManager) : Promise<UpdateResult>{
+  updateBySecondaryActivity(@Param('id') id: string, @Param("activityName") activityName: string, @CurrentUser() user: ProjectManager) : Promise<UpdateResult>{
     this.sentryService.setSentryUser(user);
-    return this.prospectsService.updateByActivity(+id, activityName);
+    return this.prospectsService.updateBySecondaryActivity(+id, activityName);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)

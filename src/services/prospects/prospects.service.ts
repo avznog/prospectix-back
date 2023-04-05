@@ -255,7 +255,7 @@ export class ProspectsService {
     try {
       researchParamsProspectDto.zipcode = +researchParamsProspectDto.zipcode
       return await this.prospectRepository.find({
-        relations: ["activity", "city", "country", "events", "meetings", "phone", "reminders", "website", "email", "bookmarks", "bookmarks.pm"],
+        relations: ["secondaryActivity", "city", "country", "events", "meetings", "phone", "reminders", "website", "email", "bookmarks", "bookmarks.pm"],
         where: [
           researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode != -1000 && researchParamsProspectDto.secondaryActivity! != "allActivities" && {
             stage: StageType.RESEARCH,
@@ -374,15 +374,15 @@ export class ProspectsService {
     } 
   }
 
-  async updateByActivity(idProspect: number, activityName: string) : Promise<UpdateResult> {
+  async updateBySecondaryActivity(idProspect: number, activityName: string) : Promise<UpdateResult> {
     try {
       const updateProspectDto = new UpdateProspectDto()
-      const activity = await this.secondaryActivityRepository.findOne({
+      const secondaryActivity = await this.secondaryActivityRepository.findOne({
         where: {
           name: activityName
         }
       });
-      updateProspectDto.secondaryActivity = activity;
+      updateProspectDto.secondaryActivity = secondaryActivity;
       return await this.prospectRepository.update(idProspect, updateProspectDto);  
     } catch (error) {
       console.log(error)

@@ -9,16 +9,16 @@ import { CreateSecondaryActivityDto } from 'src/dto/secondary-activities/create-
 import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { ActivitiesService } from 'src/services/secondary-activities/secondary-activities.service';
+import { SecondaryActivitiesService as SecondaryActivitiesService } from 'src/services/secondary-activities/secondary-activities.service';
 import { SentryService } from 'src/services/sentry/sentry/sentry.service';
 
 @UseInterceptors(SentryInterceptor)
-@Controller('activities')
-@ApiTags("activities")
+@Controller('secondary-activities')
+@ApiTags("secondary-activities")
 @UseGuards(JwtAuthGuard, RolesGuard)
-export class ActivitiesController {
+export class SecondaryActivitiesController {
   constructor(
-    private readonly activitiesService: ActivitiesService,
+    private readonly secondaryActivitiesService: SecondaryActivitiesService,
     private readonly sentryService: SentryService
     ) {}
 
@@ -26,20 +26,20 @@ export class ActivitiesController {
   @Get()
   findAll(@CurrentUser() user: ProjectManager) : Promise<SecondaryActivity[]> {
     this.sentryService.setSentryUser(user)
-    return this.activitiesService.findAll();
+    return this.secondaryActivitiesService.findAll();
   }
 
   @Roles(RolesType.ADMIN, RolesType.CDP)
   @Post("add")
-  create(@Body() createActivityDto: CreateSecondaryActivityDto, @CurrentUser() user: ProjectManager) {
+  create(@Body() createSecondaryActivityDto: CreateSecondaryActivityDto, @CurrentUser() user: ProjectManager) {
     this.sentryService.setSentryUser(user)
-    return this.activitiesService.create(createActivityDto);
+    return this.secondaryActivitiesService.create(createSecondaryActivityDto);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("adjustWeightNbNo/:id")
   adjustWeightNbNo(@Param("id") id: number, @CurrentUser() user: ProjectManager) {
     this.sentryService.setSentryUser(user);
-    this.activitiesService.adjustWeightNbNo(id);
+    this.secondaryActivitiesService.adjustWeightNbNo(id);
   }
 }
