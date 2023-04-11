@@ -7,7 +7,6 @@ import { StageType } from 'src/constants/stage.type';
 import { CreateProspectDto } from 'src/dto/prospects/create-prospect.dto';
 import { ResearchParamsProspectDto } from 'src/dto/prospects/research-params-prospect.dto';
 import { UpdateProspectDto } from 'src/dto/prospects/update-prospect.dto';
-import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
 import { City } from 'src/entities/cities/city.entity';
 import { Country } from 'src/entities/countries/country.entity';
 import { Email } from 'src/entities/emails/email.entity';
@@ -15,8 +14,9 @@ import { Event } from 'src/entities/events/event.entity';
 import { Phone } from 'src/entities/phones/phone.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Prospect } from 'src/entities/prospects/prospect.entity';
+import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
 import { Website } from 'src/entities/websites/website.entity';
-import { ILike, Repository, UpdateResult } from 'typeorm';
+import { ILike, Not, Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class ProspectsService {
@@ -85,10 +85,10 @@ export class ProspectsService {
     console.time("filter")
     const alreadyPhone = []
     prospectsScrapped = (prospectsScrapped as any[]).filter(prospect => {
-      if(prospect.secondaryActivity.name.trim().length == 0 || alreadyPhone.includes(prospect.phone.number))
+      if (prospect.secondaryActivity.name.trim().length == 0 || alreadyPhone.includes(prospect.phone.number))
         return false
-      
-      if(isNaN(+prospect.city.zipcode))
+
+      if (isNaN(+prospect.city.zipcode))
         return false
 
       alreadyPhone.push(prospect.phone.number)
@@ -96,23 +96,23 @@ export class ProspectsService {
     })
     console.timeEnd("filter")
 
-    for(let prospect of prospectsScrapped) {
+    for (let prospect of prospectsScrapped) {
       // adding filtered cities to map
-      if(!cities.has(+prospect.city.zipcode))
-        cities.set(+prospect.city.zipcode, prospect.city.name[0].toUpperCase()+prospect.city.name.toLowerCase().slice(1))
+      if (!cities.has(+prospect.city.zipcode))
+        cities.set(+prospect.city.zipcode, prospect.city.name[0].toUpperCase() + prospect.city.name.toLowerCase().slice(1))
 
       // adding activities to array
-      if(prospect.secondaryActivity.name.trim().length)
-        activitiesFiltered.add(prospect.secondaryActivity.name) 
+      if (prospect.secondaryActivity.name.trim().length)
+        activitiesFiltered.add(prospect.secondaryActivity.name)
     }
     console.log("Chargement des villes et acti finies")
-    
+
     // Adding cities to DB
     let added = 0
     const len = cities.size
-    for(let city of cities) {
+    for (let city of cities) {
       added++
-      if(added % 50 == 0)
+      if (added % 50 == 0)
         console.log("cities", added, "/", len)
 
       await this.cityRepository.save(this.cityRepository.create({
@@ -126,19 +126,19 @@ export class ProspectsService {
     // Adding activities to db
     activitiesFiltered.forEach(activity => {
       added++
-      if(added % 50 == 0)
+      if (added % 50 == 0)
         console.log("acti", added, "/", len)
       this.secondaryActivityRepository.save(this.secondaryActivityRepository.create({
         name: activity
       }))
     })
 
-    const activitiesCache: {[key: string]: SecondaryActivity} = {}
-    const cityCache: {[key: string]: City} = {}
-    const countryCache: {[key: string]: Country} = {}
+    const activitiesCache: { [key: string]: SecondaryActivity } = {}
+    const cityCache: { [key: string]: City } = {}
+    const countryCache: { [key: string]: Country } = {}
 
     added = 0
-    for(let prospect of prospectsScrapped){
+    for (let prospect of prospectsScrapped) {
       // prospect basis
       const newProspect = {
         companyName: prospect.companyName,
@@ -173,11 +173,11 @@ export class ProspectsService {
       // get city
       const city = cityCache[prospect.city.zipcode] ?? (cityCache[prospect.city.zipcode] = await this.cityRepository.findOne({
         where: {
-          name: prospect.city.name[0].toUpperCase()+prospect.city.name.toLowerCase().slice(1),
+          name: prospect.city.name[0].toUpperCase() + prospect.city.name.toLowerCase().slice(1),
           zipcode: +prospect.city.zipcode
         }
       }))
-        
+
       newProspect.city = city;
 
       // get activity
@@ -202,10 +202,10 @@ export class ProspectsService {
       this.prospectRepository.save(this.prospectRepository.create(newProspect))
 
       added++
-      if(added % 50 == 0)
+      if (added % 50 == 0)
         console.log("prospect", added, "/", len)
     }
-      
+
   }
 
   async addEvents() {
@@ -222,7 +222,7 @@ export class ProspectsService {
     });
 
     // adding events
-    for(let prospect of prospects) {
+    for (let prospect of prospects) {
       this.eventRepository.save(this.eventRepository.create({
         date: new Date,
         description: "Prospect créé",
@@ -230,7 +230,7 @@ export class ProspectsService {
         type: EventType.CREATION,
         pm: pm
       }));
-    } 
+    }
     console.log("finished")
   }
 
@@ -251,86 +251,16 @@ export class ProspectsService {
     }
   }
 
-  async findAllPaginated(researchParamsProspectDto: ResearchParamsProspectDto) : Promise<Prospect[]> {
+  async update(idProspect: number, updateProspectDto: UpdateProspectDto): Promise<UpdateResult> {
     try {
-      researchParamsProspectDto.zipcode = +researchParamsProspectDto.zipcode
-      return await this.prospectRepository.find({
-        relations: ["secondaryActivity", "city", "country", "events", "meetings", "phone", "reminders", "website", "email", "bookmarks", "bookmarks.pm"],
-        where: [
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode != -1000 && researchParamsProspectDto.secondaryActivity! != "allActivities" && {
-            stage: StageType.RESEARCH,
-            disabled: false,
-            city: {
-              zipcode: researchParamsProspectDto.zipcode
-            },
-            secondaryActivity: {
-              name: researchParamsProspectDto.secondaryActivity
-            }
-          },
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode == -1000 && researchParamsProspectDto.secondaryActivity! != "allActivities" && {
-            stage: StageType.RESEARCH,
-            disabled: false,
-            secondaryActivity: {
-              name: researchParamsProspectDto.secondaryActivity
-            }
-          },
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.secondaryActivity! == "allActivities" && researchParamsProspectDto.zipcode == -1000 && {
-            stage: StageType.RESEARCH,
-            disabled: false,
-          },
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.secondaryActivity! == "allActivities" && researchParamsProspectDto.zipcode != -1000 && {
-            stage: StageType.RESEARCH,
-            disabled: false,
-            city: {
-                  zipcode: researchParamsProspectDto.zipcode
-            }
-          },
-          researchParamsProspectDto.keyword! != "" && {
-            stage: StageType.RESEARCH,
-            disabled: false,
-            companyName: ILike(`%${researchParamsProspectDto.keyword}%`)
-          },
-          researchParamsProspectDto.keyword! != "" && {
-            stage: StageType.RESEARCH,
-            disabled: false,
-            city: {
-              name: ILike(`%${researchParamsProspectDto.keyword}%`)
-            }
-          },
-          researchParamsProspectDto.keyword! != "" && {
-            stage: StageType.RESEARCH,
-            disabled: false,
-            secondaryActivity: {
-              name: ILike(`%${researchParamsProspectDto.keyword}%`)
-            }
-          },
-          researchParamsProspectDto.keyword! != "" && {
-            stage: StageType.RESEARCH,
-            disabled: false,
-            phone: {
-              number: ILike(`%${researchParamsProspectDto.keyword}%`)
-            }
-          }
-        ],
-        take: researchParamsProspectDto.take,
-        skip: researchParamsProspectDto.skip
-      })
+      return await this.prospectRepository.update(idProspect, updateProspectDto);
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossible de récupérer les prospects", HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException("impossible de modifier le prospect", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
-  async update(idProspect: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
-    try {
-      return await this.prospectRepository.update(idProspect, updateProspectDto);  
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("impossible de modifier le prospect",HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-  }
-
-  async updateAllProspect(idProspect: number, updateProspectDto: UpdateProspectDto) : Promise<UpdateResult> {
+  async updateAllProspect(idProspect: number, updateProspectDto: UpdateProspectDto): Promise<UpdateResult> {
     try {
       updateProspectDto.phone && await this.phoneRepository.update(updateProspectDto.phone.id, { number: updateProspectDto.phone.number });
       updateProspectDto.website && await this.websiteRepository.update(updateProspectDto.website.id, { website: updateProspectDto.website.website });
@@ -351,14 +281,14 @@ export class ProspectsService {
           }
         })
       );
-      return await this.prospectRepository.update(idProspect, updateProspectDto);  
+      return await this.prospectRepository.update(idProspect, updateProspectDto);
     } catch (error) {
       console.log(error)
-      throw new HttpException("impossible de modifier le prospect",HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException("impossible de modifier le prospect", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
-  async updateByCity(idProspect: number, cityName: string) : Promise<UpdateResult> {
+  async updateByCity(idProspect: number, cityName: string): Promise<UpdateResult> {
     try {
       const updateProspectDto = new UpdateProspectDto()
       const city = await this.cityRepository.findOne({
@@ -367,14 +297,14 @@ export class ProspectsService {
         }
       });
       updateProspectDto.city = city;
-      return await this.prospectRepository.update(idProspect, updateProspectDto);  
+      return await this.prospectRepository.update(idProspect, updateProspectDto);
     } catch (error) {
       console.log(error)
-      throw new HttpException("impossible de modifier la ville du prospect",HttpStatus.INTERNAL_SERVER_ERROR)
-    } 
+      throw new HttpException("impossible de modifier la ville du prospect", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 
-  async updateBySecondaryActivity(idProspect: number, activityName: string) : Promise<UpdateResult> {
+  async updateBySecondaryActivity(idProspect: number, activityName: string): Promise<UpdateResult> {
     try {
       const updateProspectDto = new UpdateProspectDto()
       const secondaryActivity = await this.secondaryActivityRepository.findOne({
@@ -383,14 +313,14 @@ export class ProspectsService {
         }
       });
       updateProspectDto.secondaryActivity = secondaryActivity;
-      return await this.prospectRepository.update(idProspect, updateProspectDto);  
+      return await this.prospectRepository.update(idProspect, updateProspectDto);
     } catch (error) {
       console.log(error)
-      throw new HttpException("impossible de modifier le domaine d'acitvité du prospect",HttpStatus.INTERNAL_SERVER_ERROR)
-    } 
+      throw new HttpException("impossible de modifier le domaine d'acitvité du prospect", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 
-  async disable(idProspect: number, reason: ReasonDisabledType) : Promise<UpdateResult> {
+  async disable(idProspect: number, reason: ReasonDisabledType): Promise<UpdateResult> {
     try {
       const updateProspectDto = new UpdateProspectDto();
       updateProspectDto.disabled = true;
@@ -398,128 +328,112 @@ export class ProspectsService {
       return await this.prospectRepository.update(idProspect, updateProspectDto);
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossible de désactiver le prospect",HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException("Impossible de désactiver le prospect", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
-  async enable(idProspect: number) : Promise<UpdateResult> {
+  async enable(idProspect: number): Promise<UpdateResult> {
     try {
       const updateProspectDto = new UpdateProspectDto();
       updateProspectDto.disabled = false;
       return await this.prospectRepository.update(idProspect, updateProspectDto);
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossible d'activer le prospect demandé",HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException("Impossible d'activer le prospect demandé", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
-  async countForDomains() {
+  async findAllPaginated(researchParamsProspectDto: ResearchParamsProspectDto): Promise<{prospects: Prospect[], count: number}> {
     try {
-      let countDomains: [{}] = [{}];
-      countDomains.pop()
-      let activities = await this.secondaryActivityRepository.find();
-      for(let activity of activities) {
-        let count = await this.prospectRepository.count({
-          where: {
-            secondaryActivity: {
-              id: activity.id
-            },
-            stage: StageType.RESEARCH
-          }
-        });
-        countDomains.push({ id: activity.id, count: count})
-      }
-      return countDomains;
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de compter les prospects par activités", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
 
-  async countForCities() {
-    try {
-      let countCities: [{}] = [{}];
-      countCities.pop();
-      let cities = await this.cityRepository.find();
-      for(let city of cities) {
-        let count = await this.prospectRepository.count({
-          where: {
-          city: {
-            id: city.id
-          }
-        }});
-        countCities.push({ id: city.id, count: count});
-      }
-      return countCities;
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de compter les prospects par ville", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
+      const whereParameters = 
 
-  async countProspects(researchParamsProspectDto: ResearchParamsProspectDto) : Promise<number> {
-    try {
-      return await this.prospectRepository.count({
-        where: [
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode != -1000 && researchParamsProspectDto.secondaryActivity! != "allActivities" && {
+        // ? ONLY KEYWORD
+        researchParamsProspectDto.keyword && !researchParamsProspectDto.zipcode && !researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && [
+          
+
+          {
+            companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
             stage: StageType.RESEARCH,
             disabled: false,
+          },
+          {
+            phone: {
+              number: ILike(`%${researchParamsProspectDto.keyword}%`)
+            },
+            stage: StageType.RESEARCH,
+            disabled: false,
+          }
+
+        // ? ONLY ZIPCODE
+        ] || 
+        researchParamsProspectDto.zipcode && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.primaryActivity && [
+          {
             city: {
               zipcode: researchParamsProspectDto.zipcode
             },
-            secondaryActivity: {
-              name: researchParamsProspectDto.secondaryActivity
-            }
-          },
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.zipcode == -1000 && researchParamsProspectDto.secondaryActivity! != "allActivities" && {
-            stage: StageType.RESEARCH,
-            disabled: false,
-            secondaryActivity: {
-              name: researchParamsProspectDto.secondaryActivity
-            }
-          },
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.secondaryActivity! == "allActivities" && researchParamsProspectDto.zipcode == -1000 && {
             stage: StageType.RESEARCH,
             disabled: false,
           },
-          researchParamsProspectDto.keyword! == "" && researchParamsProspectDto.secondaryActivity! == "allActivities" && researchParamsProspectDto.zipcode != -1000 && {
+        ] ||
+
+        // ? ONLY PRIMARY ACTIVITY
+        researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && [
+          {
+            secondaryActivity: Not(null) && {
+              primaryActivity: {
+                name: ILike(`%${researchParamsProspectDto.primaryActivity}%`)
+              }
+            },
+
             stage: StageType.RESEARCH,
             disabled: false,
-            city: {
-                  zipcode: researchParamsProspectDto.zipcode
-            }
-          },
-          researchParamsProspectDto.keyword! != "" && {
-            stage: StageType.RESEARCH,
-            disabled: false,
-            companyName: ILike(`%${researchParamsProspectDto.keyword}%`)
-          },
-          researchParamsProspectDto.keyword! != "" && {
-            stage: StageType.RESEARCH,
-            disabled: false,
-            city: {
-              name: ILike(`%${researchParamsProspectDto.keyword}%`)
-            }
-          },
-          researchParamsProspectDto.keyword! != "" && {
-            stage: StageType.RESEARCH,
-            disabled: false,
-            secondaryActivity: {
-              name: ILike(`%${researchParamsProspectDto.keyword}%`)
-            }
-          },
-          researchParamsProspectDto.keyword! != "" && {
-            stage: StageType.RESEARCH,
-            disabled: false,
-            phone: {
-              number: ILike(`%${researchParamsProspectDto.keyword}%`)
-            }
           }
-        ]
-      })
+        ] ||
+
+        // ? SECONDARY ACTIVITY
+        researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword &&
+        {
+          secondaryActivity: {
+            name: ILike(`%${researchParamsProspectDto.secondaryActivity}%`),
+            primaryActivity: {
+              name: ILike(`%${researchParamsProspectDto.primaryActivity}%`)
+            }
+          },
+          stage: StageType.RESEARCH,
+          disabled: false,
+
+        // ? THE REST
+        } || [
+          {
+            stage: StageType.RESEARCH,
+            disabled: false
+          }
+        ];
+
+      // ! Count max prospects avalaible
+      const countProspects= await this.prospectRepository.countBy(whereParameters);
+
+      // ! find prospects
+      const prospects =  await this.prospectRepository.find({
+        relations: ["secondaryActivity", "city", "country", "events", "meetings", "phone", "reminders", "website", "email", "bookmarks", "bookmarks.pm"],
+        where: whereParameters,
+        take: researchParamsProspectDto.take,
+        skip: researchParamsProspectDto.skip,
+        order: {
+          phone: {
+            number: "desc"
+          }
+        }
+      });
+
+      return {
+        prospects: prospects,
+        count: countProspects
+      }
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossible de compter les prospect", HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException("Impossible de récupérer les prospects", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 

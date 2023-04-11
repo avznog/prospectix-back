@@ -3,5 +3,6 @@ export interface ResearchParamsProspectDto {
   take: number;
   skip: number;
   zipcode: number;
-  secondaryActivity?: string;
+  primaryActivity: string;
+  secondaryActivity: string;
 }

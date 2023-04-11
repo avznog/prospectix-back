@@ -24,15 +24,6 @@ export class SecondaryActivitiesService {
     }
   }
 
-  async create(createSecondaryActivityDto: CreateSecondaryActivityDto) : Promise<SecondaryActivity> {
-    try {
-      return await this.secondaryActivityRepository.save(createSecondaryActivityDto);
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de créer l'activité", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
   async adjustWeight(id: number, weight: number, toAdd: number) {
     try {
       await this.secondaryActivityRepository.update(id, { weight: Number(((Number(weight)+toAdd)/2).toFixed(5)) ?? toAdd });

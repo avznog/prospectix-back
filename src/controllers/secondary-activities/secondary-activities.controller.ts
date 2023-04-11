@@ -1,15 +1,14 @@
-import { Body, Controller, Get, Post, UseGuards, UseInterceptors, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateSecondaryActivityDto } from 'src/dto/secondary-activities/create-secondary-activity.dto';
-import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
+import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { SecondaryActivitiesService as SecondaryActivitiesService } from 'src/services/secondary-activities/secondary-activities.service';
+import { SecondaryActivitiesService } from 'src/services/secondary-activities/secondary-activities.service';
 import { SentryService } from 'src/services/sentry/sentry/sentry.service';
 
 @UseInterceptors(SentryInterceptor)
@@ -27,13 +26,6 @@ export class SecondaryActivitiesController {
   findAll(@CurrentUser() user: ProjectManager) : Promise<SecondaryActivity[]> {
     this.sentryService.setSentryUser(user)
     return this.secondaryActivitiesService.findAll();
-  }
-
-  @Roles(RolesType.ADMIN, RolesType.CDP)
-  @Post("add")
-  create(@Body() createSecondaryActivityDto: CreateSecondaryActivityDto, @CurrentUser() user: ProjectManager) {
-    this.sentryService.setSentryUser(user)
-    return this.secondaryActivitiesService.create(createSecondaryActivityDto);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
