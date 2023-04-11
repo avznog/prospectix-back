@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateSecondaryActivityDto } from 'src/dto/secondary-activities/create-secondary-activity.dto';
 import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
 import { Repository } from 'typeorm';
 
