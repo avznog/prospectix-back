@@ -27,4 +27,32 @@ export class PrimaryActivityService {
       throw new HttpException("Error while fetching all the primary activities", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async adjustWeight(id: number, weight: number, toAdd: number) {
+    try {
+      await this.primaryActivityRepository.update(id, { weight: Number(((Number(weight)+toAdd)/2).toFixed(5)) ?? toAdd });
+      return await this.primaryActivityRepository.findOne({
+        where: {
+          id: id
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(`Failure while updating the weight of this acitivity with id : ${id}`, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async adjustWeightNbNo(id: number) {
+    try {
+      const primaryActivity = await this.primaryActivityRepository.findOne({
+        where: {
+          id: id
+        }
+      });
+      return await this.adjustWeight(id, primaryActivity.weight, 0.05)
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(`Failure while updating the weight of this acitivity with id : ${id}`, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
 }

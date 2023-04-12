@@ -1,21 +1,25 @@
-import { Controller, UseGuards, UseInterceptors, Get } from '@nestjs/common';
+import { Controller, UseGuards, UseInterceptors, Get, Param } from '@nestjs/common';
 import { ApiTags } from "@nestjs/swagger";
 import { Roles } from 'src/auth/annotations/roles.decorator';
+import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
 import { PrimaryActivity } from 'src/entities/primary-activity/primary-activity.entity';
+import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { PrimaryActivityService } from 'src/services/primary-activity/primary-activity/primary-activity.service';
+import { SentryService } from 'src/services/sentry/sentry/sentry.service';
 
 @UseInterceptors(SentryInterceptor)
 @Controller('primary-activities')
 @ApiTags("primary-activities")
-// @UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class PrimaryActivityController {
 
   constructor(
-    private readonly primaryActivityServices: PrimaryActivityService
+    private readonly primaryActivityServices: PrimaryActivityService,
+    private readonly sentryService: SentryService
   ) {}
 
   @Get("find-all")
@@ -23,5 +27,11 @@ export class PrimaryActivityController {
   findAll() : Promise<PrimaryActivity[]> {
     return this.primaryActivityServices.findAll();
   }
-  
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("adjustWeightNbNo/:id")
+  adjustWeightNbNo(@Param("id") id: number, @CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
+    this.primaryActivityServices.adjustWeightNbNo(id);
+  }
 }

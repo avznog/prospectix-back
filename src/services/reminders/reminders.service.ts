@@ -9,6 +9,7 @@ import { ProjectManager } from 'src/entities/project-managers/project-manager.en
 import { Reminder } from 'src/entities/reminders/reminder.entity';
 import { Between, DeleteResult, In, Repository, UpdateResult } from 'typeorm';
 import { SecondaryActivitiesService } from '../secondary-activities/secondary-activities.service';
+import { PrimaryActivityService } from '../primary-activity/primary-activity/primary-activity.service';
 
 @Injectable()
 export class RemindersService {
@@ -19,7 +20,8 @@ export class RemindersService {
     @InjectRepository(ProjectManager)
     private pmRepository: Repository<ProjectManager>,
 
-    private readonly secondaryActivitiesService: SecondaryActivitiesService
+    private readonly secondaryActivitiesService: SecondaryActivitiesService,
+    private readonly primaryActivitiesService: PrimaryActivityService
   ){}
   
   async update(id: number, updateReminderDto: UpdateReminderDto) {
@@ -35,6 +37,7 @@ export class RemindersService {
     try {
       createReminderDto.pm = user;
       this.secondaryActivitiesService.adjustWeight(createReminderDto.prospect.secondaryActivity.id, createReminderDto.prospect.secondaryActivity.weight, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);
+      this.primaryActivitiesService.adjustWeight(createReminderDto.prospect.secondaryActivity.primaryActivity.id, createReminderDto.prospect.secondaryActivity.primaryActivity.weight, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);
       return await this.reminderRepository.save(createReminderDto);
     } catch (error) {
       console.log(error)

@@ -416,7 +416,7 @@ export class ProspectsService {
 
       // ! find prospects
       const prospects =  await this.prospectRepository.find({
-        relations: ["secondaryActivity", "city", "country", "events", "meetings", "phone", "reminders", "website", "email", "bookmarks", "bookmarks.pm"],
+        relations: ["secondaryActivity", "secondaryActivity.primaryActivity", "city", "country", "events", "meetings", "phone", "reminders", "website", "email", "bookmarks", "bookmarks.pm"],
         where: whereParameters,
         take: researchParamsProspectDto.take,
         skip: researchParamsProspectDto.skip,

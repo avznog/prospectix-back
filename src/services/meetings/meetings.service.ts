@@ -11,6 +11,7 @@ import { ProjectManager } from 'src/entities/project-managers/project-manager.en
 import { Between, DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { SecondaryActivitiesService } from '../secondary-activities/secondary-activities.service';
 import { GoogleService } from '../google/google.service';
+import { PrimaryActivityService } from '../primary-activity/primary-activity/primary-activity.service';
 
 @Injectable()
 export class MeetingsService {
@@ -22,13 +23,15 @@ export class MeetingsService {
     private readonly pmRepository: Repository<ProjectManager>,
 
     private readonly googleService: GoogleService,
-    private readonly secondaryActivitiesService: SecondaryActivitiesService
+    private readonly secondaryActivitiesService: SecondaryActivitiesService,
+    private readonly primaryActivitiesService: PrimaryActivityService
   ){}
 
   async create(createMeetingDto: CreateMeetingDto, user: ProjectManager) : Promise<Meeting> {
     try {
       createMeetingDto.pm = await this.googleService.updateTokens(user);
       this.secondaryActivitiesService.adjustWeight(createMeetingDto.prospect.secondaryActivity.id, createMeetingDto.prospect.secondaryActivity.weight, 1)
+      this.primaryActivitiesService.adjustWeight(createMeetingDto.prospect.secondaryActivity.primaryActivity.id, createMeetingDto.prospect.secondaryActivity.primaryActivity.weight, 1)
       this.googleService.createEventOnCalendar(createMeetingDto, user);
       return await this.meetingRepository.save(createMeetingDto);
     } catch (error) {

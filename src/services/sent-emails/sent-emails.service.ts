@@ -12,6 +12,7 @@ import { SentEmail } from 'src/entities/sent-emails/sent-email.entity';
 import { Between, Repository, UpdateResult } from 'typeorm';
 import { SecondaryActivitiesService } from '../secondary-activities/secondary-activities.service';
 import { GoogleService } from '../google/google.service';
+import { PrimaryActivityService } from '../primary-activity/primary-activity/primary-activity.service';
 @Injectable()
 export class SentEmailsService {
 
@@ -29,7 +30,8 @@ export class SentEmailsService {
     private readonly mailTemplateRepository: Repository<MailTemplate>,
 
     private readonly googleService: GoogleService,
-    private readonly secondaryActivitiesService: SecondaryActivitiesService
+    private readonly secondaryActivitiesService: SecondaryActivitiesService,
+    private readonly primaryActivitiesService: PrimaryActivityService
   ) { }
 
   async findAllPaginated(researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, user: ProjectManager) : Promise<{sentEmails: SentEmail[], count: number}> {
@@ -133,7 +135,8 @@ export class SentEmailsService {
     try {
       createSentEmailDto.pm = user;
       console.log(createSentEmailDto)
-      this.secondaryActivitiesService.adjustWeight(createSentEmailDto.prospect.secondaryActivity.id,createSentEmailDto.prospect.secondaryActivity.weight, 0.09)
+      this.secondaryActivitiesService.adjustWeight(createSentEmailDto.prospect.secondaryActivity.id, createSentEmailDto.prospect.secondaryActivity.weight, 0.09)
+      this.primaryActivitiesService.adjustWeight(createSentEmailDto.prospect.secondaryActivity.primaryActivity.id, createSentEmailDto.prospect.secondaryActivity.primaryActivity.weight, 0.09)
       return await this.sentEmailRepository.save(createSentEmailDto);
     } catch (error) {
       console.log(error)
