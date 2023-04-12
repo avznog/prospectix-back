@@ -5,7 +5,7 @@ import { CreateBookmarkDto } from 'src/dto/bookmarks/create-bookmark.dto';
 import { ResearchParamsBookmarksDto } from 'src/dto/bookmarks/research-params-bookmarks.dto';
 import { Bookmark } from 'src/entities/bookmarks/bookmark.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
-import { DeleteResult, ILike, Repository } from 'typeorm';
+import { DeleteResult, ILike, Not, Repository } from 'typeorm';
 
 @Injectable()
 export class BookmarksService {
@@ -33,206 +33,129 @@ export class BookmarksService {
     }
   }
 
-  async findAllPaginated(researchParamsBookmarksDto: ResearchParamsBookmarksDto, user: ProjectManager): Promise<Bookmark[]> {
+  async findAllPaginated(researchParamsBookmarksDto: ResearchParamsBookmarksDto, user: ProjectManager): Promise<{bookmarks: Bookmark[], count: number}> {
     try {
-      researchParamsBookmarksDto.zipcode = +researchParamsBookmarksDto.zipcode
-      return await this.bookmarkRepository.find({
-        relations: ["prospect", "pm", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.events", "prospect.meetings", "prospect.phone", "prospect.reminders", "prospect.website", "prospect.email"],
-        where: [
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode != -1000 && researchParamsBookmarksDto.secondaryActivity! != "allActivities" && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              city: {
-                zipcode: researchParamsBookmarksDto.zipcode
-              },
-              secondaryActivity: {
-                name: researchParamsBookmarksDto.secondaryActivity
-              }
-              
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-            
-          },
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode == -1000 && researchParamsBookmarksDto.secondaryActivity! != "allActivities" && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-            secondaryActivity: {
-              name: researchParamsBookmarksDto.secondaryActivity
-            }
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.secondaryActivity! == "allActivities" && researchParamsBookmarksDto.zipcode == -1000 && {
-            prospect: {
-              stage: StageType.BOOKMARK
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.secondaryActivity! == "allActivities" && researchParamsBookmarksDto.zipcode != -1000 && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-            city: {
-              zipcode: researchParamsBookmarksDto.zipcode
-            }
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          researchParamsBookmarksDto.keyword != "" && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          researchParamsBookmarksDto.keyword != "" && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              city: {
-                name: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-              }
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          researchParamsBookmarksDto.keyword != "" && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              secondaryActivity: {
-                name: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-              }
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          researchParamsBookmarksDto.keyword != "" && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              phone: {
-                number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-              }
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          }
-        ]
-      }
-      );
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de récupérer les prospects favoris", HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-  }
 
-  async countBookmarks(researchParamsBookmarksDto: ResearchParamsBookmarksDto, user: ProjectManager) : Promise<number> {
-    try {
-      return await this.bookmarkRepository.count({
-        where: [
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode != -1000 && researchParamsBookmarksDto.secondaryActivity! != "allActivities" && {
+      const whereParameters = 
+
+        // ? ONLY KEYWORD
+        researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.zipcode && !researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && [
+          
+
+          {
             prospect: {
+              companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`),
               stage: StageType.BOOKMARK,
-              city: {
-                zipcode: researchParamsBookmarksDto.zipcode
-              },
-              secondaryActivity: {
-                name: researchParamsBookmarksDto.secondaryActivity
-              }
-              
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-            
-          },
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.zipcode == -1000 && researchParamsBookmarksDto.secondaryActivity! != "allActivities" && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-            secondaryActivity: {
-              name: researchParamsBookmarksDto.secondaryActivity
-            }
+              disabled: false,
             },
             pm: {
               pseudo: user.pseudo
             }
           },
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.secondaryActivity! == "allActivities" && researchParamsBookmarksDto.zipcode == -1000 && {
+          {
             prospect: {
-              stage: StageType.BOOKMARK
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          researchParamsBookmarksDto.keyword == "" && researchParamsBookmarksDto.secondaryActivity! == "allActivities" && researchParamsBookmarksDto.zipcode != -1000 && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-            city: {
-              zipcode: researchParamsBookmarksDto.zipcode
-            }
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          researchParamsBookmarksDto.keyword != "" && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          researchParamsBookmarksDto.keyword != "" && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              city: {
-                name: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-              }
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          researchParamsBookmarksDto.keyword != "" && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              secondaryActivity: {
-                name: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-              }
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          researchParamsBookmarksDto.keyword != "" && {
-            prospect: {
-              stage: StageType.BOOKMARK,
               phone: {
                 number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-              }
+              },
+              stage: StageType.BOOKMARK,
+              disabled: false,
             },
             pm: {
               pseudo: user.pseudo
             }
           }
-        ]
-      })
+
+        // ? ONLY ZIPCODE
+        ] || 
+        researchParamsBookmarksDto.zipcode && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.primaryActivity && [
+          {
+            prospect: {
+              city: {
+                zipcode: researchParamsBookmarksDto.zipcode
+              },
+              stage: StageType.BOOKMARK,
+              disabled: false,
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
+          },
+        ] ||
+
+        // ? ONLY PRIMARY ACTIVITY
+        researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && [
+          {
+            prospect: {
+              secondaryActivity: Not(null) && {
+                primaryActivity: {
+                  name: ILike(`%${researchParamsBookmarksDto.primaryActivity}%`)
+                }
+              },
+  
+              stage: StageType.BOOKMARK,
+              disabled: false,
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
+          }
+        ] ||
+
+        // ? SECONDARY ACTIVITY
+        researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword &&
+        {
+          prospect: {
+            secondaryActivity: {
+              name: ILike(`%${researchParamsBookmarksDto.secondaryActivity}%`),
+              primaryActivity: {
+                name: ILike(`%${researchParamsBookmarksDto.primaryActivity}%`)
+              }
+            },
+            stage: StageType.BOOKMARK,
+            disabled: false,
+          },
+          pm: {
+            pseudo: user.pseudo
+          }
+
+        // ? THE REST
+        } || [
+          {
+            prospect: {
+              stage: StageType.BOOKMARK,
+              disabled: false
+            },
+            pm: {
+              pseudo: user.pseudo
+            }
+          }
+        ];
+
+      // ! Count max bookmarks avalaible
+      const countbookmarks= await this.bookmarkRepository.countBy(whereParameters);
+
+      // ! find bookmarks
+      const bookmarks =  await this.bookmarkRepository.find({
+        relations: ["prospect", "pm", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.events", "prospect.meetings", "prospect.phone", "prospect.reminders", "prospect.website", "prospect.email"],
+        where: whereParameters,
+        take: researchParamsBookmarksDto.take,
+        skip: researchParamsBookmarksDto.skip,
+        order: {
+          prospect: {
+            phone: {
+              number: "desc"
+            }
+          }
+        }
+      });
+
+      return {
+        bookmarks: bookmarks,
+        count: countbookmarks
+      }
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossible de compter les favoris", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException("Impossible de récupérer les prospects", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 }

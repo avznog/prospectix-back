@@ -40,15 +40,8 @@ export class BookmarksController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query() researchParamsBookmarksDto: ResearchParamsBookmarksDto, @CurrentUser() user: ProjectManager) {
+  findAllPaginated(@Query() researchParamsBookmarksDto: ResearchParamsBookmarksDto, @CurrentUser() user: ProjectManager) : Promise<{bookmarks: Bookmark[], count: number}> {
     this.sentryService.setSentryUser(user);
     return this.bookmarksService.findAllPaginated(researchParamsBookmarksDto, user);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("count-bookmarks")
-  countBookmarks(@Query() researchParamsBookmarksDto: ResearchParamsBookmarksDto, @CurrentUser() user: ProjectManager): Promise<number> {
-    this.sentryService.setSentryUser(user);
-    return this.bookmarksService.countBookmarks(researchParamsBookmarksDto, user);
   }
 }
