@@ -14,7 +14,7 @@ export class SecondaryActivitiesService {
     try {
       return await this.secondaryActivityRepository.find({
         order: {
-          name: "ASC"
+          name: 'asc'
         }
       });
     } catch (error) {

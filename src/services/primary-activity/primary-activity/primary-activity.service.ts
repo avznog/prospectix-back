@@ -14,7 +14,13 @@ export class PrimaryActivityService {
   async findAll() : Promise<PrimaryActivity[]> {
     try {
       return await this.primaryActivityRepository.find({
-        relations: ["secondaryActivities"]
+        relations: ["secondaryActivities"],
+        order: {
+          name: 'asc',
+          secondaryActivities: {
+            name: 'asc'
+          }
+        }
       });
     } catch (error) {
       console.log(error)
