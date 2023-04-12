@@ -65,99 +65,85 @@ export class MeetingsService {
     }
   }
 
-  async findAllPaginated(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<Meeting[]>{
+  async findAllPaginated(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<{meetings: Meeting[], count: number}>{
     try {
-      return await this.meetingRepository.find({
-        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
-        where: [
-          researchParamsMeetingsDto.type != "" && {
-            prospect: {
-              stage: StageType.MEETING
-            },
-            pm: {
-              pseudo: user.pseudo
-            },
-            done: researchParamsMeetingsDto.done  == "true" ? true : false,
-            type: researchParamsMeetingsDto.type as MeetingType
+      const whereParameters = [
+        researchParamsMeetingsDto.type != "" && {
+          prospect: {
+            stage: StageType.MEETING
           },
-          researchParamsMeetingsDto.type == "" && {
-            prospect: {
-              stage: StageType.MEETING
-            },
-            pm: {
-              pseudo: user.pseudo
-            },
-            done: researchParamsMeetingsDto.done  == "true" ? true : false,
-          }
-        ],
+          pm: {
+            pseudo: user.pseudo
+          },
+          done: researchParamsMeetingsDto.done  == "true" ? true : false,
+          type: researchParamsMeetingsDto.type as MeetingType
+        },
+        researchParamsMeetingsDto.type == "" && {
+          prospect: {
+            stage: StageType.MEETING
+          },
+          pm: {
+            pseudo: user.pseudo
+          },
+          done: researchParamsMeetingsDto.done  == "true" ? true : false,
+        }
+      ];
+      const meetings = await this.meetingRepository.find({
+        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
+        where: whereParameters,
         order: {
           date: "ASC"
         },
         take: researchParamsMeetingsDto.take,
         skip: researchParamsMeetingsDto.skip
       });
+
+      const countMeetings = await this.meetingRepository.countBy(whereParameters);
+
+      return {
+        meetings: meetings,
+        count: countMeetings
+      };
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récupérer les rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async findAllMeetingsDone(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<Meeting[]> {
+  async findAllMeetingsDone(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<{meetingsDone: Meeting[], count: number}> {
     try {
-      return await this.meetingRepository.find({
-        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
-        where: [
-          researchParamsMeetingsDto.type != "" && {
-            pm: {
-              pseudo: user.pseudo
-            },
-            done: true,
-            type: researchParamsMeetingsDto.type as MeetingType
+      const whereParameters = [
+        researchParamsMeetingsDto.type != "" && {
+          pm: {
+            pseudo: user.pseudo
           },
-          researchParamsMeetingsDto.type == "" && {
-            pm: {
-              pseudo: user.pseudo
-            },
-            done: true
-          }
-        ],
+          done: true,
+          type: researchParamsMeetingsDto.type as MeetingType
+        },
+        researchParamsMeetingsDto.type == "" && {
+          pm: {
+            pseudo: user.pseudo
+          },
+          done: true
+        }
+      ];
+
+      const meetingsDone = await this.meetingRepository.find({
+        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
+        where: whereParameters,
         take: researchParamsMeetingsDto.take,
         skip: researchParamsMeetingsDto.skip
-      })
+      });
+
+      const countMeetingsDone = await this.meetingRepository.countBy(whereParameters);
+
+      return {
+        meetingsDone: meetingsDone,
+        count: countMeetingsDone
+      }
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récupérer les renddez vous effectués", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  async countMeetings(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<number> {
-    try {
-      return await this.meetingRepository.count({
-        where: [
-          researchParamsMeetingsDto.type != "" && {
-            prospect: {
-              stage: StageType.MEETING
-            },
-            pm: {
-              pseudo: user.pseudo
-            },
-            done: researchParamsMeetingsDto.done  == "true" ? true : false,
-            type: researchParamsMeetingsDto.type as MeetingType
-          },
-          researchParamsMeetingsDto.type == "" && {
-            prospect: {
-              stage: StageType.MEETING
-            },
-            pm: {
-              pseudo: user.pseudo
-            },
-            done: researchParamsMeetingsDto.done  == "true" ? true : false,
-          }
-        ]
-      })
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de récupérer le nombre de rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

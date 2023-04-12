@@ -32,52 +32,67 @@ export class SentEmailsService {
     private readonly secondaryActivitiesService: SecondaryActivitiesService
   ) { }
 
-  async findAllPaginated(researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, user: ProjectManager) {
+  async findAllPaginated(researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, user: ProjectManager) : Promise<{sentEmails: SentEmail[], count: number}> {
     try {
-      await this.checkMailsSynchro()
-      return await this.sentEmailRepository.find({
-        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.phone", "prospect.email", "prospect.website", "prospect.reminders", "prospect.meetings", "prospect.events", "prospect.bookmarks"],
-        where: {
-          pm: {
-            pseudo: user.pseudo
-          },
-          prospect: {
-            stage: StageType.MAIL
-          },
-          sent: false
+      const whereParameters = {
+        pm: {
+          pseudo: user.pseudo
         },
+        prospect: {
+          stage: StageType.MAIL
+        },
+        sent: false
+      };
+      await this.checkMailsSynchro();
+      const sentEmails = await this.sentEmailRepository.find({
+        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.phone", "prospect.email", "prospect.website", "prospect.reminders", "prospect.meetings", "prospect.events", "prospect.bookmarks"],
+        where: whereParameters,
         order: {
           sendingDate: "ASC"
         },
         take: researchParamsSentEmailsDto.take,
         skip: researchParamsSentEmailsDto.skip
       })
+
+      const countSentEmails = await this.sentEmailRepository.countBy(whereParameters);
+      return {
+        sentEmails: sentEmails,
+        count: countSentEmails
+      };
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récupérer les emails non envoyés", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async findAllPaginatedSent(researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, user: ProjectManager) {
+  async findAllPaginatedSent(researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, user: ProjectManager) : Promise<{sentEmailsSent: SentEmail[], count: number}> {
     try {
       await this.checkMailsSynchro();
-      return await this.sentEmailRepository.find({
-        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.phone", "prospect.email", "prospect.website", "prospect.reminders", "prospect.meetings", "prospect.events", "prospect.bookmarks"],
-        where: {
-          pm: {
-            pseudo: user.pseudo
-          },
-          prospect: {
-            stage: StageType.MAIL_SENT
-          },
-          sent: true
+      const whereParameters = {
+        pm: {
+          pseudo: user.pseudo
         },
+        prospect: {
+          stage: StageType.MAIL_SENT
+        },
+        sent: true
+      };
+      const sentEmailsSent = await this.sentEmailRepository.find({
+        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.phone", "prospect.email", "prospect.website", "prospect.reminders", "prospect.meetings", "prospect.events", "prospect.bookmarks"],
+        where: whereParameters,
         order: {
           sendingDate: "ASC"
         },
         take: researchParamsSentEmailsDto.take,
         skip: researchParamsSentEmailsDto.skip
       })
+
+      const countSentEmailsSent = await this.sentEmailRepository.countBy(whereParameters);
+
+      return {
+        sentEmailsSent: sentEmailsSent,
+        count: countSentEmailsSent
+      };
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récupérer les emails envoyés", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -125,45 +140,6 @@ export class SentEmailsService {
       throw new HttpException("Impossible de créer l'email", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
-  async countSentEmails(user: ProjectManager, researchParamsSentEmailsDto: ResearchParamsSentEmailsDto): Promise<number> {
-    try {
-      return await this.sentEmailRepository.count({
-        where: {
-          pm: {
-            pseudo: user.pseudo
-          },
-          prospect: {
-            stage: StageType.MAIL
-          },
-          sent: false
-        }
-      })
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de compter les mails", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  async countSentEmailsSent(user: ProjectManager, researchParamsSentEmailsDto: ResearchParamsSentEmailsDto): Promise<number> {
-    try {
-      return await this.sentEmailRepository.count({
-        where: {
-          pm: {
-            pseudo: user.pseudo
-          },
-          prospect: {
-            stage: StageType.MAIL_SENT
-          },
-          sent: true
-        }
-      })
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de compter les mails", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
 
   async countWeeklyForMe(user: ProjectManager): Promise<number> {
     try {
