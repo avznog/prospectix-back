@@ -40,6 +40,13 @@ export class SecondaryActivity extends BaseEntity {
   })
   prospects: Prospect[];
 
+  @Column({nullable: true})
+  @ApiProperty({
+  description: "Version du scraping, cela correspond aux différentes sessions de scraping qu'on a effectuées.\n v1 -> octobre 2022 / v2 -> mai 2023",
+  required: true
+  })
+  version: string;
+
   @ManyToOne(() => PrimaryActivity, (primaryActivity: PrimaryActivity) => primaryActivity.secondaryActivities)
   primaryActivity: PrimaryActivity;
   
