@@ -36,8 +36,8 @@ export class RemindersService {
   async create(createReminderDto: CreateReminderDto, user: ProjectManager) : Promise<Reminder>{
     try {
       createReminderDto.pm = user;
-      this.secondaryActivitiesService.adjustWeight(createReminderDto.prospect.secondaryActivity.id, createReminderDto.prospect.secondaryActivity.weight, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);
-      this.primaryActivitiesService.adjustWeight(createReminderDto.prospect.secondaryActivity.primaryActivity.id, createReminderDto.prospect.secondaryActivity.primaryActivity.weight, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);
+      this.secondaryActivitiesService.adjustWeight(createReminderDto.prospect.secondaryActivity.id, createReminderDto.prospect.secondaryActivity.weight, createReminderDto.prospect.secondaryActivity.weightCount, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);
+      this.primaryActivitiesService.adjustWeight(createReminderDto.prospect.secondaryActivity.primaryActivity.id, createReminderDto.prospect.secondaryActivity.primaryActivity.weight, createReminderDto.prospect.secondaryActivity.primaryActivity.weightCount, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);
       return await this.reminderRepository.save(createReminderDto);
     } catch (error) {
       console.log(error)

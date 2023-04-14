@@ -28,9 +28,9 @@ export class PrimaryActivityService {
     }
   }
 
-  async adjustWeight(id: number, weight: number, toAdd: number) {
+  async adjustWeight(id: number, weight: number, weightCount: number, toAdd: number) {
     try {
-      await this.primaryActivityRepository.update(id, { weight: Number(((Number(weight)+toAdd)/2).toFixed(5)) ?? toAdd });
+      await this.primaryActivityRepository.update(id, { weight: Number(((Number(weight)+toAdd)/2).toFixed(5)) ?? toAdd, weightCount: weightCount + 1 });
       return await this.primaryActivityRepository.findOne({
         where: {
           id: id
@@ -49,7 +49,7 @@ export class PrimaryActivityService {
           id: id
         }
       });
-      return await this.adjustWeight(id, primaryActivity.weight, 0.05)
+      return await this.adjustWeight(id, primaryActivity.weight, primaryActivity.weightCount, 0.05)
     } catch (error) {
       console.log(error)
       throw new HttpException(`Failure while updating the weight of this acitivity with id : ${id}`, HttpStatus.INTERNAL_SERVER_ERROR)

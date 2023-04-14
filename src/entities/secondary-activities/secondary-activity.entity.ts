@@ -49,5 +49,11 @@ export class SecondaryActivity extends BaseEntity {
 
   @ManyToOne(() => PrimaryActivity, (primaryActivity: PrimaryActivity) => primaryActivity.secondaryActivities)
   primaryActivity: PrimaryActivity;
-  
+
+  @Column({nullable: false, default: 0})
+  @ApiProperty({
+    description: "Le nombre d'appels comptés dans le poids de la catégorie",
+    required: false
+  })
+  weightCount: number;
 }

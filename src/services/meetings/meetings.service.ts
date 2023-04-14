@@ -30,8 +30,8 @@ export class MeetingsService {
   async create(createMeetingDto: CreateMeetingDto, user: ProjectManager) : Promise<Meeting> {
     try {
       createMeetingDto.pm = await this.googleService.updateTokens(user);
-      this.secondaryActivitiesService.adjustWeight(createMeetingDto.prospect.secondaryActivity.id, createMeetingDto.prospect.secondaryActivity.weight, 1)
-      this.primaryActivitiesService.adjustWeight(createMeetingDto.prospect.secondaryActivity.primaryActivity.id, createMeetingDto.prospect.secondaryActivity.primaryActivity.weight, 1)
+      this.secondaryActivitiesService.adjustWeight(createMeetingDto.prospect.secondaryActivity.id, createMeetingDto.prospect.secondaryActivity.weight, createMeetingDto.prospect.secondaryActivity.weightCount, 1)
+      this.primaryActivitiesService.adjustWeight(createMeetingDto.prospect.secondaryActivity.primaryActivity.id, createMeetingDto.prospect.secondaryActivity.primaryActivity.weight, createMeetingDto.prospect.secondaryActivity.primaryActivity.weightCount, 1)
       this.googleService.createEventOnCalendar(createMeetingDto, user);
       return await this.meetingRepository.save(createMeetingDto);
     } catch (error) {

@@ -25,6 +25,12 @@ export class CreateSecondaryActivityDto {
   required: true
   })
   version: string;
+
+  @ApiProperty({
+    description: "Le nombre d'appels comptés dans le poids de la catégorie",
+    required: false
+  })
+  weightCount: number;
 }
 
   

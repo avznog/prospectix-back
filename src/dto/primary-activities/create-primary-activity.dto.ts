@@ -4,4 +4,5 @@ export class CreatePrimaryActivityDto {
   name: string;
   weight: number;
   secondaryActivities: SecondaryActivity[];
+  weightCount: number;
 }

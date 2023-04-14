@@ -135,8 +135,8 @@ export class SentEmailsService {
     try {
       createSentEmailDto.pm = user;
       console.log(createSentEmailDto)
-      this.secondaryActivitiesService.adjustWeight(createSentEmailDto.prospect.secondaryActivity.id, createSentEmailDto.prospect.secondaryActivity.weight, 0.09)
-      this.primaryActivitiesService.adjustWeight(createSentEmailDto.prospect.secondaryActivity.primaryActivity.id, createSentEmailDto.prospect.secondaryActivity.primaryActivity.weight, 0.09)
+      this.secondaryActivitiesService.adjustWeight(createSentEmailDto.prospect.secondaryActivity.id, createSentEmailDto.prospect.secondaryActivity.weight, createSentEmailDto.prospect.secondaryActivity.weightCount, 0.09)
+      this.primaryActivitiesService.adjustWeight(createSentEmailDto.prospect.secondaryActivity.primaryActivity.id, createSentEmailDto.prospect.secondaryActivity.primaryActivity.weight, createSentEmailDto.prospect.secondaryActivity.primaryActivity.weightCount, 0.09)
       return await this.sentEmailRepository.save(createSentEmailDto);
     } catch (error) {
       console.log(error)
