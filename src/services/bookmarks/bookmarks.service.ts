@@ -83,7 +83,7 @@ export class BookmarksService {
         ] ||
 
         // ? ONLY PRIMARY ACTIVITY
-        researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && [
+        researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.cityName && [
           {
             prospect: {
               secondaryActivity: Not(null) && {
@@ -102,7 +102,7 @@ export class BookmarksService {
         ] ||
 
         // ? SECONDARY ACTIVITY
-        researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword &&
+        researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.cityName && researchParamsBookmarksDto.primaryActivity &&
         {
           prospect: {
             secondaryActivity: {
@@ -119,7 +119,7 @@ export class BookmarksService {
           }
 
         // ? THE REST
-        } || [
+        } || !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.cityName && !researchParamsBookmarksDto.primaryActivity && [
           {
             prospect: {
               stage: StageType.BOOKMARK,

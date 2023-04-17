@@ -378,7 +378,7 @@ export class ProspectsService {
         ] ||
 
         // ? ONLY PRIMARY ACTIVITY
-        researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && [
+        researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.cityName && [
           {
             secondaryActivity: Not(null) && {
               primaryActivity: {
@@ -392,7 +392,7 @@ export class ProspectsService {
         ] ||
 
         // ? SECONDARY ACTIVITY
-        researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword &&
+        researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.cityName && researchParamsProspectDto.primaryActivity &&
         {
           secondaryActivity: {
             name: ILike(`%${researchParamsProspectDto.secondaryActivity}%`),
@@ -404,7 +404,7 @@ export class ProspectsService {
           disabled: false,
 
         // ? THE REST
-        } || [
+        } || !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.cityName && !researchParamsProspectDto.primaryActivity && [
           {
             stage: StageType.RESEARCH,
             disabled: false
