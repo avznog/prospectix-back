@@ -12,4 +12,16 @@ export class CreateCityDto {
     required: true
   })
   zipcode: number;
+
+  @ApiProperty({
+    description: "Version d'implémentation de la ville",
+    required: false
+  })
+  version: string;
+
+  @ApiProperty({
+    description: "Date d'implémentation de la ville dans l'application",
+    required: false
+  })
+  dateScraped: Date;
 }

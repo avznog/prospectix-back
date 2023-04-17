@@ -31,4 +31,18 @@ export class PrimaryActivity {
   })
   weightCount: number;
 
+  @Column({nullable: true})
+  @ApiProperty({
+    description: "Version de l'activité",
+    required: false
+  })
+  version: string;
+
+  @Column({nullable: true})
+  @ApiProperty({
+    description: "Date de l'implémentation de l'activité",
+    required: false
+  })
+  dateScraped: Date;
+
 }

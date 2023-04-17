@@ -31,6 +31,12 @@ export class CreateSecondaryActivityDto {
     required: false
   })
   weightCount: number;
+
+  @ApiProperty({
+    description: "Date d'imlémentation du domaine d'activité",
+    required: false
+  })
+  dateScraped: Date;
 }
 
   

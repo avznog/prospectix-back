@@ -56,4 +56,11 @@ export class SecondaryActivity extends BaseEntity {
     required: false
   })
   weightCount: number;
+
+  @Column({nullable: true})
+  @ApiProperty({
+    description: "Date d'imlémentation du domaine d'activité",
+    required: false
+  })
+  dateScraped: Date;
 }

@@ -37,4 +37,18 @@ export class City extends BaseEntity {
     required: true
   })
   prospects: Prospect[];
+
+  @Column({nullable: true})
+  @ApiProperty({
+    description: "Version d'implémentation de la ville",
+    required: false
+  })
+  version: string;
+
+  @Column({nullable: true})
+  @ApiProperty({
+    description: "Date d'implémentation de la ville dans l'application",
+    required: false
+  })
+  dateScraped: Date;
 }
