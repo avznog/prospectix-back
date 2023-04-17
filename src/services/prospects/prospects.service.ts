@@ -349,7 +349,7 @@ export class ProspectsService {
       const whereParameters = 
 
         // ? ONLY KEYWORD
-        researchParamsProspectDto.keyword && !researchParamsProspectDto.zipcode && !researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && [
+        researchParamsProspectDto.keyword && !researchParamsProspectDto.cityName && !researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && [
           
 
           {
@@ -365,12 +365,12 @@ export class ProspectsService {
             disabled: false,
           }
 
-        // ? ONLY ZIPCODE
+        // ? ONLY cityName
         ] || 
-        researchParamsProspectDto.zipcode && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.primaryActivity && [
+        researchParamsProspectDto.cityName && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.primaryActivity && [
           {
             city: {
-              zipcode: researchParamsProspectDto.zipcode
+              name: researchParamsProspectDto.cityName
             },
             stage: StageType.RESEARCH,
             disabled: false,

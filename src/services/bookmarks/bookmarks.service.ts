@@ -39,7 +39,7 @@ export class BookmarksService {
       const whereParameters = 
 
         // ? ONLY KEYWORD
-        researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.zipcode && !researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && [
+        researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.cityName && !researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && [
           
 
           {
@@ -65,13 +65,13 @@ export class BookmarksService {
             }
           }
 
-        // ? ONLY ZIPCODE
+        // ? ONLY cityName
         ] || 
-        researchParamsBookmarksDto.zipcode && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.primaryActivity && [
+        researchParamsBookmarksDto.cityName && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.primaryActivity && [
           {
             prospect: {
               city: {
-                zipcode: researchParamsBookmarksDto.zipcode
+                name: researchParamsBookmarksDto.cityName
               },
               stage: StageType.BOOKMARK,
               disabled: false,

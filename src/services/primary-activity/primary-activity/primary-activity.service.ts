@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PrimaryActivity } from 'src/entities/primary-activity/primary-activity.entity';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 
 @Injectable()
 export class PrimaryActivityService {
@@ -20,11 +20,33 @@ export class PrimaryActivityService {
           secondaryActivities: {
             name: 'asc'
           }
+        },
+        where: {
+          secondaryActivities: {
+            prospects: MoreThan(500)
+          }
         }
       });
     } catch (error) {
       console.log(error)
       throw new HttpException("Error while fetching all the primary activities", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findAllWithoutLimit() {
+    try {
+      return await this.primaryActivityRepository.find({
+        relations: ["secondaryActivities"],
+        order: {
+          name: 'asc',
+          secondaryActivities: {
+            name: 'asc'
+          }
+        }
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Error while fetching all the primary Activities", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

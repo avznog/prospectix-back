@@ -23,11 +23,18 @@ export class CitiesController {
     ) {}
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get()
-  findAll(@CurrentUser() user: ProjectManager) : Promise<City[]> {
+  @Get("find-all")
+  findAll(@CurrentUser() user: ProjectManager) {
     this.sentryService.setSentryUser(user);
-    return this.citiesService.findAll();
-  } 
+    return this.citiesService.findAll()
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Get("find-all-by-zipcode")
+  findAllByZipcode(@CurrentUser() user: ProjectManager) {
+    this.sentryService.setSentryUser(user);
+    return this.citiesService.findAllByZipcode()
+  }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post("add")

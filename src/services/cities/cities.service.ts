@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCityDto } from 'src/dto/cities/create-city.dto';
 import { City } from 'src/entities/cities/city.entity';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 
 @Injectable()
 export class CitiesService {
@@ -11,17 +11,32 @@ export class CitiesService {
     private readonly cityRepository: Repository<City>
   ) {}
 
-  async findAll() : Promise<City[]> {
+  async findAll(){
+    try {
+      return await this.cityRepository.find({
+        where: {
+          prospects: MoreThan(500)
+        },
+        order: {
+          name: 'asc'
+        }
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Error while counting the cities", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async findAllByZipcode(){
     try {
       return await this.cityRepository.find({
         order: {
-          name: "ASC",
-          zipcode: "ASC"
+          name: 'asc'
         }
-      });
+      })
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossible de récuprérer les villes", HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException("Error while counting the cities", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 

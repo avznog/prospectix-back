@@ -2,7 +2,7 @@ export interface ResearchParamsProspectDto {
   keyword?: string;
   take: number;
   skip: number;
-  zipcode: number;
+  cityName: string;
   primaryActivity: string;
   secondaryActivity: string;
 }

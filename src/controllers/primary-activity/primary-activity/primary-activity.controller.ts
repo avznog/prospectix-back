@@ -24,8 +24,16 @@ export class PrimaryActivityController {
 
   @Get("find-all")
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  findAll() : Promise<PrimaryActivity[]> {
+  findAll(@CurrentUser() user: ProjectManager) : Promise<PrimaryActivity[]> {
+    this.sentryService.setSentryUser(user);
     return this.primaryActivityServices.findAll();
+  }
+
+  @Get("find-all-without-limit")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  findAllWithoutLimit(@CurrentUser() user: ProjectManager) : Promise<PrimaryActivity[]> {
+    this.sentryService.setSentryUser(user);
+    return this.primaryActivityServices.findAllWithoutLimit();
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
