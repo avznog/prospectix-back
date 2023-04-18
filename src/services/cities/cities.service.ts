@@ -2,20 +2,26 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCityDto } from 'src/dto/cities/create-city.dto';
 import { City } from 'src/entities/cities/city.entity';
+import { SearchParams } from 'src/entities/search-params/search-params.entity';
 import { MoreThan, Repository } from 'typeorm';
 
 @Injectable()
 export class CitiesService {
   constructor(
     @InjectRepository(City)
-    private readonly cityRepository: Repository<City>
+    private readonly cityRepository: Repository<City>,
+
+    @InjectRepository(SearchParams)
+    private readonly searchParamRepository: Repository<SearchParams>
   ) {}
 
   async findAll(){
     try {
+      const searchParams = await this.searchParamRepository.findOne({where: {id: 1}})
       return await this.cityRepository.find({
         where: {
-          prospects: MoreThan(500)
+          prospects: MoreThan(500),
+          version: searchParams.versionCity
         },
         order: {
           name: 'asc'

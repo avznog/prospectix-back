@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PrimaryActivity } from 'src/entities/primary-activity/primary-activity.entity';
+import { SearchParams } from 'src/entities/search-params/search-params.entity';
 import { MoreThan, Repository } from 'typeorm';
 
 @Injectable()
@@ -8,11 +9,15 @@ export class PrimaryActivityService {
   
   constructor(
     @InjectRepository(PrimaryActivity)
-    private readonly primaryActivityRepository: Repository<PrimaryActivity>
+    private readonly primaryActivityRepository: Repository<PrimaryActivity>,
+
+    @InjectRepository(SearchParams)
+    private readonly searchParamRepository: Repository<SearchParams>
   ) {}
 
   async findAll() : Promise<PrimaryActivity[]> {
     try {
+      const searchParams = await this.searchParamRepository.findOne({where: {id: 1}});
       return await this.primaryActivityRepository.find({
         relations: ["secondaryActivities"],
         order: {
@@ -22,8 +27,10 @@ export class PrimaryActivityService {
           }
         },
         where: {
+          version: searchParams.versionPrimaryActivity,
           secondaryActivities: {
-            prospects: MoreThan(500)
+            prospects: MoreThan(500),
+            version: searchParams.versionSecondaryActivity
           }
         }
       });
@@ -50,14 +57,14 @@ export class PrimaryActivityService {
     }
   }
 
-  async adjustWeight(id: number, weight: number, weightCount: number, toAdd: number) {
+  async adjustWeight(id: number, toAdd: number) {
     try {
-      await this.primaryActivityRepository.update(id, { weight: Number(((Number(weight)+toAdd)/2).toFixed(5)) ?? toAdd, weightCount: weightCount + 1 });
-      return await this.primaryActivityRepository.findOne({
-        where: {
-          id: id
-        }
-      });
+      const primaryActivity = await this.primaryActivityRepository.findOne({where: {id: id}});
+      await this.primaryActivityRepository.update(id, { weight: (primaryActivity.weight + toAdd) / 2 ?? toAdd, weightCount: primaryActivity.weightCount + 1 });
+      return {
+        ...primaryActivity,
+        weight: (primaryActivity.weight + toAdd) / 2 ?? toAdd,
+      }
     } catch (error) {
       console.log(error)
       throw new HttpException(`Failure while updating the weight of this acitivity with id : ${id}`, HttpStatus.INTERNAL_SERVER_ERROR)
@@ -66,12 +73,7 @@ export class PrimaryActivityService {
 
   async adjustWeightNbNo(id: number) {
     try {
-      const primaryActivity = await this.primaryActivityRepository.findOne({
-        where: {
-          id: id
-        }
-      });
-      return await this.adjustWeight(id, primaryActivity.weight, primaryActivity.weightCount, 0.05)
+      return await this.adjustWeight(id, 0.05)
     } catch (error) {
       console.log(error)
       throw new HttpException(`Failure while updating the weight of this acitivity with id : ${id}`, HttpStatus.INTERNAL_SERVER_ERROR)

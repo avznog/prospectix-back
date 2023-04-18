@@ -27,7 +27,7 @@ export class SecondaryActivity extends BaseEntity {
   })
   name: string;
 
-  @Column({ default: null, nullable: true, type: 'decimal' })
+  @Column({ default: null, nullable: true, type: 'float' })
   @ApiProperty({
     description: "Poids de la catégorie. Plus le poids est haut, plus la catégorie a de la valeur",
     required: true

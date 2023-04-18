@@ -15,7 +15,7 @@ export class PrimaryActivity {
   })
   name: string;
 
-  @Column({default: null, nullable: true, type: 'decimal'})
+  @Column({default: null, nullable: true, type: 'float'})
   @ApiProperty({
     description: "Le poids de la catégorie",
     required: false

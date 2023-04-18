@@ -30,8 +30,8 @@ export class NegativeAnswersService {
   async createForMe(createNegativeAnswerDto: CreateNegativeAnswerDto, user: ProjectManager) : Promise<NegativeAnswer> {
     try {
       createNegativeAnswerDto.pm = user;
-      await this.secondaryActivitiesService.adjustWeight(createNegativeAnswerDto.prospect.secondaryActivity.id, createNegativeAnswerDto.prospect.secondaryActivity.weight, createNegativeAnswerDto.prospect.secondaryActivity.weightCount, 0)
-      await this.primaryActivitiesService.adjustWeight(createNegativeAnswerDto.prospect.secondaryActivity.primaryActivity.id, createNegativeAnswerDto.prospect.secondaryActivity.primaryActivity.weight, createNegativeAnswerDto.prospect.secondaryActivity.primaryActivity.weightCount, 0)
+      await this.secondaryActivitiesService.adjustWeight(createNegativeAnswerDto.prospect.secondaryActivity.id, 0)
+      await this.primaryActivitiesService.adjustWeight(createNegativeAnswerDto.prospect.secondaryActivity.primaryActivity.id, 0)
       return await this.negativeAnswerRepository.save(this.negativeAnswerRepository.create(createNegativeAnswerDto));
     } catch (error) {
       console.log(error)

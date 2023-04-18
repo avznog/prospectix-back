@@ -23,14 +23,15 @@ export class SecondaryActivitiesService {
     }
   }
 
-  async adjustWeight(id: number, weight: number, weightCount: number, toAdd: number) {
+  async adjustWeight(id: number, toAdd: number) {
     try {
-      await this.secondaryActivityRepository.update(id, { weight: Number(((Number(weight)+toAdd)/2).toFixed(5)) ?? toAdd, weightCount: weightCount + 1 });
-      return await this.secondaryActivityRepository.findOne({
-        where: {
-          id: id
-        }
-      });
+      const secondaryActivity = await this.secondaryActivityRepository.findOne({where: {id: id}});
+      await this.secondaryActivityRepository.update(id, { weight: (secondaryActivity.weight + toAdd) / 2 ?? toAdd, weightCount: secondaryActivity.weightCount + 1 });
+      return {
+        ...secondaryActivity,
+        weight: (secondaryActivity.weight + toAdd) / 2 ?? toAdd,
+        weightCount: secondaryActivity.weightCount + 1 
+      }
     } catch (error) {
       console.log(error)
       throw new HttpException(`Failure while updating the weight of this acitivity with id : ${id}`, HttpStatus.INTERNAL_SERVER_ERROR)
@@ -39,12 +40,7 @@ export class SecondaryActivitiesService {
 
   async adjustWeightNbNo(id: number) {
     try {
-      const secondaryActivity = await this.secondaryActivityRepository.findOne({
-        where: {
-          id: id
-        }
-      });
-      return await this.adjustWeight(id, secondaryActivity.weight, secondaryActivity.weightCount, 0.05)
+      return await this.adjustWeight(id, 0.05)
     } catch (error) {
       console.log(error)
       throw new HttpException(`Failure while updating the weight of this acitivity with id : ${id}`, HttpStatus.INTERNAL_SERVER_ERROR)
