@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { VersionCityType } from "src/constants/versions.type";
 
 export class CreateCityDto {
   @ApiProperty({
@@ -17,7 +18,7 @@ export class CreateCityDto {
     description: "Version d'implémentation de la ville",
     required: false
   })
-  version: string;
+  version: VersionCityType;
 
   @ApiProperty({
     description: "Date d'implémentation de la ville dans l'application",

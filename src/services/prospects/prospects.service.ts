@@ -14,6 +14,7 @@ import { Event } from 'src/entities/events/event.entity';
 import { Phone } from 'src/entities/phones/phone.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Prospect } from 'src/entities/prospects/prospect.entity';
+import { SearchParams } from 'src/entities/search-params/search-params.entity';
 import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
 import { Website } from 'src/entities/websites/website.entity';
 import { ILike, Not, Repository, UpdateResult } from 'typeorm';
@@ -46,7 +47,10 @@ export class ProspectsService {
     private readonly websiteRepository: Repository<Website>,
 
     @InjectRepository(Email)
-    private readonly emailRepository: Repository<Email>
+    private readonly emailRepository: Repository<Email>,
+
+    @InjectRepository(SearchParams)
+    private readonly searchParamRepository: Repository<SearchParams>
 
   ) {}
 
@@ -345,7 +349,7 @@ export class ProspectsService {
 
   async findAllPaginated(researchParamsProspectDto: ResearchParamsProspectDto): Promise<{prospects: Prospect[], count: number}> {
     try {
-
+      researchParamsProspectDto.searchParams = await this.searchParamRepository.findOne({where: {id: 1}});
       const whereParameters = 
 
         // ? ONLY KEYWORD
@@ -356,6 +360,16 @@ export class ProspectsService {
             companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
             stage: StageType.RESEARCH,
             disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity
+            },
+            secondaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+              }
+            }
           },
           {
             phone: {
@@ -363,6 +377,16 @@ export class ProspectsService {
             },
             stage: StageType.RESEARCH,
             disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity
+            },
+            secondaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+              }
+            }
           }
 
         // ? ONLY cityName
@@ -370,10 +394,18 @@ export class ProspectsService {
         researchParamsProspectDto.cityName && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.primaryActivity && [
           {
             city: {
-              name: researchParamsProspectDto.cityName
+              name: researchParamsProspectDto.cityName,
+              version: researchParamsProspectDto.searchParams.versionCity
             },
             stage: StageType.RESEARCH,
             disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            secondaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+              }
+            }
           },
         ] ||
 
@@ -381,13 +413,18 @@ export class ProspectsService {
         researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.cityName && [
           {
             secondaryActivity: Not(null) && {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
               primaryActivity: {
-                name: ILike(`%${researchParamsProspectDto.primaryActivity}%`)
+                name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity
               }
             },
-
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity
+            },
             stage: StageType.RESEARCH,
             disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect
           }
         ] ||
 
@@ -396,18 +433,34 @@ export class ProspectsService {
         {
           secondaryActivity: {
             name: ILike(`%${researchParamsProspectDto.secondaryActivity}%`),
+            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
             primaryActivity: {
-              name: ILike(`%${researchParamsProspectDto.primaryActivity}%`)
+              name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
+              version: researchParamsProspectDto.searchParams.versionPrimaryActivity
             }
           },
           stage: StageType.RESEARCH,
           disabled: false,
+          version: researchParamsProspectDto.searchParams.versionProspect,
+          city: {
+            version: researchParamsProspectDto.searchParams.versionCity
+          }
 
         // ? THE REST
         } || !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.cityName && !researchParamsProspectDto.primaryActivity && [
           {
             stage: StageType.RESEARCH,
-            disabled: false
+            disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity
+            },
+            secondaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+              }
+            }
           }
         ];
 

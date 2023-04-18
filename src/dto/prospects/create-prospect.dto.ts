@@ -11,6 +11,7 @@ import { Event } from 'src/entities/events/event.entity';
 import { Meeting } from 'src/entities/meetings/meeting.entity';
 import { Phone } from 'src/entities/phones/phone.entity';
 import { Website } from 'src/entities/websites/website.entity';
+import { VersionProspectType } from 'src/constants/versions.type';
 
 export class CreateProspectDto {
   @ApiProperty({
@@ -118,7 +119,7 @@ export class CreateProspectDto {
     description: "Version du scraping; Différentes sessions de scraping sont organisées (1-> nov 2022; 2-> mai 2023)",
     required: true
   })
-  version: string;
+  version: VersionProspectType;
 
   @ApiProperty({
     description: "Date du scraping du prospect",

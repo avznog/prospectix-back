@@ -24,6 +24,7 @@ import {
   PrimaryGeneratedColumn
 } from 'typeorm';
 import { SecondaryActivity } from '../secondary-activities/secondary-activity.entity';
+import { VersionProspectType } from 'src/constants/versions.type';
 
 @Entity()
 export class Prospect extends BaseEntity {
@@ -186,7 +187,7 @@ export class Prospect extends BaseEntity {
     description: "Version du scraping; Différentes sessions de scraping sont organisées (1-> nov 2022; 2-> mai 2023)",
     required: true
   })
-  version: string;
+  version: VersionProspectType;
 
   @Column({nullable: true})
   @ApiProperty({

@@ -1,3 +1,5 @@
+import { SearchParams } from "src/entities/search-params/search-params.entity";
+
 export interface ResearchParamsProspectDto {
   keyword?: string;
   take: number;
@@ -5,4 +7,5 @@ export interface ResearchParamsProspectDto {
   cityName: string;
   primaryActivity: string;
   secondaryActivity: string;
+  searchParams: SearchParams;
 }

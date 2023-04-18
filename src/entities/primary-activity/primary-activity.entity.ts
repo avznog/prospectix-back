@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { SecondaryActivity } from "../secondary-activities/secondary-activity.entity";
 import { ApiProperty } from "@nestjs/swagger";
+import { VersionPrimaryActivityType } from "src/constants/versions.type";
 
 @Entity()
 export class PrimaryActivity {
@@ -36,7 +37,7 @@ export class PrimaryActivity {
     description: "Version de l'activité",
     required: false
   })
-  version: string;
+  version: VersionPrimaryActivityType;
 
   @Column({nullable: true})
   @ApiProperty({

@@ -71,12 +71,15 @@ import { SentryService } from './services/sentry/sentry/sentry.service';
 import { PrimaryActivityController } from './controllers/primary-activity/primary-activity/primary-activity.controller';
 import { PrimaryActivityService } from './services/primary-activity/primary-activity/primary-activity.service';
 import { PrimaryActivity } from './entities/primary-activity/primary-activity.entity';
+import { SearchParams } from './entities/search-params/search-params.entity';
+import { SearchParamsController } from './controllers/search-params/search-params.controller';
+import { SearchParamsService } from './services/search-params/search-params.service';
 
 @Module({
   imports: [
     AuthModule,
     HttpModule,
-    TypeOrmModule.forFeature([SecondaryActivity, PrimaryActivity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website]),
+    TypeOrmModule.forFeature([SearchParams, SecondaryActivity, PrimaryActivity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website]),
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
@@ -94,14 +97,14 @@ import { PrimaryActivity } from './entities/primary-activity/primary-activity.en
       database: process.env.POSTGRES_DATABASE ?? 'newacti',
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
-      entities: [PrimaryActivity, SecondaryActivity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website],
+      entities: [SearchParams, PrimaryActivity, SecondaryActivity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website],
     }),
 
     ScheduleModule.forRoot(),
 
   ],
-  controllers: [AppController, SecondaryActivitiesController, BookmarksController, CitiesController, CallsController, CountriesController, EmailsController, EventsController, GoalTemplatesController, GoalsController, GoogleController, MailTemplatesController, MeetingsController, NegativeAnswersController, PhonesController, ProjectManagersController, ProspectsController, RemindersController, SentEmailsController, SlackController, WebsitesController, PrimaryActivityController],
-  providers: [AppService, SecondaryActivitiesService, BookmarksService, CitiesService, CallsService, CountriesService, EmailsService, EventsService, GoalTemplatesService, GoalsService, GoogleService, MailTemplatesService, MeetingsService, NegativeAnswersService, PhonesService, ProjectManagersService, ProspectsService, RemindersService, SentEmailsService, SlackService, WebsitesService, SentryService, PrimaryActivityService],
+  controllers: [AppController, SecondaryActivitiesController, BookmarksController, CitiesController, CallsController, CountriesController, EmailsController, EventsController, GoalTemplatesController, GoalsController, GoogleController, MailTemplatesController, MeetingsController, NegativeAnswersController, PhonesController, ProjectManagersController, ProspectsController, RemindersController, SentEmailsController, SlackController, WebsitesController, PrimaryActivityController, SearchParamsController],
+  providers: [AppService, SecondaryActivitiesService, BookmarksService, CitiesService, CallsService, CountriesService, EmailsService, EventsService, GoalTemplatesService, GoalsService, GoogleService, MailTemplatesService, MeetingsService, NegativeAnswersService, PhonesService, ProjectManagersService, ProspectsService, RemindersService, SentEmailsService, SlackService, WebsitesService, SentryService, PrimaryActivityService, SearchParamsService],
 
 })
 export class AppModule { }

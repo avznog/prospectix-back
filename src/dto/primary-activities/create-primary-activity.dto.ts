@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { VersionPrimaryActivityType } from "src/constants/versions.type";
 import { SecondaryActivity } from "src/entities/secondary-activities/secondary-activity.entity";
 
 export class CreatePrimaryActivityDto {
@@ -25,7 +26,7 @@ export class CreatePrimaryActivityDto {
     description: "Version de l'activité",
     required: false
   })
-  version: string;
+  version: VersionPrimaryActivityType;
 
   @ApiProperty({
     description: "Date de l'implémentation de l'activité",
