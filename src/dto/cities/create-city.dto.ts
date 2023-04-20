@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { VersionCityType } from "src/constants/versions.type";
 
 export class CreateCityDto {
   @ApiProperty({
@@ -12,4 +13,16 @@ export class CreateCityDto {
     required: true
   })
   zipcode: number;
+
+  @ApiProperty({
+    description: "Version d'implémentation de la ville",
+    required: false
+  })
+  version: VersionCityType;
+
+  @ApiProperty({
+    description: "Date d'implémentation de la ville dans l'application",
+    required: false
+  })
+  dateScraped: Date;
 }

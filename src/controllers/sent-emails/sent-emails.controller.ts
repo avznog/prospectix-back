@@ -28,14 +28,14 @@ export class SentEmailsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query() researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, @CurrentUser() user: ProjectManager) {
+  findAllPaginated(@Query() researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, @CurrentUser() user: ProjectManager) : Promise<{sentEmails: SentEmail[], count: number}> {
     this.sentryService.setSentryUser(user);
     return this.sentEmailsService.findAllPaginated(researchParamsSentEmailsDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated-sent")
-  findAllPaginatedSent(@Query() researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, @CurrentUser() user: ProjectManager) {
+  findAllPaginatedSent(@Query() researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, @CurrentUser() user: ProjectManager) : Promise<{sentEmailsSent: SentEmail[], count: number}> {
     this.sentryService.setSentryUser(user);
     return this.sentEmailsService.findAllPaginatedSent(researchParamsSentEmailsDto, user);
   }
@@ -53,20 +53,6 @@ export class SentEmailsController {
   create(@Body() createSentEmailDto: CreateSentEmailDto, @CurrentUser() user: ProjectManager) : Promise<SentEmail> {
     this.sentryService.setSentryUser(user);
     return this.sentEmailsService.create(createSentEmailDto, user);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("count-sent-emails")
-  countSentEmails(@CurrentUser() user: ProjectManager, @Query() researchParamsSentEmails: ResearchParamsSentEmailsDto) : Promise<number> {
-    this.sentryService.setSentryUser(user);
-    return this.sentEmailsService.countSentEmails(user, researchParamsSentEmails);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("count-sent-emails-sent")
-  countSentEmailsSent(@CurrentUser() user: ProjectManager, @Query() researchParamsSentEmails: ResearchParamsSentEmailsDto) : Promise<number> {
-    this.sentryService.setSentryUser(user);
-    return this.sentEmailsService.countSentEmailsSent(user, researchParamsSentEmails)
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)

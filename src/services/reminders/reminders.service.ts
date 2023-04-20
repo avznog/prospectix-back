@@ -8,7 +8,8 @@ import { UpdateReminderDto } from 'src/dto/reminders/update-reminder.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Reminder } from 'src/entities/reminders/reminder.entity';
 import { Between, DeleteResult, In, Repository, UpdateResult } from 'typeorm';
-import { ActivitiesService } from '../activities/activities.service';
+import { SecondaryActivitiesService } from '../secondary-activities/secondary-activities.service';
+import { PrimaryActivityService } from '../primary-activity/primary-activity/primary-activity.service';
 
 @Injectable()
 export class RemindersService {
@@ -19,7 +20,8 @@ export class RemindersService {
     @InjectRepository(ProjectManager)
     private pmRepository: Repository<ProjectManager>,
 
-    private readonly activitiesService: ActivitiesService
+    private readonly secondaryActivitiesService: SecondaryActivitiesService,
+    private readonly primaryActivitiesService: PrimaryActivityService
   ){}
   
   async update(id: number, updateReminderDto: UpdateReminderDto) {
@@ -34,7 +36,8 @@ export class RemindersService {
   async create(createReminderDto: CreateReminderDto, user: ProjectManager) : Promise<Reminder>{
     try {
       createReminderDto.pm = user;
-      this.activitiesService.adjustWeight(createReminderDto.prospect.activity.id, createReminderDto.prospect.activity.weight, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);
+      this.secondaryActivitiesService.adjustWeight(createReminderDto.prospect.secondaryActivity.id, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);
+      this.primaryActivitiesService.adjustWeight(createReminderDto.prospect.secondaryActivity.primaryActivity.id, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);
       return await this.reminderRepository.save(createReminderDto);
     } catch (error) {
       console.log(error)
@@ -46,7 +49,7 @@ export class RemindersService {
   async findAllByProspect(idProspect: number): Promise<Reminder[]> {
     try {
       return await this.reminderRepository.find({
-        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.meetings", "prospect.phone", "prospect.website", "prospect.email"],
+        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.meetings", "prospect.phone", "prospect.website", "prospect.email"],
         where: {
           prospect: {
             id: idProspect
@@ -78,101 +81,87 @@ export class RemindersService {
   }
 
   
-  async findAllPaginated(researchParamsRemindersDto: ResearchParamsRemindersDto, user: ProjectManager) : Promise<Reminder[]> {
+  async findAllPaginated(researchParamsRemindersDto: ResearchParamsRemindersDto, user: ProjectManager) : Promise<{reminders: Reminder[], count: number}> {
     try {
-      return await this.reminderRepository.find({
-        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.activity","prospect.city","prospect.country","prospect.website","prospect.email","prospect.meetings","prospect.bookmarks","prospect.reminders"],
-        where: [
-          researchParamsRemindersDto.priority != 0 && {
-            prospect: {
-              stage: StageType.REMINDER
-            },
-            done: researchParamsRemindersDto.done == "true" ? true: false,
-            pm: {
-              pseudo: user.pseudo
-            },
-            priority: researchParamsRemindersDto.priority
+      const whereParameters = [
+        researchParamsRemindersDto.priority != 0 && {
+          prospect: {
+            stage: StageType.REMINDER
           },
-          researchParamsRemindersDto.priority == 0 && {
-            prospect: {
-              stage: StageType.REMINDER
-            },
-            done: researchParamsRemindersDto.done == "true" ? true: false,
-            pm: {
-              pseudo: user.pseudo
-            },
-            priority: In([1,2,3])
-          }
-        ],
-        order: {
-          date: "ASC"
-        }
-      });
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de récupérer les rappels", HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-  }
-
-  async findAllRemindersDone(researchParamsRemindersDto: ResearchParamsRemindersDto, user: ProjectManager) : Promise<Reminder[]> {
-    try {
-      return await this.reminderRepository.find({
-        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.activity","prospect.city","prospect.country","prospect.website","prospect.email","prospect.meetings","prospect.bookmarks","prospect.reminders"],
-        where: [
-          researchParamsRemindersDto.priority != 0 && {
-          done: true,
+          done: researchParamsRemindersDto.done == "true" ? true: false,
           pm: {
             pseudo: user.pseudo
           },
           priority: researchParamsRemindersDto.priority
         },
         researchParamsRemindersDto.priority == 0 && {
-          done: true,
+          prospect: {
+            stage: StageType.REMINDER
+          },
+          done: researchParamsRemindersDto.done == "true" ? true: false,
           pm: {
             pseudo: user.pseudo
           },
           priority: In([1,2,3])
         }
-      ],
+      ];
+
+      const reminders = await this.reminderRepository.find({
+        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.secondaryActivity","prospect.city","prospect.country","prospect.website","prospect.email","prospect.meetings","prospect.bookmarks","prospect.reminders"],
+        where: whereParameters,
+        order: {
+          date: "ASC"
+        }
+      });
+
+      const countReminders = await this.reminderRepository.countBy(whereParameters);
+
+      return {
+        reminders: reminders,
+        count: countReminders
+      };
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Impossible de récupérer les rappels", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async findAllRemindersDone(researchParamsRemindersDto: ResearchParamsRemindersDto, user: ProjectManager) : Promise<{remindersDone: Reminder[], count: number}> {
+    try {
+      const whereParameters = [
+        researchParamsRemindersDto.priority != 0 && {
+        done: true,
+        pm: {
+          pseudo: user.pseudo
+        },
+        priority: researchParamsRemindersDto.priority
+      },
+      researchParamsRemindersDto.priority == 0 && {
+        done: true,
+        pm: {
+          pseudo: user.pseudo
+        },
+        priority: In([1,2,3])
+      }
+    ];
+
+      const remindersDone = await this.reminderRepository.find({
+        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.secondaryActivity","prospect.city","prospect.country","prospect.website","prospect.email","prospect.meetings","prospect.bookmarks","prospect.reminders"],
+        where: whereParameters,
       skip: researchParamsRemindersDto.skip,
       take: researchParamsRemindersDto.take
-      })
+      });
+
+      const countRemindersDone = await this.reminderRepository.countBy(whereParameters);
+
+      return {
+        remindersDone: remindersDone,
+        count: countRemindersDone
+      };
     
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récupérer les rappels", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  async countReminders(researchParamsRemindersDto: ResearchParamsRemindersDto, user: ProjectManager) : Promise<number> {
-    try {
-      return await this.reminderRepository.count({
-        where: [
-          researchParamsRemindersDto.priority != 0 && {
-            prospect: {
-              stage: StageType.REMINDER
-            },
-            done: researchParamsRemindersDto.done == "true" ? true: false,
-            pm: {
-              pseudo: user.pseudo
-            },
-            priority: researchParamsRemindersDto.priority
-          },
-          researchParamsRemindersDto.priority == 0 && {
-            prospect: {
-              stage: StageType.REMINDER
-            },
-            done: researchParamsRemindersDto.done == "true" ? true: false,
-            pm: {
-              pseudo: user.pseudo
-            },
-            priority: In([1,2,3])
-          }
-        ]
-      });
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de compter les rappels", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

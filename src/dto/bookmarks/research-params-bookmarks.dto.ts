@@ -1,7 +1,8 @@
 export interface ResearchParamsBookmarksDto {
   take?: number;
   skip: number;
-  zipcode: number;
-  activity: string;
+  cityName: string;
+  secondaryActivity: string;
+  primaryActivity: string;
   keyword: string;
 }

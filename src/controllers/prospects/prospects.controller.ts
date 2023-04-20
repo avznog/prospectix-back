@@ -53,7 +53,7 @@ export class ProspectsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-    findAllPaginated(@Query() researchParamsProspectDto: ResearchParamsProspectDto, @CurrentUser() user: ProjectManager) : Promise<Prospect[]> {
+    findAllPaginated(@Query() researchParamsProspectDto: ResearchParamsProspectDto, @CurrentUser() user: ProjectManager) : Promise<{prospects: Prospect[], count: number}> {
       this.sentryService.setSentryUser(user);
     return this.prospectsService.findAllPaginated(researchParamsProspectDto);
   }
@@ -79,11 +79,11 @@ export class ProspectsController {
     return this.prospectsService.updateByCity(+id, cityName);
   }
 
-  @Get('by-activity/:id/:activityName')
+  @Get('by-secondary-activity/:id/:activityName')
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  updateByActivity(@Param('id') id: string, @Param("activityName") activityName: string, @CurrentUser() user: ProjectManager) : Promise<UpdateResult>{
+  updateBySecondaryActivity(@Param('id') id: string, @Param("activityName") activityName: string, @CurrentUser() user: ProjectManager) : Promise<UpdateResult>{
     this.sentryService.setSentryUser(user);
-    return this.prospectsService.updateByActivity(+id, activityName);
+    return this.prospectsService.updateBySecondaryActivity(+id, activityName);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
@@ -98,26 +98,5 @@ export class ProspectsController {
   enable(@Param("id") id: number, @CurrentUser() user: ProjectManager) : Promise<UpdateResult> {
     this.sentryService.setSentryUser(user);
     return this.prospectsService.enable(id);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("count-for-domains")
-  countForDomains(@CurrentUser() user: ProjectManager) {
-    this.sentryService.setSentryUser(user);
-    return this.prospectsService.countForDomains();
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("count-for-cities")
-  countForCities(@CurrentUser() user: ProjectManager) {
-    this.sentryService.setSentryUser(user);
-    return this.prospectsService.countForCities();
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("count-prospects")
-  countProspects(@Query() researchParamsProspectDto: ResearchParamsProspectDto, @CurrentUser() user: ProjectManager) : Promise<number> {
-    this.sentryService.setSentryUser(user);
-    return this.prospectsService.countProspects(researchParamsProspectDto);
   }
 }

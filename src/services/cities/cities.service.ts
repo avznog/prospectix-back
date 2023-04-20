@@ -2,26 +2,47 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCityDto } from 'src/dto/cities/create-city.dto';
 import { City } from 'src/entities/cities/city.entity';
-import { Repository } from 'typeorm';
+import { SearchParams } from 'src/entities/search-params/search-params.entity';
+import { MoreThan, Repository } from 'typeorm';
 
 @Injectable()
 export class CitiesService {
   constructor(
     @InjectRepository(City)
-    private readonly cityRepository: Repository<City>
+    private readonly cityRepository: Repository<City>,
+
+    @InjectRepository(SearchParams)
+    private readonly searchParamRepository: Repository<SearchParams>
   ) {}
 
-  async findAll() : Promise<City[]> {
+  async findAll(){
+    try {
+      const searchParams = await this.searchParamRepository.findOne({where: {id: 1}})
+      return await this.cityRepository.find({
+        where: {
+          prospects: MoreThan(500),
+          version: searchParams.versionCity
+        },
+        order: {
+          name: 'asc'
+        }
+      })
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Error while counting the cities", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async findAllByZipcode(){
     try {
       return await this.cityRepository.find({
         order: {
-          name: "ASC",
-          zipcode: "ASC"
+          name: 'asc'
         }
-      });
+      })
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossible de récuprérer les villes", HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException("Error while counting the cities", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 

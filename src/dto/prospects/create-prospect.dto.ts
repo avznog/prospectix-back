@@ -3,7 +3,7 @@ import { Reminder } from 'src/entities/reminders/reminder.entity';
 import { Bookmark } from 'src/entities/bookmarks/bookmark.entity';
 import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
 import { StageType } from 'src/constants/stage.type';
-import { Activity } from 'src/entities/activities/activity.entity';
+import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
 import { City } from 'src/entities/cities/city.entity';
 import { Country } from 'src/entities/countries/country.entity';
 import { Email } from 'src/entities/emails/email.entity';
@@ -11,6 +11,7 @@ import { Event } from 'src/entities/events/event.entity';
 import { Meeting } from 'src/entities/meetings/meeting.entity';
 import { Phone } from 'src/entities/phones/phone.entity';
 import { Website } from 'src/entities/websites/website.entity';
+import { VersionProspectType } from 'src/constants/versions.type';
 
 export class CreateProspectDto {
   @ApiProperty({
@@ -23,7 +24,7 @@ export class CreateProspectDto {
     description: "Domaine d'activité de l'entreprise",
     required: true,
   })
-  activity: Activity;
+  secondaryActivity: SecondaryActivity;
 
   @ApiProperty({
     description: 'Adresse postale',
@@ -113,4 +114,16 @@ export class CreateProspectDto {
     required: false
   })
   reasonDisabled: ReasonDisabledType;
+
+  @ApiProperty({
+    description: "Version du scraping; Différentes sessions de scraping sont organisées (1-> nov 2022; 2-> mai 2023)",
+    required: true
+  })
+  version: VersionProspectType;
+
+  @ApiProperty({
+    description: "Date du scraping du prospect",
+    required: true
+  })
+  dateScraped: Date;
 }

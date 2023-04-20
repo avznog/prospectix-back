@@ -3,8 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateNegativeAnswerDto } from 'src/dto/negative-answers/create-negative-answer.dto';
 import { NegativeAnswer } from 'src/entities/negative-answers/negative-answer.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
-import { Between, MoreThan, Repository } from 'typeorm';
-import { ActivitiesService } from '../activities/activities.service';
+  import { Between, MoreThan, Repository } from 'typeorm';
+import { SecondaryActivitiesService } from '../secondary-activities/secondary-activities.service';
+import { PrimaryActivityService } from '../primary-activity/primary-activity/primary-activity.service';
 
 @Injectable()
 export class NegativeAnswersService {
@@ -13,7 +14,8 @@ export class NegativeAnswersService {
     @InjectRepository(NegativeAnswer)
     private readonly negativeAnswerRepository: Repository<NegativeAnswer>,
     
-    private readonly activitiesService: ActivitiesService
+    private readonly secondaryActivitiesService: SecondaryActivitiesService,
+    private readonly primaryActivitiesService: PrimaryActivityService
   ) {}
 
   async create(createNegativeAnswerDto: CreateNegativeAnswerDto) {
@@ -28,7 +30,8 @@ export class NegativeAnswersService {
   async createForMe(createNegativeAnswerDto: CreateNegativeAnswerDto, user: ProjectManager) : Promise<NegativeAnswer> {
     try {
       createNegativeAnswerDto.pm = user;
-      await this.activitiesService.adjustWeight(createNegativeAnswerDto.prospect.activity.id, createNegativeAnswerDto.prospect.activity.weight, 0)
+      await this.secondaryActivitiesService.adjustWeight(createNegativeAnswerDto.prospect.secondaryActivity.id, 0)
+      await this.primaryActivitiesService.adjustWeight(createNegativeAnswerDto.prospect.secondaryActivity.primaryActivity.id, 0)
       return await this.negativeAnswerRepository.save(this.negativeAnswerRepository.create(createNegativeAnswerDto));
     } catch (error) {
       console.log(error)
