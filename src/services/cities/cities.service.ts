@@ -20,7 +20,9 @@ export class CitiesService {
       const searchParams = await this.searchParamRepository.findOne({where: {id: 1}})
       return await this.cityRepository.find({
         where: {
-          prospects: MoreThan(500),
+          // ? If we want to display only the cities that have at least 500 prospects
+          // ! INCRESES CONSIDERELY THE REQUEST TIME
+          // prospects: MoreThan(500),
           version: searchParams.versionCity
         },
         order: {

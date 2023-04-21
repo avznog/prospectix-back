@@ -29,7 +29,9 @@ export class PrimaryActivityService {
         where: {
           version: searchParams.versionPrimaryActivity,
           secondaryActivities: {
-            prospects: MoreThan(500),
+            // ? If we want to display only the cities that have at least 500 prospects
+            // ! INCRESES CONSIDERELY THE REQUEST TIME
+            // prospects: MoreThan(500),
             version: searchParams.versionSecondaryActivity
           }
         }
