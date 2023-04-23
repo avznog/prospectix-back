@@ -35,6 +35,17 @@ export class ProspectsController {
     console.log("endpoint disabled")
   }
 
+  @Roles(RolesType.ADMIN)
+  @Get("add-prospects-part1")
+  addProspectsv2part1() {
+    // return this.prospectsService.addProspectsv2part1();
+  }
+  @Roles(RolesType.ADMIN)
+  @Get("add-prospects-part2")
+  addProspectsv2part2() {
+    // return this.prospectsService.addProspectsv2part2();
+  }
+
 
   @Roles(RolesType.ADMIN)
   @Get("add-events")

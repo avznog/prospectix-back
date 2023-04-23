@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCityDto } from 'src/dto/cities/create-city.dto';
 import { City } from 'src/entities/cities/city.entity';
 import { SearchParams } from 'src/entities/search-params/search-params.entity';
-import { MoreThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CitiesService {
@@ -37,7 +37,11 @@ export class CitiesService {
 
   async findAllByZipcode(){
     try {
+      const searchParams = await this.searchParamRepository.findOne({where: {id: 1}})
       return await this.cityRepository.find({
+        where: {
+          version: searchParams.versionCity
+        },
         order: {
           name: 'asc'
         }

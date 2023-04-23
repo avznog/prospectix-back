@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import fs from "fs";
 import { EventType } from 'src/constants/event.type';
 import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
 import { StageType } from 'src/constants/stage.type';
+import { VersionProspectType, VersionSecondaryActivityType } from 'src/constants/versions.type';
 import { CreateProspectDto } from 'src/dto/prospects/create-prospect.dto';
 import { ResearchParamsProspectDto } from 'src/dto/prospects/research-params-prospect.dto';
 import { UpdateProspectDto } from 'src/dto/prospects/update-prospect.dto';
@@ -18,6 +18,7 @@ import { SearchParams } from 'src/entities/search-params/search-params.entity';
 import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
 import { Website } from 'src/entities/websites/website.entity';
 import { ILike, Not, Repository, UpdateResult } from 'typeorm';
+const fs = require("fs")
 
 @Injectable()
 export class ProspectsService {
@@ -210,6 +211,167 @@ export class ProspectsService {
         console.log("prospect", added, "/", len)
     }
 
+  }
+
+  async addProspectsv2part1() {
+    try {
+      console.log("started part 1")
+      const d = new Date;
+      // ! FIRST ADD ACTIVITIES
+      // ? 1. ajouter les activités secondaires en base
+      const secondayActivies : SecondaryActivity[] = JSON.parse(fs.readFileSync('./secondary-activities.json'))
+      secondayActivies.forEach(async secondayActivity => {
+        await this.secondaryActivityRepository.save(this.secondaryActivityRepository.create({
+          name: secondayActivity.name,
+          weight: null,
+          weightCount: 0,
+          version: VersionSecondaryActivityType.V2,
+          dateScraped: d,
+          primaryActivity: {
+            id: secondayActivity.primaryActivity.id
+          }
+        }))
+      })
+      console.log("done part1")
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("error while adding prospects", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async addProspectsv2part2() {
+    try {
+ 
+      console.log("started part 2")
+      const d = new Date;
+
+      // ! THEN THIS 
+      // ? 2. getting activities, phones, cities to allow to add them in the base
+      const activities = await this.secondaryActivityRepository.find({relations: ["primaryActivity"], where: {version: VersionSecondaryActivityType.V2}})
+      const phones = await this.phoneRepository.find();
+      const cities = await this.cityRepository.find(); 
+
+
+      // ? 3. getting all the new prospects to insert
+      const prospects : Prospect[] = JSON.parse(fs.readFileSync('./prospects.json'));
+
+      const phonesInDb = new Set<Phone>();
+
+      // ? 3.1 admin account for events
+      const admin = await this.pmRepository.findOne({where: {pseudo: 'admin'}});
+
+      console.log('starting insertion')
+      // ? 4. insertion script
+      prospects.forEach(async prospect => {
+
+        // ? 4.1 assign activity to prospect
+        prospect.secondaryActivity.name && (prospect.secondaryActivity = activities.find(activity => activity.name.toLowerCase() == prospect.secondaryActivity.name.toLowerCase()))
+        
+        // ? 4.2 assign city to prospect
+        prospect.city = cities.find(city => city.name == prospect.city.name)
+
+        // ? 4.3 check if phone alreay is in the database, so we know if we need to edit or add
+        if((prospect.phone.number && !phones.map(phone => phone.number).includes(prospect.phone.number)) && prospect.city && prospect.city.id && prospect.secondaryActivity && prospect.secondaryActivity.id) {
+          try {
+            const p = await this.prospectRepository.save({
+              companyName: prospect.companyName,
+              streetAddress: prospect.streetAddress,
+              comment: '',
+              nbNo: 0,
+              disabled: false,
+              stage: StageType.RESEARCH,
+              archived: null,
+              reasonDisabled: null,
+              version: VersionProspectType.V2,
+              dateScraped: d,
+              secondaryActivity: {
+                id: prospect.secondaryActivity.id,
+                name: prospect.secondaryActivity.name,
+                weight: null,
+                weightCount: 0,
+                dateScraped: d,
+                version: VersionSecondaryActivityType.V2,
+                primaryActivity: {
+                  id: prospect.secondaryActivity.primaryActivity.id,
+                }
+              },
+              isBookmarked: false,
+              city: {
+                id: prospect.city.id,
+              },
+              phone: {
+                number: prospect.phone.number
+              },
+              website: {
+                website: prospect.website.website ?? ''
+              },
+              email: {
+                email: prospect.email.email ?? ''
+              },
+              country: {
+                id: 1,
+                name: "France"
+              }
+            })
+
+            // ? creation of event
+            await this.eventRepository.save(this.eventRepository.create({
+              date: d,
+              description: 'Prospect créé',
+              pm: admin,
+              prospect: p,
+              type: EventType.CREATION
+            }));
+          } catch (error) {
+            console.log(error)
+          }
+
+        // ? 4.3 Phone is in the database, so we need to edit the prospect
+        } else {
+          const currentProspect = prospects.find(p => p.phone.number == prospect.phone.number)
+          prospect.phone.number && phonesInDb.add(currentProspect.phone);
+
+          // ? check if the prospect is still in the search or in the bookmarks
+          if(prospect.city && prospect.phone.number && currentProspect.stage == 0 || currentProspect.stage == 1 && prospect.secondaryActivity && prospect.secondaryActivity.name && prospect.secondaryActivity.id) {
+            try {
+              
+            const p = await this.prospectRepository.save({
+              ...currentProspect,
+              companyName: prospect.companyName,
+              streetAddress: prospect.streetAddress,
+              disabled: false,
+              archived: null,
+              reasonDisabled: null,
+              version: VersionProspectType.V2,
+              secondaryActivity: prospect.secondaryActivity ?? currentProspect.secondaryActivity,
+              website: {
+                website: prospect.website.website ?? currentProspect.website.website
+              },
+              country: {
+                id: 1,
+                name: "France"
+              }
+            })
+
+            await this.eventRepository.save(this.eventRepository.create({
+              date: d,
+              description: 'Prospect mis à jour',
+              pm: admin,
+              prospect: p,
+              type: EventType.UPDATE_PROSPECT
+            }))
+            } catch (error) {
+              console.log(error)
+            }
+          }
+
+        }
+      })
+      console.log('done part 2')
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Error while adding prospects", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async addEvents() {
