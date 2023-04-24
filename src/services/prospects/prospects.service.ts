@@ -214,6 +214,7 @@ export class ProspectsService {
   }
 
   async addProspectsv2part1() {
+    // ! AJOUTER LES DOMAINES D'ACTIVITÉ
     try {
       console.log("started part 1")
       const d = new Date;
@@ -242,6 +243,7 @@ export class ProspectsService {
   async addProspectsv2part2() {
     try {
  
+      // !AJOUTER LES PROSPECTS
       console.log("started part 2")
       const d = new Date;
 
@@ -250,7 +252,6 @@ export class ProspectsService {
       const activities = await this.secondaryActivityRepository.find({relations: ["primaryActivity"], where: {version: VersionSecondaryActivityType.V2}})
       const phones = await this.phoneRepository.find();
       const cities = await this.cityRepository.find(); 
-
 
       // ? 3. getting all the new prospects to insert
       const prospects : Prospect[] = JSON.parse(fs.readFileSync('./prospects.json'));
@@ -264,14 +265,13 @@ export class ProspectsService {
       // ? 4. insertion script
       prospects.forEach(async prospect => {
 
+        // ? 4.2 assign city to prospect
+        const c = cities.find(c => c.zipcode === prospect.city.zipcode);
         // ? 4.1 assign activity to prospect
         prospect.secondaryActivity.name && (prospect.secondaryActivity = activities.find(activity => activity.name.toLowerCase() == prospect.secondaryActivity.name.toLowerCase()))
         
-        // ? 4.2 assign city to prospect
-        prospect.city = cities.find(city => city.name == prospect.city.name)
-
         // ? 4.3 check if phone alreay is in the database, so we know if we need to edit or add
-        if((prospect.phone.number && !phones.map(phone => phone.number).includes(prospect.phone.number)) && prospect.city && prospect.city.id && prospect.secondaryActivity && prospect.secondaryActivity.id) {
+        if((prospect.phone.number && !phones.map(phone => phone.number).includes(prospect.phone.number)) && prospect.city && prospect.city.id && prospect.secondaryActivity && prospect.secondaryActivity.id && c) {
           try {
             const p = await this.prospectRepository.save({
               companyName: prospect.companyName,
@@ -296,9 +296,7 @@ export class ProspectsService {
                 }
               },
               isBookmarked: false,
-              city: {
-                id: prospect.city.id,
-              },
+              city: c,
               phone: {
                 number: prospect.phone.number
               },
@@ -332,7 +330,7 @@ export class ProspectsService {
           prospect.phone.number && phonesInDb.add(currentProspect.phone);
 
           // ? check if the prospect is still in the search or in the bookmarks
-          if(prospect.city && prospect.phone.number && currentProspect.stage == 0 || currentProspect.stage == 1 && prospect.secondaryActivity && prospect.secondaryActivity.name && prospect.secondaryActivity.id) {
+          if(prospect.city && prospect.phone.number && currentProspect.stage == 0 || currentProspect.stage == 1 && prospect.secondaryActivity && prospect.secondaryActivity.name && prospect.secondaryActivity.id && c) {
             try {
               
             const p = await this.prospectRepository.save({
@@ -347,6 +345,7 @@ export class ProspectsService {
               website: {
                 website: prospect.website.website ?? currentProspect.website.website
               },
+              city: c,
               country: {
                 id: 1,
                 name: "France"
@@ -549,7 +548,22 @@ export class ProspectsService {
                 version: researchParamsProspectDto.searchParams.versionPrimaryActivity
               }
             }
-          }
+          },
+            Number(researchParamsProspectDto.keyword) && {
+              stage: StageType.RESEARCH,
+              disabled: false,
+              version: researchParamsProspectDto.searchParams.versionProspect,
+              city: {
+                version: researchParamsProspectDto.searchParams.versionCity,
+                zipcode: Number(researchParamsProspectDto.keyword)
+              },
+              secondaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+                primaryActivity: {
+                  version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+                }
+              }
+            }
 
         // ? ONLY cityName
         ] || 
@@ -635,11 +649,7 @@ export class ProspectsService {
         where: whereParameters,
         take: researchParamsProspectDto.take,
         skip: researchParamsProspectDto.skip,
-        order: {
-          phone: {
-            number: "desc"
-          }
-        }
+        cache: true
       });
 
       return {
