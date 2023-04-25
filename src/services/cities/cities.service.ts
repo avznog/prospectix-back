@@ -18,7 +18,7 @@ export class CitiesService {
   async findAll(){
     try {
       const searchParams = await this.searchParamRepository.findOne({where: {id: 1}})
-      return await this.cityRepository.find({
+      const cities = await this.cityRepository.find({
         where: {
           // ? If we want to display only the cities that have at least 500 prospects
           // ! INCRESES CONSIDERELY THE REQUEST TIME
@@ -28,7 +28,8 @@ export class CitiesService {
         order: {
           name: 'asc'
         }
-      })
+      });
+      return cities.filter((city, index, array) => array.findIndex((c) => c.name === city.name) === index);
     } catch (error) {
       console.log(error)
       throw new HttpException("Error while counting the cities", HttpStatus.INTERNAL_SERVER_ERROR)
