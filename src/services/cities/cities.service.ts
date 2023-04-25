@@ -44,7 +44,7 @@ export class CitiesService {
           version: searchParams.versionCity
         },
         order: {
-          name: 'asc'
+          origin: 'asc'
         }
       })
     } catch (error) {
