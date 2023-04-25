@@ -20,7 +20,7 @@ export class City extends BaseEntity {
 
   @Column() 
   @ApiProperty({
-    description: "Nom de la ville",
+    description: "Nom de la région à laquelle appartient la ville",
     required: true
   })
   name: string;
@@ -31,6 +31,12 @@ export class City extends BaseEntity {
     required: true
   })
   zipcode: number;
+
+  @Column({nullable: true})
+  @ApiProperty({
+    description: "Ville originale, correspond au zipcode"
+  })
+  origin: string;
 
   @OneToMany(() => Prospect, (prospect) => prospect.city)
   @ApiProperty({
