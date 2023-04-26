@@ -55,323 +55,323 @@ export class ProspectsService {
 
   ) { }
 
-  async createFromScrapper() {
+  // async createFromScrapper() {
 
-    // create admin account
-    await this.pmRepository.save(this.pmRepository.create({
-      pseudo: "admin",
-      admin: true,
-      name: "admin",
-      firstname: "admin",
-      mail: "admin@juniorisep.com",
-      tokenGoogle: "",
-      disabled: false,
-      statsEnabled: false
-    }));
+  //   // create admin account
+  //   await this.pmRepository.save(this.pmRepository.create({
+  //     pseudo: "admin",
+  //     admin: true,
+  //     name: "admin",
+  //     firstname: "admin",
+  //     mail: "admin@juniorisep.com",
+  //     tokenGoogle: "",
+  //     disabled: false,
+  //     statsEnabled: false
+  //   }));
 
-    // Creating France country
-    await this.countryRepository.save(this.countryRepository.create({
-      name: "France"
-    }));
+  //   // Creating France country
+  //   await this.countryRepository.save(this.countryRepository.create({
+  //     name: "France"
+  //   }));
 
-    let cities = new Map<number, string>();
-    let activitiesFiltered = new Set<string>();
+  //   let cities = new Map<number, string>();
+  //   let activitiesFiltered = new Set<string>();
 
-    // Creating the cities and activities arrays
+  //   // Creating the cities and activities arrays
 
-    console.log("json decode")
-    console.time("json decode")
+  //   console.log("json decode")
+  //   console.time("json decode")
 
-    let prospectsScrapped = JSON.parse(fs.readFileSync("allprospects.json").toString())
+  //   let prospectsScrapped = JSON.parse(fs.readFileSync("allprospects.json").toString())
 
-    console.timeEnd("json decode")
+  //   console.timeEnd("json decode")
 
-    console.log("Filtering prospects")
-    console.time("filter")
-    const alreadyPhone = []
-    prospectsScrapped = (prospectsScrapped as any[]).filter(prospect => {
-      if (prospect.secondaryActivity.name.trim().length == 0 || alreadyPhone.includes(prospect.phone.number))
-        return false
+  //   console.log("Filtering prospects")
+  //   console.time("filter")
+  //   const alreadyPhone = []
+  //   prospectsScrapped = (prospectsScrapped as any[]).filter(prospect => {
+  //     if (prospect.secondaryActivity.name.trim().length == 0 || alreadyPhone.includes(prospect.phone.number))
+  //       return false
 
-      if (isNaN(+prospect.city.zipcode))
-        return false
+  //     if (isNaN(+prospect.city.zipcode))
+  //       return false
 
-      alreadyPhone.push(prospect.phone.number)
-      return true
-    })
-    console.timeEnd("filter")
+  //     alreadyPhone.push(prospect.phone.number)
+  //     return true
+  //   })
+  //   console.timeEnd("filter")
 
-    for (let prospect of prospectsScrapped) {
-      // adding filtered cities to map
-      if (!cities.has(+prospect.city.zipcode))
-        cities.set(+prospect.city.zipcode, prospect.city.name[0].toUpperCase() + prospect.city.name.toLowerCase().slice(1))
+  //   for (let prospect of prospectsScrapped) {
+  //     // adding filtered cities to map
+  //     if (!cities.has(+prospect.city.zipcode))
+  //       cities.set(+prospect.city.zipcode, prospect.city.name[0].toUpperCase() + prospect.city.name.toLowerCase().slice(1))
 
-      // adding activities to array
-      if (prospect.secondaryActivity.name.trim().length)
-        activitiesFiltered.add(prospect.secondaryActivity.name)
-    }
-    console.log("Chargement des villes et acti finies")
+  //     // adding activities to array
+  //     if (prospect.secondaryActivity.name.trim().length)
+  //       activitiesFiltered.add(prospect.secondaryActivity.name)
+  //   }
+  //   console.log("Chargement des villes et acti finies")
 
-    // Adding cities to DB
-    let added = 0
-    const len = cities.size
-    for (let city of cities) {
-      added++
-      if (added % 50 == 0)
-        console.log("cities", added, "/", len)
+  //   // Adding cities to DB
+  //   let added = 0
+  //   const len = cities.size
+  //   for (let city of cities) {
+  //     added++
+  //     if (added % 50 == 0)
+  //       console.log("cities", added, "/", len)
 
-      await this.cityRepository.save(this.cityRepository.create({
-        name: city[1],
-        zipcode: +city[0]
-      }));
-    }
-    console.log("Sauvegarde des villes finies")
+  //     await this.cityRepository.save(this.cityRepository.create({
+  //       name: city[1],
+  //       zipcode: +city[0]
+  //     }));
+  //   }
+  //   console.log("Sauvegarde des villes finies")
 
-    added = 0
-    // Adding activities to db
-    activitiesFiltered.forEach(activity => {
-      added++
-      if (added % 50 == 0)
-        console.log("acti", added, "/", len)
-      this.secondaryActivityRepository.save(this.secondaryActivityRepository.create({
-        name: activity
-      }))
-    })
+  //   added = 0
+  //   // Adding activities to db
+  //   activitiesFiltered.forEach(activity => {
+  //     added++
+  //     if (added % 50 == 0)
+  //       console.log("acti", added, "/", len)
+  //     this.secondaryActivityRepository.save(this.secondaryActivityRepository.create({
+  //       name: activity
+  //     }))
+  //   })
 
-    const activitiesCache: { [key: string]: SecondaryActivity } = {}
-    const cityCache: { [key: string]: City } = {}
-    const countryCache: { [key: string]: Country } = {}
+  //   const activitiesCache: { [key: string]: SecondaryActivity } = {}
+  //   const cityCache: { [key: string]: City } = {}
+  //   const countryCache: { [key: string]: Country } = {}
 
-    added = 0
-    for (let prospect of prospectsScrapped) {
-      // prospect basis
-      const newProspect = {
-        companyName: prospect.companyName,
-        streetAddress: prospect.streetAddress,
-        isBookmarked: false,
-        comment: "",
-        nbNo: 0,
-        disabled: false,
-        stage: StageType.RESEARCH,
-        phone: {
-          number: prospect.phone.number
-        },
-        website: {
-          website: prospect.website ? prospect.website.website : ""
-        },
-        email: {
-          email: ""
-        },
-        city: {
-          name: "",
-          zipcode: 0
-        },
-        secondaryActivity: {
-          name: ""
-        },
-        country: {
-          id: 1,
-          name: "France"
-        }
-      }
+  //   added = 0
+  //   for (let prospect of prospectsScrapped) {
+  //     // prospect basis
+  //     const newProspect = {
+  //       companyName: prospect.companyName,
+  //       streetAddress: prospect.streetAddress,
+  //       isBookmarked: false,
+  //       comment: "",
+  //       nbNo: 0,
+  //       disabled: false,
+  //       stage: StageType.RESEARCH,
+  //       phone: {
+  //         number: prospect.phone.number
+  //       },
+  //       website: {
+  //         website: prospect.website ? prospect.website.website : ""
+  //       },
+  //       email: {
+  //         email: ""
+  //       },
+  //       city: {
+  //         name: "",
+  //         zipcode: 0
+  //       },
+  //       secondaryActivity: {
+  //         name: ""
+  //       },
+  //       country: {
+  //         id: 1,
+  //         name: "France"
+  //       }
+  //     }
 
-      // get city
-      const city = cityCache[prospect.city.zipcode] ?? (cityCache[prospect.city.zipcode] = await this.cityRepository.findOne({
-        where: {
-          name: prospect.city.name[0].toUpperCase() + prospect.city.name.toLowerCase().slice(1),
-          zipcode: +prospect.city.zipcode
-        }
-      }))
+  //     // get city
+  //     const city = cityCache[prospect.city.zipcode] ?? (cityCache[prospect.city.zipcode] = await this.cityRepository.findOne({
+  //       where: {
+  //         name: prospect.city.name[0].toUpperCase() + prospect.city.name.toLowerCase().slice(1),
+  //         zipcode: +prospect.city.zipcode
+  //       }
+  //     }))
 
-      newProspect.city = city;
+  //     newProspect.city = city;
 
-      // get activity
-      const activity = activitiesCache[prospect.secondaryActivity.name] ?? (activitiesCache[prospect.secondaryActivity.name] = await this.secondaryActivityRepository.findOne({
-        where: {
-          name: prospect.secondaryActivity.name
-        }
-      }))
+  //     // get activity
+  //     const activity = activitiesCache[prospect.secondaryActivity.name] ?? (activitiesCache[prospect.secondaryActivity.name] = await this.secondaryActivityRepository.findOne({
+  //       where: {
+  //         name: prospect.secondaryActivity.name
+  //       }
+  //     }))
 
-      newProspect.secondaryActivity = activity;
+  //     newProspect.secondaryActivity = activity;
 
-      // get country // ! default France
-      const country = countryCache["France"] ?? (countryCache["France"] = await this.countryRepository.findOne({
-        where: {
-          name: "France"
-        }
-      }))
+  //     // get country // ! default France
+  //     const country = countryCache["France"] ?? (countryCache["France"] = await this.countryRepository.findOne({
+  //       where: {
+  //         name: "France"
+  //       }
+  //     }))
 
-      newProspect.country = country;
+  //     newProspect.country = country;
 
-      // save in db
-      this.prospectRepository.save(this.prospectRepository.create(newProspect))
+  //     // save in db
+  //     this.prospectRepository.save(this.prospectRepository.create(newProspect))
 
-      added++
-      if (added % 50 == 0)
-        console.log("prospect", added, "/", len)
-    }
+  //     added++
+  //     if (added % 50 == 0)
+  //       console.log("prospect", added, "/", len)
+  //   }
 
-  }
+  // }
 
-  async addProspectsv2part1() {
-    // ! AJOUTER LES DOMAINES D'ACTIVITÉ
-    try {
-      console.log("started part 1")
-      const d = new Date;
-      // ! FIRST ADD ACTIVITIES
-      // ? 1. ajouter les activités secondaires en base
-      const secondayActivies: SecondaryActivity[] = JSON.parse(fs.readFileSync('./secondary-activities.json'))
-      secondayActivies.forEach(async secondayActivity => {
-        await this.secondaryActivityRepository.save(this.secondaryActivityRepository.create({
-          name: secondayActivity.name,
-          weight: null,
-          weightCount: 0,
-          version: VersionSecondaryActivityType.V2,
-          dateScraped: d,
-          primaryActivity: {
-            id: secondayActivity.primaryActivity.id
-          }
-        }))
-      })
-      console.log("done part1")
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("error while adding prospects", HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-  }
+  // async addProspectsv2part1() {
+  //   // ! AJOUTER LES DOMAINES D'ACTIVITÉ
+  //   try {
+  //     console.log("started part 1")
+  //     const d = new Date;
+  //     // ! FIRST ADD ACTIVITIES
+  //     // ? 1. ajouter les activités secondaires en base
+  //     const secondayActivies: SecondaryActivity[] = JSON.parse(fs.readFileSync('./secondary-activities.json'))
+  //     secondayActivies.forEach(async secondayActivity => {
+  //       await this.secondaryActivityRepository.save(this.secondaryActivityRepository.create({
+  //         name: secondayActivity.name,
+  //         weight: null,
+  //         weightCount: 0,
+  //         version: VersionSecondaryActivityType.V2,
+  //         dateScraped: d,
+  //         primaryActivity: {
+  //           id: secondayActivity.primaryActivity.id
+  //         }
+  //       }))
+  //     })
+  //     console.log("done part1")
+  //   } catch (error) {
+  //     console.log(error)
+  //     throw new HttpException("error while adding prospects", HttpStatus.INTERNAL_SERVER_ERROR)
+  //   }
+  // }
 
-  async addProspectsv2part2() {
-    try {
+  // async addProspectsv2part2() {
+  //   try {
 
-      // !AJOUTER LES PROSPECTS
-      console.log("started part 2")
-      const d = new Date;
+  //     // !AJOUTER LES PROSPECTS
+  //     console.log("started part 2")
+  //     const d = new Date;
 
-      // ! THEN THIS 
-      // ? 2. getting activities, phones, cities to allow to add them in the base
-      const activities = await this.secondaryActivityRepository.find({ relations: ["primaryActivity"], where: { version: VersionSecondaryActivityType.V2 } })
-      const phones = await this.phoneRepository.find();
-      const cities = await this.cityRepository.find();
+  //     // ! THEN THIS 
+  //     // ? 2. getting activities, phones, cities to allow to add them in the base
+  //     const activities = await this.secondaryActivityRepository.find({ relations: ["primaryActivity"], where: { version: VersionSecondaryActivityType.V2 } })
+  //     const phones = await this.phoneRepository.find();
+  //     const cities = await this.cityRepository.find();
 
-      // ? 3. getting all the new prospects to insert
-      const prospects: Prospect[] = JSON.parse(fs.readFileSync('./prospects.json'));
+  //     // ? 3. getting all the new prospects to insert
+  //     const prospects: Prospect[] = JSON.parse(fs.readFileSync('./prospects.json'));
 
-      const phonesInDb = new Set<Phone>();
+  //     const phonesInDb = new Set<Phone>();
 
-      // ? 3.1 admin account for events
-      const admin = await this.pmRepository.findOne({ where: { pseudo: 'admin' } });
+  //     // ? 3.1 admin account for events
+  //     const admin = await this.pmRepository.findOne({ where: { pseudo: 'admin' } });
 
-      console.log('starting insertion')
-      // ? 4. insertion script
-      prospects.forEach(async prospect => {
+  //     console.log('starting insertion')
+  //     // ? 4. insertion script
+  //     prospects.forEach(async prospect => {
 
-        // ? 4.2 assign city to prospect
-        const c = cities.find(c => c.zipcode === prospect.city.zipcode);
-        // ? 4.1 assign activity to prospect
-        prospect.secondaryActivity.name && (prospect.secondaryActivity = activities.find(activity => activity.name.toLowerCase() == prospect.secondaryActivity.name.toLowerCase()))
+  //       // ? 4.2 assign city to prospect
+  //       const c = cities.find(c => c.zipcode === prospect.city.zipcode);
+  //       // ? 4.1 assign activity to prospect
+  //       prospect.secondaryActivity.name && (prospect.secondaryActivity = activities.find(activity => activity.name.toLowerCase() == prospect.secondaryActivity.name.toLowerCase()))
 
-        // ? 4.3 check if phone alreay is in the database, so we know if we need to edit or add
-        if ((prospect.phone.number && !phones.map(phone => phone.number).includes(prospect.phone.number)) && prospect.city && prospect.city.id && prospect.secondaryActivity && prospect.secondaryActivity.id && c) {
-          try {
-            const p = await this.prospectRepository.save({
-              companyName: prospect.companyName,
-              streetAddress: prospect.streetAddress,
-              comment: '',
-              nbNo: 0,
-              disabled: false,
-              stage: StageType.RESEARCH,
-              archived: null,
-              reasonDisabled: null,
-              version: VersionProspectType.V2,
-              dateScraped: d,
-              secondaryActivity: {
-                id: prospect.secondaryActivity.id,
-                name: prospect.secondaryActivity.name,
-                weight: null,
-                weightCount: 0,
-                dateScraped: d,
-                version: VersionSecondaryActivityType.V2,
-                primaryActivity: {
-                  id: prospect.secondaryActivity.primaryActivity.id,
-                }
-              },
-              isBookmarked: false,
-              city: c,
-              phone: {
-                number: prospect.phone.number
-              },
-              website: {
-                website: prospect.website.website ?? ''
-              },
-              email: {
-                email: prospect.email.email ?? ''
-              },
-              country: {
-                id: 1,
-                name: "France"
-              }
-            })
+  //       // ? 4.3 check if phone alreay is in the database, so we know if we need to edit or add
+  //       if ((prospect.phone.number && !phones.map(phone => phone.number).includes(prospect.phone.number)) && prospect.city && prospect.city.id && prospect.secondaryActivity && prospect.secondaryActivity.id && c) {
+  //         try {
+  //           const p = await this.prospectRepository.save({
+  //             companyName: prospect.companyName,
+  //             streetAddress: prospect.streetAddress,
+  //             comment: '',
+  //             nbNo: 0,
+  //             disabled: false,
+  //             stage: StageType.RESEARCH,
+  //             archived: null,
+  //             reasonDisabled: null,
+  //             version: VersionProspectType.V2,
+  //             dateScraped: d,
+  //             secondaryActivity: {
+  //               id: prospect.secondaryActivity.id,
+  //               name: prospect.secondaryActivity.name,
+  //               weight: null,
+  //               weightCount: 0,
+  //               dateScraped: d,
+  //               version: VersionSecondaryActivityType.V2,
+  //               primaryActivity: {
+  //                 id: prospect.secondaryActivity.primaryActivity.id,
+  //               }
+  //             },
+  //             isBookmarked: false,
+  //             city: c,
+  //             phone: {
+  //               number: prospect.phone.number
+  //             },
+  //             website: {
+  //               website: prospect.website.website ?? ''
+  //             },
+  //             email: {
+  //               email: prospect.email.email ?? ''
+  //             },
+  //             country: {
+  //               id: 1,
+  //               name: "France"
+  //             }
+  //           })
 
-            // ? creation of event
-            await this.eventRepository.save(this.eventRepository.create({
-              date: d,
-              description: 'Prospect créé',
-              pm: admin,
-              prospect: p,
-              type: EventType.CREATION
-            }));
-          } catch (error) {
-            console.log(error)
-          }
+  //           // ? creation of event
+  //           await this.eventRepository.save(this.eventRepository.create({
+  //             date: d,
+  //             description: 'Prospect créé',
+  //             pm: admin,
+  //             prospect: p,
+  //             type: EventType.CREATION
+  //           }));
+  //         } catch (error) {
+  //           console.log(error)
+  //         }
 
-          // ? 4.3 Phone is in the database, so we need to edit the prospect
-        } else {
-          const currentProspect = prospects.find(p => p.phone.number == prospect.phone.number)
-          prospect.phone.number && phonesInDb.add(currentProspect.phone);
+  //         // ? 4.3 Phone is in the database, so we need to edit the prospect
+  //       } else {
+  //         const currentProspect = prospects.find(p => p.phone.number == prospect.phone.number)
+  //         prospect.phone.number && phonesInDb.add(currentProspect.phone);
 
-          // ? check if the prospect is still in the search or in the bookmarks
-          if (prospect.city && prospect.phone.number && currentProspect.stage == 0 || currentProspect.stage == 1 && prospect.secondaryActivity && prospect.secondaryActivity.name && prospect.secondaryActivity.id && c) {
-            try {
+  //         // ? check if the prospect is still in the search or in the bookmarks
+  //         if (prospect.city && prospect.phone.number && currentProspect.stage == 0 || currentProspect.stage == 1 && prospect.secondaryActivity && prospect.secondaryActivity.name && prospect.secondaryActivity.id && c) {
+  //           try {
 
-              const p = await this.prospectRepository.save({
-                ...currentProspect,
-                companyName: prospect.companyName,
-                streetAddress: prospect.streetAddress,
-                disabled: false,
-                archived: null,
-                reasonDisabled: null,
-                version: VersionProspectType.V2,
-                secondaryActivity: prospect.secondaryActivity ?? currentProspect.secondaryActivity,
-                website: {
-                  website: prospect.website.website ?? currentProspect.website.website
-                },
-                city: c,
-                country: {
-                  id: 1,
-                  name: "France"
-                }
-              })
+  //             const p = await this.prospectRepository.save({
+  //               ...currentProspect,
+  //               companyName: prospect.companyName,
+  //               streetAddress: prospect.streetAddress,
+  //               disabled: false,
+  //               archived: null,
+  //               reasonDisabled: null,
+  //               version: VersionProspectType.V2,
+  //               secondaryActivity: prospect.secondaryActivity ?? currentProspect.secondaryActivity,
+  //               website: {
+  //                 website: prospect.website.website ?? currentProspect.website.website
+  //               },
+  //               city: c,
+  //               country: {
+  //                 id: 1,
+  //                 name: "France"
+  //               }
+  //             })
 
-              await this.eventRepository.save(this.eventRepository.create({
-                date: d,
-                description: 'Prospect mis à jour',
-                pm: admin,
-                prospect: p,
-                type: EventType.UPDATE_PROSPECT
-              }))
-            } catch (error) {
-              console.log(error)
-            }
-          }
+  //             await this.eventRepository.save(this.eventRepository.create({
+  //               date: d,
+  //               description: 'Prospect mis à jour',
+  //               pm: admin,
+  //               prospect: p,
+  //               type: EventType.UPDATE_PROSPECT
+  //             }))
+  //           } catch (error) {
+  //             console.log(error)
+  //           }
+  //         }
 
-        }
-      })
-      console.log('done part 2')
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Error while adding prospects", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
+  //       }
+  //     })
+  //     console.log('done part 2')
+  //   } catch (error) {
+  //     console.log(error)
+  //     throw new HttpException("Error while adding prospects", HttpStatus.INTERNAL_SERVER_ERROR);
+  //   }
+  // }
 
   async addEvents() {
     // Adding first event for prospects
@@ -512,17 +512,53 @@ export class ProspectsService {
   async findAllPaginated(researchParamsProspectDto: ResearchParamsProspectDto): Promise<{ prospects: Prospect[], count: number }> {
     try {
       console.time()
-      researchParamsProspectDto.searchParams = await this.searchParamRepository.findOne({ where: { id: 1 } });
-      // researchParamsProspectDto.searchParams = {id: 1, versionCity: VersionCityType.V2, versionProspect: VersionProspectType.V2, versionPrimaryActivity: VersionPrimaryActivityType.V2, versionSecondaryActivity: VersionSecondaryActivityType.V2};
+      // researchParamsProspectDto.searchParams = await this.searchParamRepository.findOne({ where: { id: 1 } });
+      researchParamsProspectDto.searchParams  = {id: 1, versionCity: VersionCityType.V2, versionProspect: VersionProspectType.V2, versionPrimaryActivity: VersionPrimaryActivityType.V2, versionSecondaryActivity: VersionSecondaryActivityType.V2};
+      const whereParameters = 
 
-        // ? ONLY KEYWORD
-        const q =    {
+      // ? ONLY KEYWORD
+      researchParamsProspectDto.keyword && !researchParamsProspectDto.city && !researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && [
+        
+
+        {
+          companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
+          stage: StageType.RESEARCH,
+          disabled: false,
+          version: researchParamsProspectDto.searchParams.versionProspect,
+          city: {
+            version: researchParamsProspectDto.searchParams.versionCity
+          },
+          secondaryActivity: {
+            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+            primaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+            }
+          }
+        },
+        {
+          phone: {
+            number: ILike(`%${researchParamsProspectDto.keyword}%`)
+          },
+          stage: StageType.RESEARCH,
+          disabled: false,
+          version: researchParamsProspectDto.searchParams.versionProspect,
+          city: {
+            version: researchParamsProspectDto.searchParams.versionCity
+          },
+          secondaryActivity: {
+            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+            primaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+            }
+          }
+        },
+          Number(researchParamsProspectDto.keyword) && {
             stage: StageType.RESEARCH,
             disabled: false,
             version: researchParamsProspectDto.searchParams.versionProspect,
             city: {
               version: researchParamsProspectDto.searchParams.versionCity,
-              id: researchParamsProspectDto.city
+              zipcode: Number(researchParamsProspectDto.keyword)
             },
             secondaryActivity: {
               version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
@@ -530,21 +566,241 @@ export class ProspectsService {
                 version: researchParamsProspectDto.searchParams.versionPrimaryActivity
               }
             }
-          };
+          }
+
+      // ? ONLY city
+      ] || 
+      researchParamsProspectDto.city && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.primaryActivity && [
+        {
+          city: {
+            id: researchParamsProspectDto.city,
+            version: researchParamsProspectDto.searchParams.versionCity
+          },
+          stage: StageType.RESEARCH,
+          disabled: false,
+          version: researchParamsProspectDto.searchParams.versionProspect,
+          secondaryActivity: {
+            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+            primaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+            }
+          }
+        },
+      ] ||
+
+      // ? ONLY PRIMARY ACTIVITY
+      researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.city && [
+        {
+          secondaryActivity: Not(null) && {
+            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+            primaryActivity: {
+              id: researchParamsProspectDto.primaryActivity,
+              version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+            }
+          },
+          city: {
+            version: researchParamsProspectDto.searchParams.versionCity
+          },
+          stage: StageType.RESEARCH,
+          disabled: false,
+          version: researchParamsProspectDto.searchParams.versionProspect
+        }
+      ] ||
+
+      // ? SECONDARY ACTIVITY
+      researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.city && researchParamsProspectDto.primaryActivity &&
+      {
+        secondaryActivity: {
+          id: researchParamsProspectDto.secondaryActivity,
+          version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+          primaryActivity: {
+            id: researchParamsProspectDto.primaryActivity,
+            version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+          }
+        },
+        stage: StageType.RESEARCH,
+        disabled: false,
+        version: researchParamsProspectDto.searchParams.versionProspect,
+        city: {
+          version: researchParamsProspectDto.searchParams.versionCity
+        }
+
+        // ? CITY AND PRIMARY ACTIVITY
+      } || researchParamsProspectDto.city && researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && [
+        {
+          stage: StageType.RESEARCH,
+          disabled: false,
+          version: researchParamsProspectDto.searchParams.versionProspect,
+          city: {
+            version: researchParamsProspectDto.searchParams.versionCity,
+            id: researchParamsProspectDto.city
+          },
+          secondaryActivity: {
+            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+            primaryActivity: {
+              id: researchParamsProspectDto.primaryActivity,
+              version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+            }
+          }
+        }
+        // ? CITY AND KEYWORD
+      ] || researchParamsProspectDto.keyword && researchParamsProspectDto.city && !researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && [
+        {
+          companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
+          stage: StageType.RESEARCH,
+          disabled: false,
+          version: researchParamsProspectDto.searchParams.versionProspect,
+          city: {
+            version: researchParamsProspectDto.searchParams.versionCity,
+            id: researchParamsProspectDto.city
+          },
+          secondaryActivity: {
+            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+            primaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+            }
+          }
+        },
+        {
+          phone: {
+            number: ILike(`%${researchParamsProspectDto.keyword}%`)
+          },
+          stage: StageType.RESEARCH,
+          disabled: false,
+          version: researchParamsProspectDto.searchParams.versionProspect,
+          city: {
+            version: researchParamsProspectDto.searchParams.versionCity,
+            id: researchParamsProspectDto.city
+          },
+          secondaryActivity: {
+            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+            primaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+            }
+          }
+        },
+        Number(researchParamsProspectDto.keyword) && {
+          stage: StageType.RESEARCH,
+          disabled: false,
+          version: researchParamsProspectDto.searchParams.versionProspect,
+          city: {
+            version: researchParamsProspectDto.searchParams.versionCity,
+            zipcode: Number(researchParamsProspectDto.keyword),
+            id: researchParamsProspectDto.city
+          },
+          secondaryActivity: {
+            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+            primaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+            }
+          }
+        }
+        
+        // ? CITY AND PRIMARY ACTIVITY AND SECONDARY ACTIVITY 
+      ] || researchParamsProspectDto.city && researchParamsProspectDto.primaryActivity && researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && [
+        {
+          stage: StageType.RESEARCH,
+          disabled: false,
+          version: researchParamsProspectDto.searchParams.versionProspect,
+          city: {
+            version: researchParamsProspectDto.searchParams.versionCity,
+            id: researchParamsProspectDto.city
+          },
+          secondaryActivity: {
+            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+            id: researchParamsProspectDto.secondaryActivity,
+            primaryActivity: {
+              id: researchParamsProspectDto.primaryActivity,
+              version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+            }
+          }
+        }
+      // ? CITY, KEYWORD, PRIMARY ACTIVITY & SECONDARY ACTIVITY (ALL FILTERS)
+      ] || researchParamsProspectDto.city && researchParamsProspectDto.keyword && researchParamsProspectDto.primaryActivity && researchParamsProspectDto.secondaryActivity && [
+        {
+          companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
+          stage: StageType.RESEARCH,
+          disabled: false,
+          version: researchParamsProspectDto.searchParams.versionProspect,
+          city: {
+            version: researchParamsProspectDto.searchParams.versionCity,
+            id: researchParamsProspectDto.city
+          },
+          secondaryActivity: {
+            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+            id: researchParamsProspectDto.secondaryActivity,
+            primaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
+              id: researchParamsProspectDto.primaryActivity
+            }
+          }
+        },
+        {
+          phone: {
+            number: ILike(`%${researchParamsProspectDto.keyword}%`)
+          },
+          stage: StageType.RESEARCH,
+          disabled: false,
+          version: researchParamsProspectDto.searchParams.versionProspect,
+          city: {
+            version: researchParamsProspectDto.searchParams.versionCity,
+            id: researchParamsProspectDto.city
+          },
+          secondaryActivity: {
+            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+            id: researchParamsProspectDto.secondaryActivity,
+            primaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
+              id: researchParamsProspectDto.primaryActivity
+            }
+          }
+        },
+        Number(researchParamsProspectDto.keyword) && {
+          stage: StageType.RESEARCH,
+          disabled: false,
+          version: researchParamsProspectDto.searchParams.versionProspect,
+          city: {
+            version: researchParamsProspectDto.searchParams.versionCity,
+            zipcode: Number(researchParamsProspectDto.keyword),
+            id: researchParamsProspectDto.city
+          },
+          secondaryActivity: {
+            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+            id: researchParamsProspectDto.secondaryActivity,
+            primaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
+              id: researchParamsProspectDto.primaryActivity
+            }
+          }
+        }
+        // ? EVERYTHING (NO FILTER) 
+      ] || !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.city && !researchParamsProspectDto.primaryActivity && [
+        {
+          stage: StageType.RESEARCH,
+          disabled: false,
+          version: researchParamsProspectDto.searchParams.versionProspect,
+          city: {
+            version: researchParamsProspectDto.searchParams.versionCity
+          },
+          secondaryActivity: {
+            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+            primaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+            }
+          }
+        }
+      ];
 
       // ! find prospects
-      const prospects = await this.prospectRepository.findAndCount({
+      const prospects = await this.prospectRepository.find({
         relations: ["secondaryActivity", "secondaryActivity.primaryActivity", "city", "country", "events", "meetings", "phone", "reminders", "website", "email", "bookmarks", "bookmarks.pm"],
-        where: q,
-        take: researchParamsProspectDto.take,
+        take: 20,
         skip: researchParamsProspectDto.skip,
-
-      });
-
-      console.timeEnd()
+        where: whereParameters
+      })
       return {
-        prospects: prospects[0],
-        count: prospects[1]
+        prospects: prospects,
+        count: 0
       }
     } catch (error) {
       console.log(error)
