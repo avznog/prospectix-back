@@ -551,22 +551,7 @@ export class ProspectsService {
               version: researchParamsProspectDto.searchParams.versionPrimaryActivity
             }
           }
-        },
-          Number(researchParamsProspectDto.keyword) && {
-            stage: StageType.RESEARCH,
-            disabled: false,
-            version: researchParamsProspectDto.searchParams.versionProspect,
-            city: {
-              version: researchParamsProspectDto.searchParams.versionCity,
-              zipcode: Number(researchParamsProspectDto.keyword)
-            },
-            secondaryActivity: {
-              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-              primaryActivity: {
-                version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-              }
-            }
-          }
+        }
 
       // ? ONLY city
       ] || 
@@ -678,22 +663,6 @@ export class ProspectsService {
               version: researchParamsProspectDto.searchParams.versionPrimaryActivity
             }
           }
-        },
-        Number(researchParamsProspectDto.keyword) && {
-          stage: StageType.RESEARCH,
-          disabled: false,
-          version: researchParamsProspectDto.searchParams.versionProspect,
-          city: {
-            version: researchParamsProspectDto.searchParams.versionCity,
-            zipcode: Number(researchParamsProspectDto.keyword),
-            id: researchParamsProspectDto.city
-          },
-          secondaryActivity: {
-            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-            primaryActivity: {
-              version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-            }
-          }
         }
         
         // ? CITY AND PRIMARY ACTIVITY AND SECONDARY ACTIVITY 
@@ -744,24 +713,6 @@ export class ProspectsService {
           version: researchParamsProspectDto.searchParams.versionProspect,
           city: {
             version: researchParamsProspectDto.searchParams.versionCity,
-            id: researchParamsProspectDto.city
-          },
-          secondaryActivity: {
-            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-            id: researchParamsProspectDto.secondaryActivity,
-            primaryActivity: {
-              version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
-              id: researchParamsProspectDto.primaryActivity
-            }
-          }
-        },
-        Number(researchParamsProspectDto.keyword) && {
-          stage: StageType.RESEARCH,
-          disabled: false,
-          version: researchParamsProspectDto.searchParams.versionProspect,
-          city: {
-            version: researchParamsProspectDto.searchParams.versionCity,
-            zipcode: Number(researchParamsProspectDto.keyword),
             id: researchParamsProspectDto.city
           },
           secondaryActivity: {
