@@ -512,8 +512,8 @@ export class ProspectsService {
   async findAllPaginated(researchParamsProspectDto: ResearchParamsProspectDto): Promise<{ prospects: Prospect[], count: number }> {
     try {
       console.time()
-      // researchParamsProspectDto.searchParams = await this.searchParamRepository.findOne({ where: { id: 1 } });
-      researchParamsProspectDto.searchParams = {id: 1, versionCity: VersionCityType.V2, versionProspect: VersionProspectType.V2, versionPrimaryActivity: VersionPrimaryActivityType.V2, versionSecondaryActivity: VersionSecondaryActivityType.V2};
+      researchParamsProspectDto.searchParams = await this.searchParamRepository.findOne({ where: { id: 1 } });
+      // researchParamsProspectDto.searchParams = {id: 1, versionCity: VersionCityType.V2, versionProspect: VersionProspectType.V2, versionPrimaryActivity: VersionPrimaryActivityType.V2, versionSecondaryActivity: VersionSecondaryActivityType.V2};
       // let q = [{
       //           companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
       //           stage: StageType.RESEARCH,
