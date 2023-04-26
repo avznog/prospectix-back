@@ -742,7 +742,7 @@ export class ProspectsService {
               }
             }
           }
-        ];
+        ]
   
   
       })
