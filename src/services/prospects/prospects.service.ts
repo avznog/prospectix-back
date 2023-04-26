@@ -596,24 +596,26 @@ export class ProspectsService {
   
         // ? SECONDARY ACTIVITY
         researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.city && researchParamsProspectDto.primaryActivity &&
-        {
-          secondaryActivity: {
-            id: researchParamsProspectDto.secondaryActivity,
-            version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-            primaryActivity: {
-              id: researchParamsProspectDto.primaryActivity,
-              version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+        [
+          {
+            secondaryActivity: {
+              id: researchParamsProspectDto.secondaryActivity,
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                id: researchParamsProspectDto.primaryActivity,
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+              }
+            },
+            stage: StageType.RESEARCH,
+            disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity
             }
-          },
-          stage: StageType.RESEARCH,
-          disabled: false,
-          version: researchParamsProspectDto.searchParams.versionProspect,
-          city: {
-            version: researchParamsProspectDto.searchParams.versionCity
+    
+            // ? CITY AND PRIMARY ACTIVITY
           }
-  
-          // ? CITY AND PRIMARY ACTIVITY
-        } || researchParamsProspectDto.city && researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && [
+        ] || researchParamsProspectDto.city && researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && [
           {
             stage: StageType.RESEARCH,
             disabled: false,
