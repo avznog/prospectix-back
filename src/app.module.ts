@@ -98,7 +98,6 @@ import { SearchParamsService } from './services/search-params/search-params.serv
       // url: `pgsql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/prospectix`,
       synchronize: true,
       entities: [SearchParams, PrimaryActivity, SecondaryActivity, Bookmark, City, Call, Country, Email, Event, GoalTemplate, Goal, Google, MailTemplate, Meeting, NegativeAnswer, Phone, ProjectManager, Prospect, Reminder, SentEmail, Slack, Website],
-      logging: true
     }),
 
     ScheduleModule.forRoot(),
