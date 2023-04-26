@@ -49,7 +49,7 @@ export class RemindersService {
   async findAllByProspect(idProspect: number): Promise<Reminder[]> {
     try {
       return await this.reminderRepository.find({
-        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.secondaryActivity.primaryActivity", "prospect.city", "prospect.country", "prospect.meetings", "prospect.phone", "prospect.website", "prospect.email"],
+        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.meetings", "prospect.phone", "prospect.website", "prospect.email"],
         where: {
           prospect: {
             id: idProspect
@@ -107,7 +107,7 @@ export class RemindersService {
       ];
 
       const reminders = await this.reminderRepository.find({
-        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.secondaryActivity", "prospect.secondaryActivity.primaryActivity", "prospect.city","prospect.country","prospect.website","prospect.email","prospect.meetings","prospect.bookmarks","prospect.reminders"],
+        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.secondaryActivity","prospect.city","prospect.country","prospect.website","prospect.email","prospect.meetings","prospect.bookmarks","prospect.reminders"],
         where: whereParameters,
         order: {
           date: "ASC"
@@ -146,7 +146,7 @@ export class RemindersService {
     ];
 
       const remindersDone = await this.reminderRepository.find({
-        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.secondaryActivity", "prospect.secondaryActivity.primaryActivity", "prospect.city","prospect.country","prospect.website","prospect.email","prospect.meetings","prospect.bookmarks","prospect.reminders"],
+        relations: ["pm", "prospect","prospect.phone","prospect.email", "prospect.secondaryActivity","prospect.city","prospect.country","prospect.website","prospect.email","prospect.meetings","prospect.bookmarks","prospect.reminders"],
         where: whereParameters,
       skip: researchParamsRemindersDto.skip,
       take: researchParamsRemindersDto.take

@@ -92,7 +92,7 @@ export class MeetingsService {
         }
       ];
       const meetings = await this.meetingRepository.find({
-        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.secondaryActivity.primaryActivity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
+        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
         where: whereParameters,
         order: {
           date: "ASC"
@@ -132,7 +132,7 @@ export class MeetingsService {
       ];
 
       const meetingsDone = await this.meetingRepository.find({
-        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.secondaryActivity.primaryActivity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
+        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
         where: whereParameters,
         take: researchParamsMeetingsDto.take,
         skip: researchParamsMeetingsDto.skip
