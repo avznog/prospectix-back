@@ -516,9 +516,7 @@ export class ProspectsService {
       // researchParamsProspectDto.searchParams = {id: 1, versionCity: VersionCityType.V2, versionProspect: VersionProspectType.V2, versionPrimaryActivity: VersionPrimaryActivityType.V2, versionSecondaryActivity: VersionSecondaryActivityType.V2};
 
         // ? ONLY KEYWORD
-        const q = 
-          
-          [          {
+        const q =    {
             stage: StageType.RESEARCH,
             disabled: false,
             version: researchParamsProspectDto.searchParams.versionProspect,
@@ -532,8 +530,7 @@ export class ProspectsService {
                 version: researchParamsProspectDto.searchParams.versionPrimaryActivity
               }
             }
-          }
-        ];
+          };
 
       // ! find prospects
       const prospects = await this.prospectRepository.findAndCount({
