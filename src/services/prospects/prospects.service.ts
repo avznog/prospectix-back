@@ -514,28 +514,10 @@ export class ProspectsService {
       console.time()
       researchParamsProspectDto.searchParams = await this.searchParamRepository.findOne({ where: { id: 1 } });
       // researchParamsProspectDto.searchParams = {id: 1, versionCity: VersionCityType.V2, versionProspect: VersionProspectType.V2, versionPrimaryActivity: VersionPrimaryActivityType.V2, versionSecondaryActivity: VersionSecondaryActivityType.V2};
-      // let q = [{
-      //           companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
-      //           stage: StageType.RESEARCH,
-      //           disabled: false,
-      //           version: researchParamsProspectDto.searchParams.versionProspect,
-      //           city: {
-      //             version: researchParamsProspectDto.searchParams.versionCity
-      //           },
-      //           secondaryActivity: {
-      //             version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-      //             primaryActivity: {
-      //               version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-      //             }
-      //           }
-      //         }];
-      
-
 
         // ? ONLY KEYWORD
-        const q = researchParamsProspectDto.keyword && !researchParamsProspectDto.cityName && !researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && [
+        const q = researchParamsProspectDto.keyword && !researchParamsProspectDto.city && !researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && [
           
-
           {
             companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
             stage: StageType.RESEARCH,
@@ -584,12 +566,12 @@ export class ProspectsService {
               }
             }
 
-        // ? ONLY cityName
+        // ? ONLY city
         ] || 
-        researchParamsProspectDto.cityName && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.primaryActivity && [
+        researchParamsProspectDto.city && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.primaryActivity && [
           {
             city: {
-              name: researchParamsProspectDto.cityName,
+              id: researchParamsProspectDto.city,
               version: researchParamsProspectDto.searchParams.versionCity
             },
             stage: StageType.RESEARCH,
@@ -605,12 +587,12 @@ export class ProspectsService {
         ] ||
 
         // ? ONLY PRIMARY ACTIVITY
-        researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.cityName && [
+        researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.city && [
           {
             secondaryActivity: Not(null) && {
               version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
               primaryActivity: {
-                name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
+                id: researchParamsProspectDto.primaryActivity,
                 version: researchParamsProspectDto.searchParams.versionPrimaryActivity
               }
             },
@@ -624,13 +606,13 @@ export class ProspectsService {
         ] ||
 
         // ? SECONDARY ACTIVITY
-        researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.cityName && researchParamsProspectDto.primaryActivity &&
+        researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.city && researchParamsProspectDto.primaryActivity &&
         {
           secondaryActivity: {
-            name: ILike(`%${researchParamsProspectDto.secondaryActivity}%`),
+            id: researchParamsProspectDto.secondaryActivity,
             version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
             primaryActivity: {
-              name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
+              id: researchParamsProspectDto.primaryActivity,
               version: researchParamsProspectDto.searchParams.versionPrimaryActivity
             }
           },
@@ -642,13 +624,14 @@ export class ProspectsService {
           }
 
         // ? THE REST
-        } || !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.cityName && !researchParamsProspectDto.primaryActivity && [
+        } || !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.city && !researchParamsProspectDto.primaryActivity && [
           {
             stage: StageType.RESEARCH,
             disabled: false,
             version: researchParamsProspectDto.searchParams.versionProspect,
             city: {
-              version: researchParamsProspectDto.searchParams.versionCity
+              version: researchParamsProspectDto.searchParams.versionCity,
+              id: researchParamsProspectDto.city
             },
             secondaryActivity: {
               version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
@@ -658,516 +641,6 @@ export class ProspectsService {
             }
           }
         ];
-
-      //  keyword
-      // if (researchParamsProspectDto.keyword && !researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.cityName) {
-      //   q = [
-      //     {
-      //       companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
-      //       stage: StageType.RESEARCH,
-      //       disabled: false,
-      //       version: researchParamsProspectDto.searchParams.versionProspect,
-      //       city: {
-      //         version: researchParamsProspectDto.searchParams.versionCity
-      //       },
-      //       secondaryActivity: {
-      //         version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-      //         primaryActivity: {
-      //           version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-      //         }
-      //       }
-      //     },
-      //     {
-      //       phone: {
-      //         number: ILike(`%${researchParamsProspectDto.keyword}%`)
-      //       },
-      //       stage: StageType.RESEARCH,
-      //       disabled: false,
-      //       version: researchParamsProspectDto.searchParams.versionProspect,
-      //       city: {
-      //         version: researchParamsProspectDto.searchParams.versionCity
-      //       },
-      //       secondaryActivity: {
-      //         version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-      //         primaryActivity: {
-      //           version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-      //         }
-      //       }
-      //     },
-          // Number(researchParamsProspectDto.keyword) && {
-          //   stage: StageType.RESEARCH,
-          //   disabled: false,
-          //   version: researchParamsProspectDto.searchParams.versionProspect,
-          //   city: {
-          //     version: researchParamsProspectDto.searchParams.versionCity,
-          //     zipcode: Number(researchParamsProspectDto.keyword)
-          //   },
-          //   secondaryActivity: {
-          //     version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-          //     primaryActivity: {
-          //       version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-          //     }
-          //   }
-          // }
-        // ]
-    //   }
-    // // cityname
-    //   else if
-    //   (researchParamsProspectDto.cityName && !researchParamsProspectDto.keyword && !researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity) {
-    //     q = [
-    //       {
-
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //           name: researchParamsProspectDto.cityName
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           primaryActivity: {
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       },
-    //     ]
-    //   }
-    // // primaryactivity
-    //   else if
-    //   (researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.cityName && !researchParamsProspectDto.secondaryActivity) {
-    //     q = [
-    //       {
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           primaryActivity: {
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
-    //             name: researchParamsProspectDto.primaryActivity
-    //           }
-    //         }
-    //       },
-    //     ]
-    //   }
-    // // secondaryactivity
-    //   else if
-    //   (researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.cityName && researchParamsProspectDto.primaryActivity) {
-    //     q = [
-    //       {
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           name: researchParamsProspectDto.secondaryActivity,
-    //           primaryActivity: {
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
-    //             name: researchParamsProspectDto.primaryActivity
-    //           }
-    //         }
-    //       },
-    //     ]
-    //   } else {
-    //     q = [{
-    //       stage: StageType.RESEARCH,
-    //       disabled: false,
-    //       version: researchParamsProspectDto.searchParams.versionProspect,
-    //       city: {
-    //         version: researchParamsProspectDto.searchParams.versionCity,
-    //       },
-    //       secondaryActivity: {
-    //         version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //         primaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
-    //         }
-    //       }
-    //     },]
-    //   }
-    // // keyword && cityname
-    //   else if
-    //     (researchParamsProspectDto.keyword && researchParamsProspectDto.cityName && !researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity) {
-    //     q = [
-    //       {
-    //         companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //           name: researchParamsProspectDto.cityName
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           primaryActivity: {
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       },
-    //       {
-    //         phone: {
-    //           number: ILike(`%${researchParamsProspectDto.keyword}%`)
-    //         },
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //           name: researchParamsProspectDto.cityName
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           primaryActivity: {
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       },
-    //       Number(researchParamsProspectDto.keyword) && {
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //           zipcode: Number(researchParamsProspectDto.keyword),
-    //           name: researchParamsProspectDto.cityName
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           primaryActivity: {
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       }
-    //     ]
-    //   }
-    // // keyword && primaryactivity
-    //   else if
-    //   (researchParamsProspectDto.keyword && researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.cityName && !researchParamsProspectDto.secondaryActivity) {
-    //     q = [
-    //       {
-    //         companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       },
-    //       {
-    //         phone: {
-    //           number: ILike(`%${researchParamsProspectDto.keyword}%`)
-    //         },
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       },
-    //       Number(researchParamsProspectDto.keyword) && {
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //           zipcode: Number(researchParamsProspectDto.keyword)
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       }
-    //     ]
-    //   }
-    // // keyword && secondary && primary
-    //   else if
-    //   (researchParamsProspectDto.keyword && researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.cityName && researchParamsProspectDto.primaryActivity) {
-    //     q = [
-    //       {
-    //         companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           name: ILike(`%${researchParamsProspectDto.secondaryActivity}%`),
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       },
-    //       {
-    //         phone: {
-    //           number: ILike(`%${researchParamsProspectDto.keyword}%`)
-    //         },
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           name: ILike(`%${researchParamsProspectDto.secondaryActivity}%`),
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       },
-    //       Number(researchParamsProspectDto.keyword) && {
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //           zipcode: Number(researchParamsProspectDto.keyword)
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           name: ILike(`%${researchParamsProspectDto.secondaryActivity}%`),
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       }
-    //     ]
-    //   }
-    // // cityname && primary
-    //   else if
-    //   (researchParamsProspectDto.cityName && researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.secondaryActivity) {
-    //     q = [
-    //       {
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //           name: researchParamsProspectDto.cityName
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       }
-    //     ]
-    //   }
-    // // city && secondary && primary
-    //   else if
-    //   (researchParamsProspectDto.cityName && researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && researchParamsProspectDto.primaryActivity) {
-    //     q = [
-    //       {
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //           name: researchParamsProspectDto.cityName
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           name: ILike(`%${researchParamsProspectDto.secondaryActivity}%`),
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       }
-    //     ]
-    //   }
-    // // primary && secondary
-    //   else if
-    //   (researchParamsProspectDto.primaryActivity && researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.cityName) {
-    //     q = [
-    //       {
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           name: ILike(`%${researchParamsProspectDto.secondaryActivity}%`),
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       }
-    //     ]
-    //   }
-    // // keyword && city && primary
-    //   else if
-    //   (researchParamsProspectDto.keyword && researchParamsProspectDto.cityName && researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity) {
-    //     q = [
-    //       {
-    //         companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //           name: researchParamsProspectDto.cityName
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       },
-    //       {
-    //         phone: {
-    //           number: ILike(`%${researchParamsProspectDto.keyword}%`)
-    //         },
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //           name: researchParamsProspectDto.cityName,
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       },
-    //       Number(researchParamsProspectDto.keyword) && {
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //           zipcode: Number(researchParamsProspectDto.keyword),
-    //           name: researchParamsProspectDto.cityName
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       }
-    //     ]
-    //   }
-    //   else if
-    //   (researchParamsProspectDto.cityName && researchParamsProspectDto.primaryActivity && researchParamsProspectDto.secondaryActivity && researchParamsProspectDto.keyword) {
-    //     q = [
-    //       {
-    //         companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //           name: researchParamsProspectDto.cityName
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           name: ILike(`%${researchParamsProspectDto.secondaryActivity}%`),
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       },
-    //       {
-    //         phone: {
-    //           number: ILike(`%${researchParamsProspectDto.keyword}%`)
-    //         },
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //           name: researchParamsProspectDto.cityName,
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           name: ILike(`%${researchParamsProspectDto.secondaryActivity}%`),
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       },
-    //       Number(researchParamsProspectDto.keyword) && {
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity,
-    //           zipcode: Number(researchParamsProspectDto.keyword),
-    //           name: researchParamsProspectDto.cityName
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           name: ILike(`%${researchParamsProspectDto.secondaryActivity}%`),
-    //           primaryActivity: {
-    //             name: ILike(`%${researchParamsProspectDto.primaryActivity}%`),
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       }
-    //     ]
-    //   }
-    //   else {
-    //     q = [
-    //       {
-    //         stage: StageType.RESEARCH,
-    //         disabled: false,
-    //         version: researchParamsProspectDto.searchParams.versionProspect,
-    //         city: {
-    //           version: researchParamsProspectDto.searchParams.versionCity
-    //         },
-    //         secondaryActivity: {
-    //           version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
-    //           primaryActivity: {
-    //             version: researchParamsProspectDto.searchParams.versionPrimaryActivity
-    //           }
-    //         }
-    //       }
-    //     ]
-    //   }
-
 
       // ! find prospects
       const prospects = await this.prospectRepository.findAndCount({
