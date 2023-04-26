@@ -511,7 +511,7 @@ export class ProspectsService {
   // good luck (Benjamin .Gonzva)
   async findAllPaginated(researchParamsProspectDto: ResearchParamsProspectDto): Promise<{ prospects: Prospect[], count: number }> {
     try {
-      researchParamsProspectDto.searchParams = await this.searchParamRepository.findOne({ where: { id: 1}});
+      researchParamsProspectDto.searchParams = {id: 1, versionCity: VersionCityType.V2, versionPrimaryActivity: VersionPrimaryActivityType.V2, versionProspect: VersionProspectType.V2, versionSecondaryActivity: VersionSecondaryActivityType.V2};
       // ! find prospects
       const prospects = await this.prospectRepository.find({
         relations: ["secondaryActivity", "secondaryActivity.primaryActivity", "city", "country", "events", "meetings", "phone", "reminders", "website", "email", "bookmarks", "bookmarks.pm"],
