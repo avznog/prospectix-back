@@ -41,10 +41,14 @@ export class CitiesService {
       const searchParams = await this.searchParamRepository.findOne({where: {id: 1}})
       return await this.cityRepository.find({
         where: {
-          version: searchParams.versionCity
+          version: searchParams.versionCity,
+          prospects: {
+            version: searchParams.versionProspect
+          }
         },
         order: {
-          origin: 'asc'
+          origin: 'asc',
+          zipcode: 'asc'
         }
       })
     } catch (error) {
