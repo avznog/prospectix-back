@@ -266,7 +266,7 @@ export class ProspectsService {
   //     prospects.forEach(async prospect => {
 
   //       // ? 4.2 assign city to prospect
-  //       const c = cities.find(c => c.zipcode === prospect.city.zipcode);
+  //       const c = cities.find(c => (c.zipcode === prospect.city.zipcode) && (c.version == VersionCityType.V2));
   //       // ? 4.1 assign activity to prospect
   //       prospect.secondaryActivity.name && (prospect.secondaryActivity = activities.find(activity => activity.name.toLowerCase() == prospect.secondaryActivity.name.toLowerCase()))
 
@@ -518,6 +518,11 @@ export class ProspectsService {
         take: 20,
         skip: researchParamsProspectDto.skip,
         where: 
+
+        // ? this is the entire seach parameters. Depending on which ResearchParamsProspectDto parameters are NOT NULL, we ask a different request to the database
+        // ? It is very important to define WHICH PARAMETERS ARE NOT NULL because if not, it will take the wrong request
+        // ? good luck (benjamin gonzva)
+
         // ? ONLY KEYWORD
         researchParamsProspectDto.keyword && !researchParamsProspectDto.city && !researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.zipcode && [
           
@@ -574,7 +579,7 @@ export class ProspectsService {
           },
         ] || 
         // ? CITY AND ZIPCODE
-        researchParamsProspectDto.city && researchParamsProspectDto.zipcode && !researchParamsProspectDto.keyword && !researchParamsProspectDto.secondaryActivity && ! researchParamsProspectDto.primaryActivity && [
+        researchParamsProspectDto.city && researchParamsProspectDto.zipcode && !researchParamsProspectDto.keyword && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.primaryActivity && [
           {
             stage: StageType.RESEARCH,
             disabled: false,
@@ -610,10 +615,144 @@ export class ProspectsService {
             disabled: false,
             version: researchParamsProspectDto.searchParams.versionProspect
           }
+        ] ||  
+        // ? KEYWORD && PRIMARY
+        researchParamsProspectDto.keyword && researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.city && !researchParamsProspectDto.zipcode && [
+          {
+            companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
+            stage: StageType.RESEARCH,
+            disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity
+            },
+            secondaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
+                id: researchParamsProspectDto.primaryActivity
+              }
+            }
+          },
+          {
+            phone: {
+              number: ILike(`%${researchParamsProspectDto.keyword}%`)
+            },
+            stage: StageType.RESEARCH,
+            disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity
+            },
+            secondaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
+                id: researchParamsProspectDto.primaryActivity
+              }
+            }
+          }
+
+        ] ||
+        // ? ZIPCODE && PRIMARY ACTIVITY
+        researchParamsProspectDto.city && researchParamsProspectDto.zipcode && researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && [
+          {
+            secondaryActivity: Not(null) && {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                id: researchParamsProspectDto.primaryActivity,
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+              }
+            },
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity,
+              zipcode: researchParamsProspectDto.zipcode
+            },
+            stage: StageType.RESEARCH,
+            disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect
+          }
+
+        ] || 
+        // ? ZIPCODE & KEYWORD
+        researchParamsProspectDto.keyword && researchParamsProspectDto.city && researchParamsProspectDto.zipcode && !researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && [
+          {
+            companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
+            stage: StageType.RESEARCH,
+            disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity,
+              name: researchParamsProspectDto.city,
+              zipcode: researchParamsProspectDto.zipcode
+            },
+            secondaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
+              }
+            }
+          },
+          {
+            phone: {
+              number: ILike(`%${researchParamsProspectDto.keyword}%`)
+            },
+            stage: StageType.RESEARCH,
+            disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity,
+              name: researchParamsProspectDto.city,
+              zipcode: researchParamsProspectDto.zipcode
+            },
+            secondaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
+              }
+            }
+          }
+        ] || 
+        // ? KEYWORD & SECONDARY
+        researchParamsProspectDto.keyword && researchParamsProspectDto.primaryActivity && researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.city && !researchParamsProspectDto.zipcode && [
+          {
+            companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
+            stage: StageType.RESEARCH,
+            disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity,
+            },
+            secondaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              id: researchParamsProspectDto.secondaryActivity,
+              primaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
+              }
+            }
+          },
+          {
+            phone: {
+              number: ILike(`%${researchParamsProspectDto.keyword}%`)
+            },
+            stage: StageType.RESEARCH,
+            disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity,
+            },
+            secondaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              id: researchParamsProspectDto.secondaryActivity,
+              primaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
+              }
+            }
+          }
         ] ||
   
         // ? SECONDARY ACTIVITY
-        researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.city && researchParamsProspectDto.primaryActivity &&
+        researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.city && researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.zipcode &&
         {
           secondaryActivity: {
             id: researchParamsProspectDto.secondaryActivity,
@@ -630,8 +769,70 @@ export class ProspectsService {
             version: researchParamsProspectDto.searchParams.versionCity
           }
   
+        } || 
+        // ? SECONDARY ACTIVITY && ZIPCODE 
+        researchParamsProspectDto.primaryActivity && researchParamsProspectDto.secondaryActivity && researchParamsProspectDto.zipcode && researchParamsProspectDto.city && !researchParamsProspectDto.keyword && [
+          {
+            secondaryActivity: {
+              id: researchParamsProspectDto.secondaryActivity,
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                id: researchParamsProspectDto.primaryActivity,
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+              }
+            },
+            stage: StageType.RESEARCH,
+            disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity,
+              zipcode: researchParamsProspectDto.zipcode
+            }
+    
+          }
+
+        ] || 
+        // ? CITY & PRIMARY & KEYWORD
+        researchParamsProspectDto.city && researchParamsProspectDto.keyword && researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.zipcode && [
+          
+          {
+            companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
+            stage: StageType.RESEARCH,
+            disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity,
+              name: researchParamsProspectDto.city,
+            },
+            secondaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
+                id: researchParamsProspectDto.primaryActivity
+              }
+            }
+          },
+          {
+            phone: {
+              number: ILike(`%${researchParamsProspectDto.keyword}%`)
+            },
+            stage: StageType.RESEARCH,
+            disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity,
+              name: researchParamsProspectDto.city,
+            },
+            secondaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
+                id: researchParamsProspectDto.primaryActivity
+              }
+            }
+          }
           // ? CITY AND PRIMARY ACTIVITY
-        } || researchParamsProspectDto.city && researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.zipcode && [
+        ] || researchParamsProspectDto.city && researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.zipcode && [
           {
             stage: StageType.RESEARCH,
             disabled: false,
@@ -645,6 +846,47 @@ export class ProspectsService {
               primaryActivity: {
                 id: researchParamsProspectDto.primaryActivity,
                 version: researchParamsProspectDto.searchParams.versionPrimaryActivity
+              }
+            }
+          }
+        ] || 
+        // ? KEYWORD & PRIMARY & ZIPCODE
+        researchParamsProspectDto.city && researchParamsProspectDto.zipcode && researchParamsProspectDto.keyword && researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && [
+          {
+            companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
+            stage: StageType.RESEARCH,
+            disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity,
+              name: researchParamsProspectDto.city,
+              zipcode: researchParamsProspectDto.zipcode
+            },
+            secondaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
+                id: researchParamsProspectDto.primaryActivity
+              }
+            }
+          },
+          {
+            phone: {
+              number: ILike(`%${researchParamsProspectDto.keyword}%`)
+            },
+            stage: StageType.RESEARCH,
+            disabled: false,
+            version: researchParamsProspectDto.searchParams.versionProspect,
+            city: {
+              version: researchParamsProspectDto.searchParams.versionCity,
+              name: researchParamsProspectDto.city,
+              zipcode: researchParamsProspectDto.zipcode
+            },
+            secondaryActivity: {
+              version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
+              primaryActivity: {
+                version: researchParamsProspectDto.searchParams.versionPrimaryActivity,
+                id: researchParamsProspectDto.primaryActivity
               }
             }
           }
@@ -704,7 +946,7 @@ export class ProspectsService {
               }
             }
           }
-        // ? CITY, KEYWORD, PRIMARY ACTIVITY & SECONDARY ACTIVITY (ALL FILTERS)
+        // ? CITY, KEYWORD, PRIMARY ACTIVITY & SECONDARY ACTIVITY & ZIPCODE (ALL FILTERS)
         ] || researchParamsProspectDto.city && researchParamsProspectDto.keyword && researchParamsProspectDto.primaryActivity && researchParamsProspectDto.secondaryActivity && researchParamsProspectDto.zipcode && [
           {
             companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
