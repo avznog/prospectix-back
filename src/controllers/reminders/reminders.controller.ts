@@ -68,13 +68,6 @@ export class RemindersController {
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("find-all-reminders-done")
-  findAllRemindersDone(@Query() researchParamsRemindersDto: ResearchParamsRemindersDto, @CurrentUser() user: ProjectManager) : Promise<{remindersDone: Reminder[], count: number}> {
-    this.sentryService.setSentryUser(user);
-    return this.reminderService.findAllRemindersDone(researchParamsRemindersDto, user);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-all-for-me")
   countAllForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
     this.sentryService.setSentryUser(user);
