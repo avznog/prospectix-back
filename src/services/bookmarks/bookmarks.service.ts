@@ -14,282 +14,533 @@ export class BookmarksService {
     private readonly bookmarkRepository: Repository<Bookmark>
   ) { }
 
-  async create(createBookmarkDto: CreateBookmarkDto, user: ProjectManager) : Promise<Bookmark> {
-    try{
+  async create(createBookmarkDto: CreateBookmarkDto, user: ProjectManager): Promise<Bookmark> {
+    try {
       createBookmarkDto.pm = user;
       return await this.bookmarkRepository.save(createBookmarkDto);
-    } catch(error) {
+    } catch (error) {
       console.log(error);
-      throw new HttpException("Impossible de créer le favoris",HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException("Impossible de créer le favoris", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async delete(idBookmark: number) : Promise<DeleteResult> {
+  async delete(idBookmark: number): Promise<DeleteResult> {
     try {
       return await this.bookmarkRepository.delete(idBookmark);
     } catch (error) {
       console.log(error)
-      throw new HttpException("Impossible de supprimer le favoris",HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException("Impossible de supprimer le favoris", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async findAllPaginated(researchParamsBookmarksDto: ResearchParamsBookmarksDto, user: ProjectManager): Promise<{bookmarks: Bookmark[], count: number}> {
+  async findAllPaginated(researchParamsBookmarksDto: ResearchParamsBookmarksDto, user: ProjectManager): Promise<{ bookmarks: Bookmark[], count: number }> {
     try {
+      // ! Count max bookmarks avalaible
+      // ! find bookmarks
+      const bookmarks = await this.bookmarkRepository.findAndCount({
+        relations: ["prospect", "pm", "prospect.secondaryActivity", "prospect.secondaryActivity.primaryActivity", "prospect.city", "prospect.country", "prospect.events", "prospect.meetings", "prospect.phone", "prospect.reminders", "prospect.website", "prospect.email"],
+        where: // ? this is the entire seach parameters. Depending on which researchParamsBookmarksDto parameters are NOT NULL, we ask a different request to the database
+          // ? It is very important to define WHICH PARAMETERS ARE NOT NULL because if not, it will take the wrong request
+          // ? good luck (benjamin gonzva)
 
-      const whereParameters = 
-
-        // ? ONLY KEYWORD
-        researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.cityName && !researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && [
-          {
-            prospect: {
-              companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`),
-              stage: StageType.BOOKMARK,
-              disabled: false,
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          {
-            prospect: {
-              phone: {
-                number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+          // ? ONLY KEYWORD
+          researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.city && !researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.zipcode && [
+            {
+              pm: {
+                pseudo: user.pseudo
               },
-              stage: StageType.BOOKMARK,
-              disabled: false,
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          Number(researchParamsBookmarksDto.keyword) && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                zipcode: Number(researchParamsBookmarksDto.keyword)
-              }  
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          }
-
-        // ? ONLY cityName
-        ] || 
-        researchParamsBookmarksDto.cityName && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.primaryActivity && [
-          {
-            prospect: {
-              city: {
-                name: researchParamsBookmarksDto.cityName
-              },
-              stage: StageType.BOOKMARK,
-              disabled: false,
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-        ] ||
-
-        // ? ONLY PRIMARY ACTIVITY
-        researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.cityName && [
-          {
-            prospect: {
-              secondaryActivity: Not(null) && {
-                primaryActivity: {
-                  name: ILike(`%${researchParamsBookmarksDto.primaryActivity}%`)
-                }
-              },
-              stage: StageType.BOOKMARK,
-              disabled: false,
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          }
-        ] ||
-
-        // ? SECONDARY ACTIVITY
-        researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.cityName && researchParamsBookmarksDto.primaryActivity &&
-        {
-          prospect: {
-            secondaryActivity: {
-              name: ILike(`%${researchParamsBookmarksDto.secondaryActivity}%`),
-              primaryActivity: {
-                name: ILike(`%${researchParamsBookmarksDto.primaryActivity}%`)
+              prospect: {
+                companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`),
+                stage: StageType.BOOKMARK,
+                disabled: false,
               }
             },
-            stage: StageType.BOOKMARK,
-            disabled: false,
-          },
-          pm: {
-            pseudo: user.pseudo
-          }
-
-          // ? CITY AND PRIMARY ACTIVITY
-        } || researchParamsBookmarksDto.cityName && researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.secondaryActivity && [
-          {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                name: researchParamsBookmarksDto.cityName
+            {
+              pm: {
+                pseudo: user.pseudo
               },
+              prospect: {
+                phone: {
+                  number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+                },
+                stage: StageType.BOOKMARK,
+                disabled: false,
+              }
+            }
+
+            // ? ONLY city
+          ] ||
+          researchParamsBookmarksDto.city && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.zipcode && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                city: {
+                  name: researchParamsBookmarksDto.city,
+
+                },
+                stage: StageType.BOOKMARK,
+                disabled: false,
+              }
+            },
+          ] ||
+          // ? CITY AND ZIPCODE
+          researchParamsBookmarksDto.city && researchParamsBookmarksDto.zipcode && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.primaryActivity && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  name: researchParamsBookmarksDto.city,
+                  zipcode: researchParamsBookmarksDto.zipcode
+                },
+              }
+            }
+          ]
+          ||
+          // ? ONLY PRIMARY ACTIVITY
+          researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.city && !researchParamsBookmarksDto.zipcode && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                secondaryActivity: Not(null) && {
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity,
+                  }
+                },
+                stage: StageType.BOOKMARK,
+                disabled: false,
+              }
+            }
+          ] ||
+          // ? KEYWORD && PRIMARY
+          researchParamsBookmarksDto.keyword && researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.city && !researchParamsBookmarksDto.zipcode && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`),
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                secondaryActivity: {
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity
+                  }
+                }
+              }
+            },
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                phone: {
+                  number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+                },
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                secondaryActivity: {
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity
+                  }
+                }
+              }
+            }
+
+          ] ||
+          // ? ZIPCODE && PRIMARY ACTIVITY
+          researchParamsBookmarksDto.city && researchParamsBookmarksDto.zipcode && researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                secondaryActivity: Not(null) && {
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity,
+                  }
+                },
+                city: {
+                  zipcode: researchParamsBookmarksDto.zipcode
+                },
+                stage: StageType.BOOKMARK,
+                disabled: false,
+              }
+            }
+
+          ] ||
+          // ? ZIPCODE & KEYWORD
+          researchParamsBookmarksDto.keyword && researchParamsBookmarksDto.city && researchParamsBookmarksDto.zipcode && !researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`),
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  name: researchParamsBookmarksDto.city,
+                  zipcode: researchParamsBookmarksDto.zipcode
+                },
+              }
+            },
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                phone: {
+                  number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+                },
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  name: researchParamsBookmarksDto.city,
+                  zipcode: researchParamsBookmarksDto.zipcode
+                },
+              }
+            }
+          ] ||
+          // ? KEYWORD & SECONDARY
+          researchParamsBookmarksDto.keyword && researchParamsBookmarksDto.primaryActivity && researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.city && !researchParamsBookmarksDto.zipcode && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`),
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                secondaryActivity: {
+                  id: researchParamsBookmarksDto.secondaryActivity,
+                  primaryActivity: {
+
+                  }
+                }
+              }
+            },
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                phone: {
+                  number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+                },
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                secondaryActivity: {
+                  id: researchParamsBookmarksDto.secondaryActivity,
+                  primaryActivity: {
+
+                  }
+                }
+              }
+            }
+          ] ||
+
+          // ? SECONDARY ACTIVITY
+          researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.city && researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.zipcode &&
+          {
+            pm: {
+              pseudo: user.pseudo
+            },
+            prospect: {
               secondaryActivity: {
+                id: researchParamsBookmarksDto.secondaryActivity,
                 primaryActivity: {
-                  name:  ILike(`%${researchParamsBookmarksDto.primaryActivity}%`)
+                  id: researchParamsBookmarksDto.primaryActivity,
                 }
-              }
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          }
-          // ? CITY AND KEYWORD
-        ] || researchParamsBookmarksDto.cityName && researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && [
-          {
-            prospect: {
-              companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`),
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                name: researchParamsBookmarksDto.cityName
-              }
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          {
-            prospect: {
-              phone: {
-                number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
               },
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                name: researchParamsBookmarksDto.cityName
-              }
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          Number(researchParamsBookmarksDto.keyword) && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                zipcode: Number(researchParamsBookmarksDto.keyword),
-                name: researchParamsBookmarksDto.cityName
-              } 
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          }
-          // ? CITY? PRIMARY ACTIVITY AND SECODNARY ACTIVITY
-        ] || researchParamsBookmarksDto.cityName && researchParamsBookmarksDto.primaryActivity && researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && [
-          {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                name: researchParamsBookmarksDto.cityName
-              },
-              secondaryActivity: {
-                name: researchParamsBookmarksDto.secondaryActivity,
-                primaryActivity: {
-                  name: researchParamsBookmarksDto.primaryActivity
-                }
-              }
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          }
-          // ? CITY, KEYWORD, PRIMARY ACTIVITY & SECONDARY ACTIVITY (ALL FILTERS) 
-        ] || researchParamsBookmarksDto.cityName && researchParamsBookmarksDto.keyword && researchParamsBookmarksDto.primaryActivity && researchParamsBookmarksDto.secondaryActivity && [
-          {
-            prospect: {
-              companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`),
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                name: researchParamsBookmarksDto.cityName
-              },
-              secondaryActivity: {
-                name: researchParamsBookmarksDto.secondaryActivity,
-                primaryActivity: {
-                  name: researchParamsBookmarksDto.primaryActivity
-                }
-              }
-            },
-            pm: {
-              pseudo: user.pseudo
-            },
-          },
-          {
-            prospect: {
-              phone: {
-                number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
-              },
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                name: researchParamsBookmarksDto.cityName
-              },
-              secondaryActivity: {
-                name: researchParamsBookmarksDto.secondaryActivity,
-                primaryActivity: {
-                  name: researchParamsBookmarksDto.primaryActivity
-                }
-              }
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          },
-          Number(researchParamsBookmarksDto.keyword) && {
-            prospect: {
-              stage: StageType.BOOKMARK,
-              disabled: false,
-              city: {
-                name: researchParamsBookmarksDto.cityName,
-                zipcode: Number(researchParamsBookmarksDto.keyword)
-              },
-              secondaryActivity: {
-                name: researchParamsBookmarksDto.secondaryActivity,
-                primaryActivity: {
-                  name: researchParamsBookmarksDto.primaryActivity
-                }
-              }
-            },
-            pm: {
-              pseudo: user.pseudo
-            }
-          }
-          // ? THE REST (NO FILTER)
-        ] || !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.cityName && !researchParamsBookmarksDto.primaryActivity && [
-          {
-            prospect: {
               stage: StageType.BOOKMARK,
               disabled: false
-            },
-            pm: {
-              pseudo: user.pseudo
             }
-          }
-        ];
 
-      // ! Count max bookmarks avalaible
-      const countbookmarks= await this.bookmarkRepository.countBy(whereParameters);
+          } ||
+          // ? SECONDARY ACTIVITY && ZIPCODE 
+          researchParamsBookmarksDto.primaryActivity && researchParamsBookmarksDto.secondaryActivity && researchParamsBookmarksDto.zipcode && researchParamsBookmarksDto.city && !researchParamsBookmarksDto.keyword && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                secondaryActivity: {
+                  id: researchParamsBookmarksDto.secondaryActivity,
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity,
+                  }
+                },
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  zipcode: researchParamsBookmarksDto.zipcode
+                }
+              }
+            }
 
-      // ! find bookmarks
-      const bookmarks =  await this.bookmarkRepository.find({
-        relations: ["prospect", "pm", "prospect.secondaryActivity", "prospect.secondaryActivity.primaryActivity", "prospect.city", "prospect.country", "prospect.events", "prospect.meetings", "prospect.phone", "prospect.reminders", "prospect.website", "prospect.email"],
-        where: whereParameters,
+          ] ||
+          // ? CITY & PRIMARY & KEYWORD
+          researchParamsBookmarksDto.city && researchParamsBookmarksDto.keyword && researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.zipcode && [
+
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`),
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  name: researchParamsBookmarksDto.city,
+                },
+                secondaryActivity: {
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity
+                  }
+                }
+              }
+            },
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                phone: {
+                  number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+                },
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  name: researchParamsBookmarksDto.city,
+                },
+                secondaryActivity: {
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity
+                  }
+                }
+              }
+            }
+            // ? CITY AND PRIMARY ACTIVITY
+          ] || researchParamsBookmarksDto.city && researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.zipcode && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  name: researchParamsBookmarksDto.city
+                },
+                secondaryActivity: {
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity,
+                  }
+                }
+              }
+            }
+          ] ||
+          // ? KEYWORD & PRIMARY & ZIPCODE
+          researchParamsBookmarksDto.city && researchParamsBookmarksDto.zipcode && researchParamsBookmarksDto.keyword && researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`),
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  name: researchParamsBookmarksDto.city,
+                  zipcode: researchParamsBookmarksDto.zipcode
+                },
+                secondaryActivity: {
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity
+                  }
+                }
+              }
+            },
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                phone: {
+                  number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+                },
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  name: researchParamsBookmarksDto.city,
+                  zipcode: researchParamsBookmarksDto.zipcode
+                },
+                secondaryActivity: {
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity
+                  }
+                }
+              }
+            }
+            // ? CITY AND KEYWORD
+          ] || researchParamsBookmarksDto.keyword && researchParamsBookmarksDto.city && !researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.zipcode && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`),
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  name: researchParamsBookmarksDto.city
+                },
+              }
+            },
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                phone: {
+                  number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+                },
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  name: researchParamsBookmarksDto.city
+                },
+              }
+            }
+
+            // ? CITY AND PRIMARY ACTIVITY AND SECONDARY ACTIVITY 
+          ] || researchParamsBookmarksDto.city && researchParamsBookmarksDto.primaryActivity && researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.zipcode && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  name: researchParamsBookmarksDto.city
+                },
+                secondaryActivity: {
+                  id: researchParamsBookmarksDto.secondaryActivity,
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity,
+                  }
+                }
+              }
+            }
+            // ? CITY, KEYWORD, PRIMARY ACTIVITY & SECONDARY ACTIVITY & ZIPCODE (ALL FILTERS)
+          ] || researchParamsBookmarksDto.city && researchParamsBookmarksDto.keyword && researchParamsBookmarksDto.primaryActivity && researchParamsBookmarksDto.secondaryActivity && researchParamsBookmarksDto.zipcode && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`),
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  name: researchParamsBookmarksDto.city,
+                  zipcode: researchParamsBookmarksDto.zipcode
+                },
+                secondaryActivity: {
+                  id: researchParamsBookmarksDto.secondaryActivity,
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity
+                  }
+                }
+              }
+            },
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                phone: {
+                  number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+                },
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  name: researchParamsBookmarksDto.city,
+                  zipcode: researchParamsBookmarksDto.zipcode
+                },
+                secondaryActivity: {
+                  id: researchParamsBookmarksDto.secondaryActivity,
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity
+                  }
+                }
+              }
+            }
+            // ? CITY AND KEYWORD AND PRIMARY AND SECONDARY
+          ] || researchParamsBookmarksDto.city && researchParamsBookmarksDto.keyword && researchParamsBookmarksDto.primaryActivity && researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.zipcode && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                companyName: ILike(`%${researchParamsBookmarksDto.keyword}%`),
+                stage: StageType.BOOKMARK,
+                disabled: false,
+                city: {
+                  name: researchParamsBookmarksDto.city
+                },
+                secondaryActivity: {
+                  id: researchParamsBookmarksDto.secondaryActivity,
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity
+                  }
+                }
+              }
+            },
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                phone: {
+                  number: ILike(`%${researchParamsBookmarksDto.keyword}%`)
+                },
+                stage: StageType.BOOKMARK,
+                disabled: false,
+
+                city: {
+                  name: researchParamsBookmarksDto.city
+                },
+                secondaryActivity: {
+                  id: researchParamsBookmarksDto.secondaryActivity,
+                  primaryActivity: {
+                    id: researchParamsBookmarksDto.primaryActivity
+                  }
+                }
+              }
+            }
+
+            // ? EVERYTHING (NO FILTER) 
+          ] || !researchParamsBookmarksDto.secondaryActivity && !researchParamsBookmarksDto.keyword && !researchParamsBookmarksDto.city && !researchParamsBookmarksDto.primaryActivity && !researchParamsBookmarksDto.zipcode && [
+            {
+              pm: {
+                pseudo: user.pseudo
+              },
+              prospect: {
+                stage: StageType.BOOKMARK,
+                disabled: false,
+              }
+            }
+          ],
         take: researchParamsBookmarksDto.take,
         skip: researchParamsBookmarksDto.skip,
         order: {
@@ -302,8 +553,8 @@ export class BookmarksService {
       });
 
       return {
-        bookmarks: bookmarks,
-        count: countbookmarks
+        bookmarks: bookmarks[0],
+        count: bookmarks[1]
       }
     } catch (error) {
       console.log(error)
