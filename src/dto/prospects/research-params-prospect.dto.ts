@@ -4,7 +4,7 @@ export interface ResearchParamsProspectDto {
   keyword?: string;
   take: number;
   skip: number;
-  city: number;
+  city: string;
   primaryActivity: number;
   secondaryActivity: number;
   searchParams: SearchParams;

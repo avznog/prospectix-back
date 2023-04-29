@@ -521,7 +521,6 @@ export class ProspectsService {
         // ? ONLY KEYWORD
         researchParamsProspectDto.keyword && !researchParamsProspectDto.city && !researchParamsProspectDto.primaryActivity && !researchParamsProspectDto.secondaryActivity && [
           
-  
           {
             companyName: ILike(`%${researchParamsProspectDto.keyword}%`),
             stage: StageType.RESEARCH,
@@ -560,7 +559,7 @@ export class ProspectsService {
         researchParamsProspectDto.city && !researchParamsProspectDto.secondaryActivity && !researchParamsProspectDto.keyword && !researchParamsProspectDto.primaryActivity && [
           {
             city: {
-              id: researchParamsProspectDto.city,
+              name: researchParamsProspectDto.city,
               version: researchParamsProspectDto.searchParams.versionCity
             },
             stage: StageType.RESEARCH,
@@ -620,7 +619,7 @@ export class ProspectsService {
             version: researchParamsProspectDto.searchParams.versionProspect,
             city: {
               version: researchParamsProspectDto.searchParams.versionCity,
-              id: researchParamsProspectDto.city
+              name: researchParamsProspectDto.city
             },
             secondaryActivity: {
               version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
@@ -639,7 +638,7 @@ export class ProspectsService {
             version: researchParamsProspectDto.searchParams.versionProspect,
             city: {
               version: researchParamsProspectDto.searchParams.versionCity,
-              id: researchParamsProspectDto.city
+              name: researchParamsProspectDto.city
             },
             secondaryActivity: {
               version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
@@ -657,7 +656,7 @@ export class ProspectsService {
             version: researchParamsProspectDto.searchParams.versionProspect,
             city: {
               version: researchParamsProspectDto.searchParams.versionCity,
-              id: researchParamsProspectDto.city
+              name: researchParamsProspectDto.city
             },
             secondaryActivity: {
               version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
@@ -675,7 +674,7 @@ export class ProspectsService {
             version: researchParamsProspectDto.searchParams.versionProspect,
             city: {
               version: researchParamsProspectDto.searchParams.versionCity,
-              id: researchParamsProspectDto.city
+              name: researchParamsProspectDto.city
             },
             secondaryActivity: {
               version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
@@ -695,7 +694,7 @@ export class ProspectsService {
             version: researchParamsProspectDto.searchParams.versionProspect,
             city: {
               version: researchParamsProspectDto.searchParams.versionCity,
-              id: researchParamsProspectDto.city
+              name: researchParamsProspectDto.city
             },
             secondaryActivity: {
               version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
@@ -715,7 +714,7 @@ export class ProspectsService {
             version: researchParamsProspectDto.searchParams.versionProspect,
             city: {
               version: researchParamsProspectDto.searchParams.versionCity,
-              id: researchParamsProspectDto.city
+              name: researchParamsProspectDto.city
             },
             secondaryActivity: {
               version: researchParamsProspectDto.searchParams.versionSecondaryActivity,
