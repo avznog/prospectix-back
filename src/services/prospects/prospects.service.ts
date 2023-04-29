@@ -513,7 +513,7 @@ export class ProspectsService {
     try {
       researchParamsProspectDto.searchParams = {id: 1, versionCity: VersionCityType.V2, versionPrimaryActivity: VersionPrimaryActivityType.V2, versionProspect: VersionProspectType.V2, versionSecondaryActivity: VersionSecondaryActivityType.V2};
       // ! find prospects
-      const prospects = await this.prospectRepository.findAndCount({
+      const prospects = await this.prospectRepository.find({
         relations: ["secondaryActivity", "secondaryActivity.primaryActivity", "city", "country", "events", "meetings", "phone", "reminders", "website", "email", "bookmarks", "bookmarks.pm"],
         take: 20,
         skip: researchParamsProspectDto.skip,
@@ -747,8 +747,8 @@ export class ProspectsService {
   
       })
       return {
-        prospects: prospects[0],
-        count: prospects[1]
+        prospects: prospects,
+        count: 0
       }
     } catch (error) {
       console.log(error)
