@@ -55,23 +55,9 @@ export class MeetingsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<Meeting[]> {
+  findAllPaginated(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<{meetings: Meeting[], count: number}> {
     this.sentryService.setSentryUser(user);
     return this.meetingsService.findAllPaginated(researchParamsMeetingsDto, user);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("find-all-meetings-done")
-  findAllMeetingsDone(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<Meeting[]> {
-    this.sentryService.setSentryUser(user);
-    return this.meetingsService.findAllMeetingsDone(researchParamsMeetingsDto, user)
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("count-meetings")
-  countMeetings(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<number> {
-    this.sentryService.setSentryUser(user);
-    return this.meetingsService.countMeetings(researchParamsMeetingsDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)

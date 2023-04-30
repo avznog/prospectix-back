@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { VersionCityType } from 'src/constants/versions.type';
 import { Prospect } from 'src/entities/prospects/prospect.entity';
 import {
   BaseEntity,
@@ -19,7 +20,7 @@ export class City extends BaseEntity {
 
   @Column() 
   @ApiProperty({
-    description: "Nom de la ville",
+    description: "Nom de la région à laquelle appartient la ville",
     required: true
   })
   name: string;
@@ -31,10 +32,30 @@ export class City extends BaseEntity {
   })
   zipcode: number;
 
+  @Column({nullable: true})
+  @ApiProperty({
+    description: "Ville originale, correspond au zipcode"
+  })
+  origin: string;
+
   @OneToMany(() => Prospect, (prospect) => prospect.city)
   @ApiProperty({
     description: "Prospect correspondant à la ville",
     required: true
   })
   prospects: Prospect[];
+
+  @Column({nullable: true})
+  @ApiProperty({
+    description: "Version d'implémentation de la ville",
+    required: false
+  })
+  version: VersionCityType;
+
+  @Column({nullable: true})
+  @ApiProperty({
+    description: "Date d'implémentation de la ville dans l'application",
+    required: false
+  })
+  dateScraped: Date;
 }

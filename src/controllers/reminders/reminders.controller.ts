@@ -62,23 +62,9 @@ export class RemindersController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("find-all-paginated")
-  findAllPaginated(@Query() researchParamsRemindersDto: ResearchParamsRemindersDto, @CurrentUser() user: ProjectManager) : Promise<Reminder[]> {
+  findAllPaginated(@Query() researchParamsRemindersDto: ResearchParamsRemindersDto, @CurrentUser() user: ProjectManager) : Promise<{reminders: Reminder[], count: number}> {
     this.sentryService.setSentryUser(user);
     return this.reminderService.findAllPaginated(researchParamsRemindersDto, user);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("find-all-reminders-done")
-  findAllRemindersDone(@Query() researchParamsRemindersDto: ResearchParamsRemindersDto, @CurrentUser() user: ProjectManager) : Promise<Reminder[]> {
-    this.sentryService.setSentryUser(user);
-    return this.reminderService.findAllRemindersDone(researchParamsRemindersDto, user);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("count-reminders")
-  countReminders(@Query() researchParamsRemindersDto: ResearchParamsRemindersDto, @CurrentUser() user: ProjectManager) : Promise<number> {
-    this.sentryService.setSentryUser(user);
-    return this.reminderService.countReminders(researchParamsRemindersDto, user);
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)

@@ -67,6 +67,7 @@ export class SlackService {
 
   //  ? Cron tab every sunday
   @Cron("00 17 * * 0")
+  // ? updated by Gauthier Itart-Longueville, 07 82 09 43 77, allez le dm
   async sendWeekRecap() {
     try {
       const allCallsCounted = await this.callsService.countWeeklyAll();
@@ -78,20 +79,22 @@ export class SlackService {
         }
       });
       pmsObjectived = pmsObjectived.filter(pm => pm.objectived)
-      let content = "";
-
+      let contentBadCdP = '';
+      let contentGoodCdP = '';
       allCallsCounted.forEach(callCounted => {
         const currentPm = pmsObjectived.find(pm => pm.id == callCounted.id)
         const meetingCounted = allMeetingsCounted.find(meetingC => meetingC.id == callCounted.id);
         const callsGoalValue = currentPm.goals.find(goal => goal.goalTemplate.name == 'Appels').value
         const meetingsGoalValue = currentPm.goals.find(goal => goal.goalTemplate.name == 'Rendez-vous').value
         if(callCounted.count < callsGoalValue || meetingCounted.count < meetingsGoalValue ) {
-          content += `*${currentPm.firstname} ${currentPm.name}* : *${callCounted.count} / ${callsGoalValue}* Appels et *${meetingCounted.count} / ${meetingsGoalValue}* Rendez-vous\n>`
-
+          contentBadCdP += `• *${currentPm.firstname} ${currentPm.name}* : *${callCounted.count} / ${callsGoalValue}* Appels et *${meetingCounted.count} / ${meetingsGoalValue}* Rendez-vous\n>`
+        }
+        else {
+          contentGoodCdP += `• *${currentPm.firstname} ${currentPm.name}* : *${callCounted.count} / ${callsGoalValue}* Appels et *${meetingCounted.count} / ${meetingsGoalValue}* Rendez-vous\n>`
         }
       })
       const message = {
-        text: `:loading: :excuseme: Alerte aux faibles : \n>${content}`
+        text: ` \n :loading: :excuseme: ALERTE AUX FAIBLES : \n>${contentBadCdP} \n> \n\n :champagne-shower: LES CHAMPIONS DE LA SEMAINE : \n>${contentGoodCdP}\n \n\n\n>`
       }
       return this.httpService.post(this.webhookRecapChannel, message).subscribe()
 

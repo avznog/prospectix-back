@@ -52,5 +52,5 @@ export class Event extends BaseEntity {
     description: "Type de l'évènement",
     required: true
   })
-  type: EventType.CREATION;
+  type: EventType;
 }

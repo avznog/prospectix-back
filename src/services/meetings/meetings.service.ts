@@ -1,16 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { lastDayOfWeek } from 'date-fns';
-import { MeetingType } from 'src/constants/meeting.type';
 import { StageType } from 'src/constants/stage.type';
 import { CreateMeetingDto } from 'src/dto/meetings/create-meeting.dto';
 import { ResearchParamsMeetingsDto } from 'src/dto/meetings/research-params-meetings.dto';
 import { UpdateMeetingDto } from 'src/dto/meetings/update-meeting.dto';
 import { Meeting } from 'src/entities/meetings/meeting.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
-import { Between, DeleteResult, Repository, UpdateResult } from 'typeorm';
-import { ActivitiesService } from '../activities/activities.service';
+import { Any, Between, DeleteResult, ILike, In, Repository, UpdateResult } from 'typeorm';
 import { GoogleService } from '../google/google.service';
+import { PrimaryActivityService } from '../primary-activity/primary-activity/primary-activity.service';
+import { SecondaryActivitiesService } from '../secondary-activities/secondary-activities.service';
 
 @Injectable()
 export class MeetingsService {
@@ -22,13 +22,15 @@ export class MeetingsService {
     private readonly pmRepository: Repository<ProjectManager>,
 
     private readonly googleService: GoogleService,
-    private readonly activitiesService: ActivitiesService
+    private readonly secondaryActivitiesService: SecondaryActivitiesService,
+    private readonly primaryActivitiesService: PrimaryActivityService
   ){}
 
   async create(createMeetingDto: CreateMeetingDto, user: ProjectManager) : Promise<Meeting> {
     try {
       createMeetingDto.pm = await this.googleService.updateTokens(user);
-      this.activitiesService.adjustWeight(createMeetingDto.prospect.activity.id, createMeetingDto.prospect.activity.weight, 1)
+      this.secondaryActivitiesService.adjustWeight(createMeetingDto.prospect.secondaryActivity.id, 1)
+      this.primaryActivitiesService.adjustWeight(createMeetingDto.prospect.secondaryActivity.primaryActivity.id, 1)
       this.googleService.createEventOnCalendar(createMeetingDto, user);
       return await this.meetingRepository.save(createMeetingDto);
     } catch (error) {
@@ -65,30 +67,89 @@ export class MeetingsService {
     }
   }
 
-  async findAllPaginated(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<Meeting[]>{
+  async findAllPaginated(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<{meetings: Meeting[], count: number}>{
     try {
-      return await this.meetingRepository.find({
-        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
-        where: [
-          researchParamsMeetingsDto.type != "" && {
+      const done = researchParamsMeetingsDto.done == 1 ? true : false;
+      const meetings = await this.meetingRepository.findAndCount({
+        relations: ["pm", "prospect", "prospect.secondaryActivity", "prospect.secondaryActivity.primaryActivity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
+        where: 
+        // ? all parameters
+        researchParamsMeetingsDto.keyword && researchParamsMeetingsDto.type && [
+          {
+            done: done,
+            type: researchParamsMeetingsDto.type,
             prospect: {
-              stage: StageType.MEETING
+              stage: !done ? StageType.MEETING : In([StageType.ARCHIVED, StageType.BOOKMARK, StageType.MAIL, StageType.MAIL_SENT, StageType.MEETING, StageType.MEETING_DONE_AND_OUT, StageType.PRO, StageType.REMINDER, StageType.RESEARCH]),
+              companyName: ILike(`%${researchParamsMeetingsDto.keyword}%`)
             },
             pm: {
               pseudo: user.pseudo
             },
-            done: researchParamsMeetingsDto.done  == "true" ? true : false,
-            type: researchParamsMeetingsDto.type as MeetingType
           },
-          researchParamsMeetingsDto.type == "" && {
+          {
+            done: done,
+            type: researchParamsMeetingsDto.type,
             prospect: {
-              stage: StageType.MEETING
+              stage: !done ? StageType.MEETING : In([StageType.ARCHIVED, StageType.BOOKMARK, StageType.MAIL, StageType.MAIL_SENT, StageType.MEETING, StageType.MEETING_DONE_AND_OUT, StageType.PRO, StageType.REMINDER, StageType.RESEARCH]),
+              phone: {
+                number: ILike(`${researchParamsMeetingsDto.keyword}`)
+              }
             },
             pm: {
               pseudo: user.pseudo
             },
-            done: researchParamsMeetingsDto.done  == "true" ? true : false,
           }
+        ] || 
+        // ? Only KEYWORD
+        researchParamsMeetingsDto.keyword && !researchParamsMeetingsDto.type && [
+          {
+            done: done,
+            prospect: {
+              stage: !done ? StageType.MEETING : In([StageType.ARCHIVED, StageType.BOOKMARK, StageType.MAIL, StageType.MAIL_SENT, StageType.MEETING, StageType.MEETING_DONE_AND_OUT, StageType.PRO, StageType.REMINDER, StageType.RESEARCH]),
+              companyName: ILike(`%${researchParamsMeetingsDto.keyword}%`)
+            },
+            pm: {
+              pseudo: user.pseudo
+            },
+          },
+          {
+            done: done,
+            prospect: {
+              stage: !done ? StageType.MEETING : In([StageType.ARCHIVED, StageType.BOOKMARK, StageType.MAIL, StageType.MAIL_SENT, StageType.MEETING, StageType.MEETING_DONE_AND_OUT, StageType.PRO, StageType.REMINDER, StageType.RESEARCH]),
+              phone: {
+                number: ILike(`${researchParamsMeetingsDto.keyword}`)
+              }
+            },
+            pm: {
+              pseudo: user.pseudo
+            },
+          }
+        ] || 
+        // ? only TYPE
+        researchParamsMeetingsDto.type && !researchParamsMeetingsDto.keyword && [
+          {
+            done: done,
+            type: researchParamsMeetingsDto.type,
+            prospect: {
+              stage: !done ? StageType.MEETING : In([StageType.ARCHIVED, StageType.BOOKMARK, StageType.MAIL, StageType.MAIL_SENT, StageType.MEETING, StageType.MEETING_DONE_AND_OUT, StageType.PRO, StageType.REMINDER, StageType.RESEARCH]),
+            },
+            pm: {
+              pseudo: user.pseudo
+            },
+          },
+        ] || 
+        // ? NO PARAMETERS
+        [
+          {
+            done: done,
+            prospect: {
+              stage: !done ? StageType.MEETING : In([StageType.ARCHIVED, StageType.BOOKMARK, StageType.MAIL, StageType.MAIL_SENT, StageType.MEETING, StageType.MEETING_DONE_AND_OUT, StageType.PRO, StageType.REMINDER, StageType.RESEARCH]),
+            },
+            pm: {
+              pseudo: user.pseudo
+            },
+          },
+
         ],
         order: {
           date: "ASC"
@@ -96,68 +157,14 @@ export class MeetingsService {
         take: researchParamsMeetingsDto.take,
         skip: researchParamsMeetingsDto.skip
       });
+
+      return {
+        meetings: meetings[0],
+        count: meetings[1]
+      };
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de récupérer les rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  async findAllMeetingsDone(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<Meeting[]> {
-    try {
-      return await this.meetingRepository.find({
-        relations: ["pm", "prospect", "prospect.activity", "prospect.city", "prospect.country", "prospect.reminders", "prospect.phone", "prospect.website", "prospect.email", "prospect.meetings","prospect.bookmarks"],
-        where: [
-          researchParamsMeetingsDto.type != "" && {
-            pm: {
-              pseudo: user.pseudo
-            },
-            done: true,
-            type: researchParamsMeetingsDto.type as MeetingType
-          },
-          researchParamsMeetingsDto.type == "" && {
-            pm: {
-              pseudo: user.pseudo
-            },
-            done: true
-          }
-        ],
-        take: researchParamsMeetingsDto.take,
-        skip: researchParamsMeetingsDto.skip
-      })
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de récupérer les renddez vous effectués", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  async countMeetings(researchParamsMeetingsDto: ResearchParamsMeetingsDto, user: ProjectManager) : Promise<number> {
-    try {
-      return await this.meetingRepository.count({
-        where: [
-          researchParamsMeetingsDto.type != "" && {
-            prospect: {
-              stage: StageType.MEETING
-            },
-            pm: {
-              pseudo: user.pseudo
-            },
-            done: researchParamsMeetingsDto.done  == "true" ? true : false,
-            type: researchParamsMeetingsDto.type as MeetingType
-          },
-          researchParamsMeetingsDto.type == "" && {
-            prospect: {
-              stage: StageType.MEETING
-            },
-            pm: {
-              pseudo: user.pseudo
-            },
-            done: researchParamsMeetingsDto.done  == "true" ? true : false,
-          }
-        ]
-      })
-    } catch (error) {
-      console.log(error)
-      throw new HttpException("Impossible de récupérer le nombre de rendez-vous", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
