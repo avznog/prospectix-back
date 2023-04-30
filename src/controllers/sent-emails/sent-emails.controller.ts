@@ -34,13 +34,6 @@ export class SentEmailsController {
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("find-all-paginated-sent")
-  findAllPaginatedSent(@Query() researchParamsSentEmailsDto: ResearchParamsSentEmailsDto, @CurrentUser() user: ProjectManager) : Promise<{sentEmailsSent: SentEmail[], count: number}> {
-    this.sentryService.setSentryUser(user);
-    return this.sentEmailsService.findAllPaginatedSent(researchParamsSentEmailsDto, user);
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post("send/:id")
   async send(@Body() sendEmailDto: sendEmailDto, @CurrentUser() user: ProjectManager, @Param("id") idSentEmail: number){
     this.sentryService.setSentryUser(user);

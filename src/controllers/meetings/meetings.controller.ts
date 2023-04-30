@@ -61,13 +61,6 @@ export class MeetingsController {
   }
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
-  @Get("find-all-meetings-done")
-  findAllMeetingsDone(@Query() researchParamsMeetingsDto: ResearchParamsMeetingsDto, @CurrentUser() user: ProjectManager) : Promise<{meetingsDone: Meeting[], count: number}> {
-    this.sentryService.setSentryUser(user);
-    return this.meetingsService.findAllMeetingsDone(researchParamsMeetingsDto, user)
-  }
-
-  @Roles(RolesType.CDP, RolesType.ADMIN)
   @Get("count-all-for-me")
   countAllForMe(@CurrentUser() user: ProjectManager) : Promise<number> {
     this.sentryService.setSentryUser(user);

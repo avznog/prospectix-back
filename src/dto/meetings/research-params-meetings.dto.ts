@@ -1,6 +1,9 @@
+import { MeetingType } from "src/constants/meeting.type";
+
 export interface ResearchParamsMeetingsDto {
   take?: number;
   skip: number;
-  done: string;
-  type?: string
+  done: number;
+  type: MeetingType | null;
+  keyword: string | null;
 }

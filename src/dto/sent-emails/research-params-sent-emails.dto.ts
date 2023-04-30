@@ -1,5 +1,6 @@
 export interface ResearchParamsSentEmailsDto {
   take: number;
   skip: number;
-  sent: boolean;
+  sent: number;
+  keyword: string | null;
 }
