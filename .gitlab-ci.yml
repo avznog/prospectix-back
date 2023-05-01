@@ -37,7 +37,7 @@ build-staging:
       - .yarn/
       - yarn.lock
   script:
-    - yarn set version berry --silent
+    - yarn set version berry
     - yarn install --immutable
     - yarn run build
   artifacts:
