@@ -16,7 +16,7 @@ build-prod:
       - .yarn/
       - yarn.lock
   before_script:
-    - yarn set version 3.5
+    - yarn set version berry
   script:
     - yarn install --immutable
     - yarn run build
@@ -37,7 +37,7 @@ build-staging:
       - .yarn/
       - yarn.lock
   before_script:
-    - yarn set version berry
+    - yarn set version 3.5
   script:
     - yarn install --immutable
     - yarn run build
