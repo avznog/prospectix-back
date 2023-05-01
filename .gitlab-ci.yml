@@ -37,6 +37,7 @@ build-staging:
       - .yarn/
       - yarn.lock
   before_script:
+    - yarn cache clean
     - yarn set version berry
   script:
     - yarn install --immutable
