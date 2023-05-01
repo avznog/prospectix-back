@@ -55,8 +55,6 @@ build-dev:
     paths:
       - .yarn/
       - yarn.lock
-  before_script:
-    - yarn set version berry
   script:
     - yarn install --immutable
     - yarn run build
