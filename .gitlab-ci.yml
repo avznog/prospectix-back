@@ -39,7 +39,7 @@ build-staging:
   before_script:
     - yarn set version berry
   script:
-    - yarn
+    - yarn install --immutable
     - yarn run build
   artifacts:
     paths:
