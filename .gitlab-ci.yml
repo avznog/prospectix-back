@@ -36,10 +36,8 @@ build-staging:
     paths:
       - .yarn/
       - yarn.lock
-  before_script:
-    - yarn cache clean
-    - yarn set version berry
   script:
+    - yarn set version berry --silent
     - yarn install --immutable
     - yarn run build
   artifacts:
