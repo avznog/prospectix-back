@@ -36,9 +36,10 @@ build-staging:
     paths:
       - .yarn/
       - yarn.lock
-  script:
+  before_script:
     - yarn set version berry
-    - yarn install --immutable
+  script:
+    - yarn install --immutable --frozen-lockfile
     - yarn run build
   artifacts:
     paths:
