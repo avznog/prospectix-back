@@ -48,6 +48,3 @@ lerna-debug.log*
 
 # vscode counter
 .VSCodeCounter/**
-
-# auto-generated documentation
-/documentation
