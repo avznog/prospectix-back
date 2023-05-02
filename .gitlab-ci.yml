@@ -111,8 +111,11 @@ docker-dev:
 docker-doc-test:
   stage: docker-doc
   image: docker:latest
+  before_script:
+    - docker login -u $DOCKER_LOGIN -p $DOCKERTOKEN $CI_REGISTRY
   script:
     - docker build -f Dockerfile.doc --tag $CI_DOC_IMAGE:test .
+    - docker push $CI_DOC_IMAGE:test
   only:
     - feature/auto-doc
 
