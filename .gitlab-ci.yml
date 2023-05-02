@@ -65,7 +65,6 @@ build-dev:
   except:
     - master
     - staging
-    - feature/auto-doc
 
 # DOCKER STAGE
 docker-staging:
@@ -104,21 +103,42 @@ docker-dev:
   except:
     - master
     - staging
-    - feature/auto-doc
 
 
 # DOCKER DOC
-docker-doc-test:
+docker-doc-dev:
   stage: docker-doc
   image: docker:latest
   before_script:
     - docker login -u $DOCKER_LOGIN -p $DOCKERTOKEN $CI_REGISTRY
   script:
-    - docker build -f Dockerfile.doc --tag $CI_DOC_IMAGE:test .
-    - docker push $CI_DOC_IMAGE:test
-  only:
-    - feature/auto-doc
+    - docker build -f Dockerfile.doc --tag $CI_DOC_IMAGE:dev .
+    - docker push $CI_DOC_IMAGE:dev
+  except:
+    - master
+    - staging
 
+docker-doc-staging:
+  stage: docker-doc
+  image: docker:latest
+  before_script:
+    - docker login -u $DOCKER_LOGIN -p $DOCKERTOKEN $CI_REGISTRY
+  script:
+    - docker build -f Dockerfile.doc --tag $CI_DOC_IMAGE:staging .
+    - docker push $CI_DOC_IMAGE:staging
+  only:
+    - staging
+
+docker-doc-master:
+  stage: docker-doc
+  image: docker:latest
+  before_script:
+    - docker login -u $DOCKER_LOGIN -p $DOCKERTOKEN $CI_REGISTRY
+  script:
+    - docker build -f Dockerfile.doc --tag $CI_DOC_IMAGE:master .
+    - docker push $CI_DOC_IMAGE:master
+  only:
+    - master
 
 #DEPLOY STAGE
 
