@@ -1,6 +1,7 @@
 stages:
   - build
   - docker
+  - docker-doc
   - deploy
 
 #BUILD STAGE
@@ -64,6 +65,7 @@ build-dev:
   except:
     - master
     - staging
+    - feature/auto-doc
 
 # DOCKER STAGE
 docker-staging:
@@ -102,6 +104,17 @@ docker-dev:
   except:
     - master
     - staging
+    - feature/auto-doc
+
+
+# DOCKER DOC
+docker-doc-test:
+  stage: docker-doc
+  image: docker:latest
+  script:
+    - docker build --tag $CI_DOC_IMAGE:test .
+  only:
+    - feature/auto-doc
 
 
 #DEPLOY STAGE
