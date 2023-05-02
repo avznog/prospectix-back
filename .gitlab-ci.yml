@@ -1,6 +1,7 @@
 stages:
   - build
   - docker
+  - docker-doc
   - deploy
 
 #BUILD STAGE
@@ -20,9 +21,11 @@ build-prod:
   script:
     - yarn install --immutable
     - yarn run build
+    - yarn compodoc
   artifacts:
     paths:
       - dist/
+      - documentation/
   only:
     - master
 
@@ -36,14 +39,14 @@ build-staging:
     paths:
       - .yarn/
       - yarn.lock
-  before_script:
-    - yarn set version berry
   script:
     - yarn install --immutable
     - yarn run build
+    - yarn compodoc
   artifacts:
     paths:
       - dist/
+      - documentation/
   only:
     - staging
 
@@ -57,14 +60,14 @@ build-dev:
     paths:
       - .yarn/
       - yarn.lock
-  before_script:
-    - yarn set version berry
   script:
     - yarn install --immutable
     - yarn run build
+    - yarn compodoc
   artifacts:
     paths:
       - dist/
+      - documentation/
   except:
     - master
     - staging
@@ -107,6 +110,47 @@ docker-dev:
     - master
     - staging
 
+
+# DOCKER DOC
+docker-doc-dev:
+  stage: docker-doc
+  image: docker:latest
+  before_script:
+    - docker login -u $DOCKER_LOGIN -p $DOCKERTOKEN $CI_REGISTRY
+  script:
+    - docker build -f Dockerfile.doc --tag $CI_DOC_IMAGE:dev .
+    - docker push $CI_DOC_IMAGE:dev
+  dependencies:
+    - build-dev
+  except:
+    - master
+    - staging
+
+docker-doc-staging:
+  stage: docker-doc
+  image: docker:latest
+  before_script:
+    - docker login -u $DOCKER_LOGIN -p $DOCKERTOKEN $CI_REGISTRY
+  script:
+    - docker build -f Dockerfile.doc --tag $CI_DOC_IMAGE:staging .
+    - docker push $CI_DOC_IMAGE:staging
+  dependencies:
+    - build-staging
+  only:
+    - staging
+
+docker-doc-prod:
+  stage: docker-doc
+  image: docker:latest
+  before_script:
+    - docker login -u $DOCKER_LOGIN -p $DOCKERTOKEN $CI_REGISTRY
+  script:
+    - docker build -f Dockerfile.doc --tag $CI_DOC_IMAGE:master .
+    - docker push $CI_DOC_IMAGE:master
+  dependencies:
+    - build-prod
+  only:
+    - master
 
 #DEPLOY STAGE
 

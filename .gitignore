@@ -46,4 +46,9 @@ lerna-debug.log*
 !.yarn/sdks
 !.yarn/versions
 
+# vscode counter
 .VSCodeCounter/**
+
+# documentation
+/documentation
+/documentation/*
