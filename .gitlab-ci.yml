@@ -63,6 +63,7 @@ build-dev:
   artifacts:
     paths:
       - dist/
+      - documentation/
   except:
     - master
     - staging
