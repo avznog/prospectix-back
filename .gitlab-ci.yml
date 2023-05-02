@@ -24,6 +24,7 @@ build-prod:
   artifacts:
     paths:
       - dist/
+      - documentation/
   only:
     - master
 
@@ -43,6 +44,7 @@ build-staging:
   artifacts:
     paths:
       - dist/
+      - documentation/
   only:
     - staging
 
@@ -130,10 +132,12 @@ docker-doc-staging:
   script:
     - docker build -f Dockerfile.doc --tag $CI_DOC_IMAGE:staging .
     - docker push $CI_DOC_IMAGE:staging
+  dependencies:
+    - build-staging
   only:
     - staging
 
-docker-doc-master:
+docker-doc-prod:
   stage: docker-doc
   image: docker:latest
   before_script:
@@ -141,6 +145,8 @@ docker-doc-master:
   script:
     - docker build -f Dockerfile.doc --tag $CI_DOC_IMAGE:master .
     - docker push $CI_DOC_IMAGE:master
+  dependencies:
+    - build-prod
   only:
     - master
 
