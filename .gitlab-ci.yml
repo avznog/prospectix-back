@@ -112,7 +112,7 @@ docker-doc-test:
   stage: docker-doc
   image: docker:latest
   script:
-    - docker build --tag $CI_DOC_IMAGE:test .
+    - docker build -f Dockerfile.doc --tag $CI_DOC_IMAGE:test .
   only:
     - feature/auto-doc
 
