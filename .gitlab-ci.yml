@@ -59,6 +59,7 @@ build-dev:
   script:
     - yarn install --immutable
     - yarn run build
+    - yarn compodoc
   artifacts:
     paths:
       - dist/
@@ -114,6 +115,8 @@ docker-doc-dev:
   script:
     - docker build -f Dockerfile.doc --tag $CI_DOC_IMAGE:dev .
     - docker push $CI_DOC_IMAGE:dev
+  dependencies:
+    - build-dev
   except:
     - master
     - staging
