@@ -21,6 +21,7 @@ build-prod:
   script:
     - yarn install --immutable
     - yarn run build
+    - yarn compodoc
   artifacts:
     paths:
       - dist/
@@ -41,6 +42,7 @@ build-staging:
   script:
     - yarn install --immutable
     - yarn run build
+    - yarn compodoc
   artifacts:
     paths:
       - dist/
