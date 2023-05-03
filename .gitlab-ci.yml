@@ -16,8 +16,6 @@ build-prod:
     paths:
       - .yarn/
       - yarn.lock
-  before_script:
-    - yarn set version berry
   script:
     - yarn install --immutable
     - yarn run build
@@ -145,8 +143,8 @@ docker-doc-prod:
   before_script:
     - docker login -u $DOCKER_LOGIN -p $DOCKERTOKEN $CI_REGISTRY
   script:
-    - docker build -f Dockerfile.doc --tag $CI_DOC_IMAGE:master .
-    - docker push $CI_DOC_IMAGE:master
+    - docker build -f Dockerfile.doc --tag $CI_DOC_IMAGE:prod .
+    - docker push $CI_DOC_IMAGE:prod
   dependencies:
     - build-prod
   only:
