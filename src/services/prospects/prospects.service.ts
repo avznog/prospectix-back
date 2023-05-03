@@ -490,6 +490,8 @@ export class ProspectsService {
       const updateProspectDto = new UpdateProspectDto();
       updateProspectDto.disabled = true;
       updateProspectDto.reasonDisabled = reason;
+      updateProspectDto.archived = new Date;
+      updateProspectDto.stage = StageType.ARCHIVED;
       return await this.prospectRepository.update(idProspect, updateProspectDto);
     } catch (error) {
       console.log(error)
