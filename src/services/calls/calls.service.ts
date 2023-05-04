@@ -5,6 +5,7 @@ import { Call } from 'src/entities/calls/call.entity';
 import { CreateCallDto } from 'src/dto/calls/create-call.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Between, Repository } from 'typeorm';
+import moment from 'moment';
 
 @Injectable()
 export class CallsService {
@@ -19,6 +20,7 @@ export class CallsService {
 
   async createForMe(createCallDto: CreateCallDto, user: ProjectManager) : Promise<Call> {
     try {
+      createCallDto.date = moment(createCallDto.date).tz('Europe/Paris').toDate();
       createCallDto.pm = user;
       return await this.callRepository.save(this.callRepository.create(createCallDto));
     } catch (error) {
@@ -29,6 +31,7 @@ export class CallsService {
 
   async create(createCallDto: CreateCallDto) {
     try {
+      createCallDto.date = moment(createCallDto.date).tz('Europe/Paris').toDate();
       return await this.callRepository.save(this.callRepository.create(createCallDto));
     } catch (error) {
       console.log(error)

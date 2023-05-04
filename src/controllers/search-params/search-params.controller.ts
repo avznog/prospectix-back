@@ -9,7 +9,8 @@ import { UpdateSearchParamsDto } from 'src/dto/search-params/update-search-param
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { SearchParamsService } from 'src/services/search-params/search-params.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 
 @Controller('search-params')
 @ApiTags("search-params")

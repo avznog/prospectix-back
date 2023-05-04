@@ -1,4 +1,4 @@
-import { Injectable, Res } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/minimal';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 

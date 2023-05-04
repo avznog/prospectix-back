@@ -9,7 +9,8 @@ import { UpdatePhoneDto } from 'src/dto/phones/update-phone.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { PhonesService } from 'src/services/phones/phones.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 import { UpdateResult } from 'typeorm';
 
 @UseInterceptors(SentryInterceptor)

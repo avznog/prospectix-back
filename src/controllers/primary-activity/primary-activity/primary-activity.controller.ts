@@ -8,8 +8,9 @@ import { RolesType } from 'src/auth/role.type';
 import { PrimaryActivity } from 'src/entities/primary-activity/primary-activity.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { PrimaryActivityService } from 'src/services/primary-activity/primary-activity/primary-activity.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { PrimaryActivityService } from 'src/services/primary-activity/primary-activity.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 
 @UseInterceptors(SentryInterceptor)
 @Controller('primary-activities')

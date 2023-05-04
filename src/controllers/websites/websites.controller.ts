@@ -8,7 +8,8 @@ import { RolesType } from 'src/auth/role.type';
 import { UpdateWebsiteDto } from 'src/dto/websites/update-website.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 import { WebsitesService } from 'src/services/websites/websites.service';
 import { UpdateResult } from 'typeorm';
 

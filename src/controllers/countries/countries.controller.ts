@@ -10,7 +10,8 @@ import { Country } from 'src/entities/countries/country.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { CountriesService } from 'src/services/countries/countries.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 
 @UseInterceptors(SentryInterceptor)
 @Controller('countries')

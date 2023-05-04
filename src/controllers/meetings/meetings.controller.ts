@@ -12,7 +12,8 @@ import { Meeting } from 'src/entities/meetings/meeting.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { MeetingsService } from 'src/services/meetings/meetings.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 import { DeleteResult, UpdateResult } from 'typeorm';
 
 @UseInterceptors(SentryInterceptor)

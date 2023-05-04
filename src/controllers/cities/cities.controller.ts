@@ -10,7 +10,8 @@ import { City } from 'src/entities/cities/city.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { CitiesService } from 'src/services/cities/cities.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 
 @UseInterceptors(SentryInterceptor)
 @Controller('cities')

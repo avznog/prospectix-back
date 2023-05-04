@@ -12,7 +12,8 @@ import { ProjectManager } from 'src/entities/project-managers/project-manager.en
 import { Reminder } from 'src/entities/reminders/reminder.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { RemindersService } from 'src/services/reminders/reminders.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 import { DeleteResult, UpdateResult } from 'typeorm';
 
 @UseInterceptors(SentryInterceptor)

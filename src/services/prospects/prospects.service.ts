@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import moment from 'moment';
 import { EventType } from 'src/constants/event.type';
 import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
 import { StageType } from 'src/constants/stage.type';
@@ -389,7 +390,7 @@ export class ProspectsService {
     // adding events
     for (let prospect of prospects) {
       this.eventRepository.save(this.eventRepository.create({
-        date: new Date,
+        date: moment().tz('Europe/Paris').toDate(),
         description: "Prospect créé",
         prospect: prospect,
         type: EventType.CREATION,
@@ -401,6 +402,7 @@ export class ProspectsService {
 
   async create(createProspectDto: CreateProspectDto, pm: ProjectManager) {
     try {
+      createProspectDto.dateScraped = moment(createProspectDto.dateScraped).tz('Europe/Paris').toDate();
       const newProspect = await this.prospectRepository.save(createProspectDto);
       this.eventRepository.save(this.eventRepository.create({
         date: new Date,

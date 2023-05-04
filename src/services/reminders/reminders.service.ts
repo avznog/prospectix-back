@@ -8,8 +8,9 @@ import { UpdateReminderDto } from 'src/dto/reminders/update-reminder.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Reminder } from 'src/entities/reminders/reminder.entity';
 import { Between, DeleteResult, ILike, Not, Repository, UpdateResult } from 'typeorm';
-import { PrimaryActivityService } from '../primary-activity/primary-activity/primary-activity.service';
+import { PrimaryActivityService } from '../primary-activity/primary-activity.service';
 import { SecondaryActivitiesService } from '../secondary-activities/secondary-activities.service';
+import moment from 'moment';
 
 @Injectable()
 export class RemindersService {
@@ -26,6 +27,9 @@ export class RemindersService {
   
   async update(id: number, updateReminderDto: UpdateReminderDto) {
     try {
+      if(updateReminderDto.date) {
+        updateReminderDto.date = moment(updateReminderDto.date).tz('Europe/Paris').toDate();
+      }
       return await this.reminderRepository.update(id, updateReminderDto);
     } catch (error) {
       console.log(error)
@@ -35,6 +39,8 @@ export class RemindersService {
 
   async create(createReminderDto: CreateReminderDto, user: ProjectManager) : Promise<Reminder>{
     try {
+      createReminderDto.creationDate = moment(createReminderDto.creationDate).tz('Europe/Paris').toDate();
+      createReminderDto.date = moment(createReminderDto.date).tz('Europe/Paris').toDate();
       createReminderDto.pm = user;
       this.secondaryActivitiesService.adjustWeight(createReminderDto.prospect.secondaryActivity.id, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);
       this.primaryActivitiesService.adjustWeight(createReminderDto.prospect.secondaryActivity.primaryActivity.id, createReminderDto.priority == 3 ? 0.8 : createReminderDto.priority == 2 ? 0.4 : 0.1);

@@ -4,6 +4,7 @@ import { CreateEventDto } from 'src/dto/events/create-event.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Repository } from 'typeorm';
 import { Event } from 'src/entities/events/event.entity';
+import moment from 'moment';
 @Injectable()
 export class EventsService {
 
@@ -14,6 +15,7 @@ export class EventsService {
 
   async create(createEventDto: CreateEventDto, user: ProjectManager) : Promise<Event> {
     try {
+      createEventDto.date = moment(createEventDto.date).tz('Europe/Paris').toDate();
       createEventDto.pm = user;
       return this.eventRepository.save(createEventDto);
     } catch (error) {

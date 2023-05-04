@@ -9,7 +9,8 @@ import { ProjectManager } from 'src/entities/project-managers/project-manager.en
 import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { SecondaryActivitiesService } from 'src/services/secondary-activities/secondary-activities.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 
 @UseInterceptors(SentryInterceptor)
 @Controller('secondary-activities')

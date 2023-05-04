@@ -11,7 +11,8 @@ import { Bookmark } from 'src/entities/bookmarks/bookmark.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { BookmarksService } from 'src/services/bookmarks/bookmarks.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 import { DeleteResult } from 'typeorm';
 
 @UseInterceptors(SentryInterceptor)

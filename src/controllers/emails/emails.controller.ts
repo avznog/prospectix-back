@@ -9,7 +9,8 @@ import { UpdateEmailDto } from 'src/dto/emails/update-email.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { EmailsService } from 'src/services/emails/emails.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 import { UpdateResult } from 'typeorm';
 
 @UseInterceptors(SentryInterceptor)

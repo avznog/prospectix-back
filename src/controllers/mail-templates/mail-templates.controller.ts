@@ -12,7 +12,8 @@ import { MailTemplate } from 'src/entities/mail-templates/mail-template.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { MailTemplatesService } from 'src/services/mail-templates/mail-templates.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 import { DeleteResult } from 'typeorm';
 
 @Controller('mail-templates')

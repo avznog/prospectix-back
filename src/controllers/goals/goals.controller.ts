@@ -10,7 +10,8 @@ import { Goal } from 'src/entities/goals/goal.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { GoalsService } from 'src/services/goals/goals.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 
 @Controller('goals')
 @UseGuards(JwtAuthGuard, RolesGuard)

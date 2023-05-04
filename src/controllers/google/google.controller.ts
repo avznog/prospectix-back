@@ -9,7 +9,8 @@ import { RolesType } from 'src/auth/role.type';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { GoogleService } from 'src/services/google/google.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 
 @UseInterceptors(SentryInterceptor)
 @Controller('google')

@@ -11,7 +11,8 @@ import { UpdateProjectManagerDto } from 'src/dto/project-managers/update-project
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { ProjectManagersService } from 'src/services/project-managers/project-managers.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 import { UpdateResult } from 'typeorm';
 
 @UseInterceptors(SentryInterceptor)

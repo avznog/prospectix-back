@@ -8,7 +8,8 @@ import { RolesType } from 'src/auth/role.type';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Prospect } from 'src/entities/prospects/prospect.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 import { SlackService } from 'src/services/slack/slack.service';
 
 @UseInterceptors(SentryInterceptor)

@@ -13,7 +13,8 @@ import { ProjectManager } from 'src/entities/project-managers/project-manager.en
 import { Prospect } from 'src/entities/prospects/prospect.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { ProspectsService } from 'src/services/prospects/prospects.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 import { UpdateResult } from 'typeorm';
 
 @UseInterceptors(SentryInterceptor)

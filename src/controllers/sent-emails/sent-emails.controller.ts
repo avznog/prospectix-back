@@ -13,7 +13,8 @@ import { SentEmail } from 'src/entities/sent-emails/sent-email.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { GoogleService } from 'src/services/google/google.service';
 import { SentEmailsService } from 'src/services/sent-emails/sent-emails.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 
 @UseInterceptors(SentryInterceptor)
 @Controller('sent-emails')

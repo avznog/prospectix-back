@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import moment from 'moment';
 import { CreateCityDto } from 'src/dto/cities/create-city.dto';
 import { City } from 'src/entities/cities/city.entity';
 import { SearchParams } from 'src/entities/search-params/search-params.entity';
@@ -59,6 +60,7 @@ export class CitiesService {
 
   async create(createCityDto: CreateCityDto) : Promise<City> {
     try {
+      createCityDto.dateScraped = moment(createCityDto.dateScraped).tz('Europe/Paris').toDate();
       const city = await this.cityRepository.find({
         where: {
           zipcode: createCityDto.zipcode

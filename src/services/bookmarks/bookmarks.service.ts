@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import moment from 'moment-timezone';
 import { StageType } from 'src/constants/stage.type';
 import { CreateBookmarkDto } from 'src/dto/bookmarks/create-bookmark.dto';
 import { ResearchParamsBookmarksDto } from 'src/dto/bookmarks/research-params-bookmarks.dto';
@@ -16,6 +17,7 @@ export class BookmarksService {
 
   async create(createBookmarkDto: CreateBookmarkDto, user: ProjectManager): Promise<Bookmark> {
     try {
+      createBookmarkDto.creationDate = moment(createBookmarkDto.creationDate).tz('Europe/Paris').toDate();
       createBookmarkDto.pm = user;
       return await this.bookmarkRepository.save(createBookmarkDto);
     } catch (error) {

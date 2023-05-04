@@ -14,9 +14,7 @@ export class ProjectManagersService {
     private readonly pmRepository: Repository<ProjectManager>,
   ) {}
 
-  async create(
-    createProjectManagerDto: CreateProjectManagerDto,
-  ): Promise<ProjectManager> {
+  async create(createProjectManagerDto: CreateProjectManagerDto): Promise<ProjectManager> {
     try {
      return await this.pmRepository.save(createProjectManagerDto); 
     } catch (error) {

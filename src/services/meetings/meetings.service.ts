@@ -7,10 +7,11 @@ import { ResearchParamsMeetingsDto } from 'src/dto/meetings/research-params-meet
 import { UpdateMeetingDto } from 'src/dto/meetings/update-meeting.dto';
 import { Meeting } from 'src/entities/meetings/meeting.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
-import { Any, Between, DeleteResult, ILike, In, Repository, UpdateResult } from 'typeorm';
+import { Between, DeleteResult, ILike, In, Repository, UpdateResult } from 'typeorm';
 import { GoogleService } from '../google/google.service';
-import { PrimaryActivityService } from '../primary-activity/primary-activity/primary-activity.service';
+import { PrimaryActivityService } from '../primary-activity/primary-activity.service';
 import { SecondaryActivitiesService } from '../secondary-activities/secondary-activities.service';
+import moment from 'moment';
 
 @Injectable()
 export class MeetingsService {
@@ -28,6 +29,8 @@ export class MeetingsService {
 
   async create(createMeetingDto: CreateMeetingDto, user: ProjectManager) : Promise<Meeting> {
     try {
+      createMeetingDto.creationDate = moment(createMeetingDto.creationDate).tz('Europe/Paris').toDate();
+      createMeetingDto.date = moment(createMeetingDto.date).tz('Europe/Paris').toDate();
       createMeetingDto.pm = await this.googleService.updateTokens(user);
       this.secondaryActivitiesService.adjustWeight(createMeetingDto.prospect.secondaryActivity.id, 1)
       this.primaryActivitiesService.adjustWeight(createMeetingDto.prospect.secondaryActivity.primaryActivity.id, 1)
@@ -356,6 +359,9 @@ export class MeetingsService {
 
   async update(id: number, updateMeetingDto: UpdateMeetingDto) : Promise<UpdateResult> {
     try {
+      if(updateMeetingDto.date) {
+        updateMeetingDto.date = moment(updateMeetingDto.date).tz('Europe/Paris').toDate();
+      }
       return await this.meetingRepository.update(id, updateMeetingDto);
     } catch (error) {
       console.log(error);

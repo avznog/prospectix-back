@@ -12,7 +12,9 @@ import { SentEmail } from 'src/entities/sent-emails/sent-email.entity';
 import { Between, ILike, Not, Repository, UpdateResult } from 'typeorm';
 import { SecondaryActivitiesService } from '../secondary-activities/secondary-activities.service';
 import { GoogleService } from '../google/google.service';
-import { PrimaryActivityService } from '../primary-activity/primary-activity/primary-activity.service';
+import { PrimaryActivityService } from '../primary-activity/primary-activity.service';
+import moment from 'moment';
+
 @Injectable()
 export class SentEmailsService {
 
@@ -98,7 +100,7 @@ export class SentEmailsService {
 
   async markSent(idSentEmail: number, templateName: string, object: string): Promise<UpdateResult> {
     try {
-      return await this.sentEmailRepository.update(idSentEmail, { sent: true, sendingDate: new Date(), templateName: templateName, object: object });
+      return await this.sentEmailRepository.update(idSentEmail, { sent: true, sendingDate: moment().tz('Europe/Paris').toDate(), templateName: templateName, object: object });
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de marquer l'email comme envoyé", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -128,8 +130,11 @@ export class SentEmailsService {
 
   async create(createSentEmailDto: CreateSentEmailDto, user: ProjectManager): Promise<SentEmail> {
     try {
+      createSentEmailDto.date = moment(createSentEmailDto.date).tz('Europe/Paris').toDate();
+      if(createSentEmailDto.sendingDate) {
+        createSentEmailDto.sendingDate = moment(createSentEmailDto.sendingDate).tz('Europe/Paris').toDate();
+      }
       createSentEmailDto.pm = user;
-      console.log(createSentEmailDto)
       this.secondaryActivitiesService.adjustWeight(createSentEmailDto.prospect.secondaryActivity.id, 0.09)
       this.primaryActivitiesService.adjustWeight(createSentEmailDto.prospect.secondaryActivity.primaryActivity.id, 0.09)
       return await this.sentEmailRepository.save(createSentEmailDto);
@@ -276,7 +281,7 @@ export class SentEmailsService {
 
   async sendSeparately(idSentEmail: number, object: string) {
     try {
-      return await this.sentEmailRepository.update(idSentEmail, { sent: true, sendingDate: new Date(), templateName: "Envoyé séparément", object: object });
+      return await this.sentEmailRepository.update(idSentEmail, { sent: true, sendingDate: moment().tz('Europe/Paris').toDate(), templateName: "Envoyé séparément", object: object });
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de marquer le mail comme envoyé séparément", HttpStatus.INTERNAL_SERVER_ERROR)

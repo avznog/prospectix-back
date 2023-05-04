@@ -8,6 +8,7 @@ import { MailTemplate } from 'src/entities/mail-templates/mail-template.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Repository } from 'typeorm';
 import { MailTemplatesService } from '../mail-templates/mail-templates.service';
+import moment from 'moment';
 
 // ! GOOGLE IMPORTS
 const path = require("path");
@@ -138,6 +139,8 @@ export class GoogleService {
   // ? Create an event on calendar JISEP -> for meetings
   async createEventOnCalendar(createMeetingDto: CreateMeetingDto, pm: ProjectManager) {
     try {
+      createMeetingDto.creationDate = moment(createMeetingDto.creationDate).tz('Europe/Paris').toDate();
+      createMeetingDto.date = moment(createMeetingDto.date).tz('Europe/Paris').toDate();
         const calendar = google.calendar({ version: 'v3'});
         var event = {
           summary: `[${createMeetingDto.prospect.companyName}] - ${createMeetingDto.pm.firstname.charAt(0).toUpperCase() + createMeetingDto.pm.firstname.slice(1).toLowerCase()} ${createMeetingDto.pm.name.toUpperCase()}`, // ? Nom de l'évènement

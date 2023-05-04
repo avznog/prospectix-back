@@ -12,7 +12,8 @@ import { Goal } from 'src/entities/goals/goal.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { GoalTemplatesService } from 'src/services/goal-templates/goal-templates.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 import { DeleteResult } from 'typeorm';
 
 @Controller('goal-templates')

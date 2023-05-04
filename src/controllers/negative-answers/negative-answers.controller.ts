@@ -9,7 +9,8 @@ import { CreateNegativeAnswerDto } from 'src/dto/negative-answers/create-negativ
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { NegativeAnswersService } from 'src/services/negative-answers/negative-answers.service';
-import { SentryService } from 'src/services/sentry/sentry/sentry.service';
+import { SentryService } from 'src/services/sentry/sentry.service';
+
 
 @UseInterceptors(SentryInterceptor)
 @Controller('negative-answers')
