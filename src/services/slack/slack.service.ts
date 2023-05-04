@@ -8,7 +8,8 @@ import { Reminder } from 'src/entities/reminders/reminder.entity';
 import { Between, Repository } from 'typeorm';
 import { CallsService } from '../calls/calls.service';
 import { MeetingsService } from '../meetings/meetings.service';
-const { WebClient } = require("@slack/web-api");
+import { UsersListResponse, WebClient } from '@slack/web-api';
+const fs = require('fs');
 
 @Injectable()
 export class SlackService {
@@ -18,7 +19,7 @@ export class SlackService {
   webhookChampChannel: string;
   webhookRecapChannel: string;
   environment: string = "";
-
+  client: WebClient;
   constructor(
     private httpService: HttpService,
 
@@ -50,6 +51,16 @@ export class SlackService {
       this.webhookFraudChannel = "https://hooks.slack.com/services/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"
       this.webhookChampChannel = "https://hooks.slack.com/services/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"
       this.webhookRecapChannel = "https://hooks.slack.com/services/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"
+    }
+
+    // ! Slack client tokens & initialization
+    // ! IF PROSPECTIX IS IN DEV OR STAGING -> SENDING MESSAGES TO SLACK ADMIN
+    if (this.environment == "prod") {
+      // ? CLIENT CDP -> SLACK CDP 
+      this.client = new WebClient("xoxb-451848388199-4265120570036-30Z0d4NI04Bo2Cb7wGtPsHFF");
+    } else {
+      // ? CLIENT ADMIN -> SLACK ADMIN
+      this.client = new WebClient("xoxb-358133606565-4230355888689-V1oyyJKt2LgKGIKDS3AWx7dH");
     }
   }
 
@@ -116,24 +127,36 @@ export class SlackService {
     }
   }
 
+  // ! TO CHANGE TO EVERY 5 mn
+  @Cron('*/5 * * * *')
+  async getSlackUsers() {
+    try {
+      // ? get list of users from slack 
+      const users = await this.client.users.list();
+
+      // ? write in a json file
+      fs.writeFileSync('slackUsers.json', JSON.stringify(users));
+      return users;
+    } catch (error) {
+      console.log(error)
+      throw new Error('Failed recovering slack api users');
+    }
+      
+  }
   // ! CRON WORKING EVERY MINUTES, CHECKING IF U HAVE A REMINDER IN 3 H -> then send slack message
   @Cron("* * * * *")
   async sendPmReminder() {
     try {
-      // ! IF PROSPECTIX IS IN DEV OR STAGING -> SENDING MESSAGES TO SLACK ADMIN
-      let client = new WebClient();
-      if (this.environment == "prod") {
-        // ? CLIENT CDP -> SLACK CDP 
-        client = new WebClient("xoxb-451848388199-4265120570036-30Z0d4NI04Bo2Cb7wGtPsHFF");
+
+      // ? getting the list of slack users from the file / calling method to read the file
+      let slackUsers: UsersListResponse;
+      if(!fs.existsSync("slackUsers.json")) {
+        slackUsers = await this.getSlackUsers();
       } else {
-        // ? CLIENT ADMIN -> SLACK ADMIN
-        client = new WebClient("xoxb-358133606565-4230355888689-V1oyyJKt2LgKGIKDS3AWx7dH");
+        slackUsers = JSON.parse(fs.readFileSync('slackUsers.json'));
       }
 
-      // * getting all the users of slack
-      const result = await client.users.list();
-
-      // * getting all the pms that are cdp
+      // ? getting all the pms that are cdp
       let pms = await this.pmRepository.find({
         where: {
           admin: false,
@@ -141,39 +164,41 @@ export class SlackService {
           disabled: false
         }
       });
-
+  
       // ?  if cron starts at 17:23:22 -> Between(17:23:00, 17:24:00)
-      // !  dates on local are not in french time zone (+5 because of utc 2)
-      const beginningInterval3h = new Date(new Date().setHours(new Date().getHours(), new Date().getMinutes() + 30, 0, 0));
-      const endInterval3h = new Date(new Date().setHours(new Date().getHours(), new Date().getMinutes() + 30, 59, 999))
+      
+      // ? interval of dates, scanning the reminders 30 mns later than the cron
+      const intervalDown = new Date(new Date().setHours(new Date().getHours(), new Date().getMinutes() + 30, 0, 0));
+      const intervalUp = new Date(new Date().setHours(new Date().getHours(), new Date().getMinutes() + 30, 59, 999))
 
-      // * for each pm, check if exists on slack, and then check if he has a reminder in the same minute 3 hours later. If yes, send notif
+      
+      // * for each pm, check if exists on slack, and then check if he has a reminder in the same minute 3mn later. If yes, send notif
       pms.forEach(async pm => {
-        if (result.members.find(member => member.name == pm.pseudo)) {
-          const slackUser = result.members.find(member => member.name == pm.pseudo)
-          await this.reminderRepository.findAndCount({
-            relations: ["prospect", "prospect.phone"],
+
+        // ? getting current pm from the slack users
+        const member = slackUsers.members.find(mem => mem.name == pm.pseudo);
+        if (member) {
+          
+          // ? getting pm's reminders, bewteen the dates of then interval (30 mn laters)
+          const reminders = await this.reminderRepository.find({
             where: {
               pm: {
                 pseudo: pm.pseudo
               },
-              // ? between minute down and minute up
-              date: Between(beginningInterval3h, endInterval3h)
-            }
-          }).then(remindersCounted => {
-            if (remindersCounted[1] > 0) {
-              for (let reminder of remindersCounted[0]) {
-                client.chat.postMessage({
-                  channel: slackUser.id,
-                  text: `Tu as un rappel à ${beginningInterval3h.getHours()}:${beginningInterval3h.getMinutes()} avec ${reminder.prospect.companyName} au <tel:${reminder.prospect.phone.number}|${reminder.prospect.phone.number}>`
-                })
-              }
-            }
+              date: Between(intervalDown, intervalUp)
+            },
+            relations: ["prospect","prospect.phone"]
+          });
 
-          })
+          // ? for each reminder, send a slack notification
+          reminders.forEach(reminder => {
+            this.client.chat.postMessage({
+              channel: member.id,
+                  text: `Tu as un rappel à ${intervalDown.getHours()}:${intervalDown.getMinutes()} avec ${reminder.prospect.companyName} au <tel:${reminder.prospect.phone.number}|${reminder.prospect.phone.number}>`
+            })
+          });
         }
-      })
-      return result
+      });
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible d'envoyer la notification personnalisée au chef de projet pour les rappels", HttpStatus.INTERNAL_SERVER_ERROR)
