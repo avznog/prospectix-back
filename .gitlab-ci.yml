@@ -17,7 +17,7 @@ build-prod:
       - .yarn/
       - yarn.lock
   script:
-    - yarn install --immutable
+    - yarn install --immutable --silent
     - yarn run build
     - yarn compodoc
   artifacts:
@@ -38,7 +38,7 @@ build-staging:
       - .yarn/
       - yarn.lock
   script:
-    - yarn install --immutable
+    - yarn install --immutable --silent
     - yarn run build
     - yarn compodoc
   artifacts:
@@ -59,7 +59,7 @@ build-dev:
       - .yarn/
       - yarn.lock
   script:
-    - yarn install --immutable
+    - yarn install --immutable --silent
     - yarn run build
     - yarn compodoc
   artifacts:
