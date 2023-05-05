@@ -1,6 +1,6 @@
 import { Prospect } from "src/prospect-global/prospects/entities/prospect.entity";
 
-export interface sendEmailDto {
+export interface SendEmailDto {
   clientName: string;
   mailTemplateId: number;
   mailTemplateModified?: string;

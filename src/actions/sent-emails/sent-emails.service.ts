@@ -1,19 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { lastDayOfWeek } from 'date-fns';
-import { StageType } from 'src/constants/stage.type';
-import { CreateSentEmailDto } from 'src/actions/sent-emails/dto/create-sent-email.dto';
-import { ResearchParamsSentEmailsDto } from 'src/dto/sent-emails/research-params-sent-emails.dto';
-import { sendEmailDto } from 'src/dto/sent-emails/send-email.dto';
-import { MailTemplate } from 'src/mails/mail-templates/entities/mail-template.entity';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
-import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
-import { SentEmail } from 'src/actions/sent-emails/entities/sent-email.entity';
-import { Between, ILike, Not, Repository, UpdateResult } from 'typeorm';
-import { SecondaryActivitiesService } from '../secondary-activities/secondary-activities.service';
-import { GoogleService } from '../google/google.service';
-import { PrimaryActivityService } from '../primary-activity/primary-activity.service';
 import moment from 'moment';
+import { CreateSentEmailDto } from 'src/actions/sent-emails/dto/create-sent-email.dto';
+import { SentEmail } from 'src/actions/sent-emails/entities/sent-email.entity';
+import { GoogleService } from 'src/apis/google/google.service';
+import { StageType } from 'src/constants/stage.type';
+import { MailTemplate } from 'src/mails/mail-templates/entities/mail-template.entity';
+import { PrimaryActivityService } from 'src/prospect-global/activities/primary-activities/primary-activity.service';
+import { SecondaryActivitiesService } from 'src/prospect-global/activities/secondary-activities/secondary-activities.service';
+import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { Between, ILike, Not, Repository, UpdateResult } from 'typeorm';
+import { ResearchParamsSentEmailsDto } from './dto/research-params-sent-emails.dto';
+import { SendEmailDto } from './dto/send-email.dto';
 
 @Injectable()
 export class SentEmailsService {
@@ -257,7 +257,7 @@ export class SentEmailsService {
     }
   }
 
-  async send(sendEmailDto: sendEmailDto, pm: ProjectManager, idSentEmail: number) {
+  async send(sendEmailDto: SendEmailDto, pm: ProjectManager, idSentEmail: number) {
     try {
       const mailTemplate = await this.mailTemplateRepository.findOne({
         where: {

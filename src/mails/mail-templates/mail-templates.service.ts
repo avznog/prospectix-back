@@ -1,12 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Mustache from 'mustache';
+import { SendEmailDto } from 'src/actions/sent-emails/dto/send-email.dto';
 import { CreateMailTemplateDto } from 'src/mails/mail-templates/dto/create-mail-template.dto';
-import { UpdateMailTemplateDto } from 'src/dto/mail-templates/update-mail-template.dto';
-import { sendEmailDto } from 'src/dto/sent-emails/send-email.dto';
 import { MailTemplate } from 'src/mails/mail-templates/entities/mail-template.entity';
 import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { DeleteResult, Repository } from 'typeorm';
+import { UpdateMailTemplateDto } from './dto/update-mail-template.dto';
 const fs = require("fs").promises
 
 
@@ -79,7 +79,7 @@ export class MailTemplatesService {
   }
 
   // ? generating the content of the mail to send
-  async generateMailContent(pm: ProjectManager, sendEmailDto: sendEmailDto, mailTemplate: MailTemplate) {
+  async generateMailContent(pm: ProjectManager, sendEmailDto: SendEmailDto, mailTemplate: MailTemplate) {
     try {
       if(pm.phone && pm.phone != '')  {
         pm.phone = "+ 33 " + pm.phone.slice(1)

@@ -1,24 +1,24 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import moment from 'moment';
+import { Event } from 'src/admin/events/entities/event.entity';
+import { SearchParams } from 'src/admin/search-params/entities/search-params.entity';
 import { EventType } from 'src/constants/event.type';
 import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
 import { StageType } from 'src/constants/stage.type';
 import { VersionCityType, VersionPrimaryActivityType, VersionProspectType, VersionSecondaryActivityType } from 'src/constants/versions.type';
-import { CreateProspectDto } from 'src/prospect-global/prospects/dto/create-prospect.dto';
-import { ResearchParamsProspectDto } from 'src/dto/prospects/research-params-prospect.dto';
-import { UpdateProspectDto } from 'src/dto/prospects/update-prospect.dto';
+import { SecondaryActivity } from 'src/prospect-global/activities/secondary-activities/entities/secondary-activity.entity';
 import { City } from 'src/prospect-global/cities/entities/city.entity';
 import { Country } from 'src/prospect-global/countries/entities/country.entity';
 import { Email } from 'src/prospect-global/emails/entities/email.entity';
-import { Event } from 'src/admin/events/entities/event.entity';
 import { Phone } from 'src/prospect-global/phones/entities/phone.entity';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { CreateProspectDto } from 'src/prospect-global/prospects/dto/create-prospect.dto';
 import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
-import { SearchParams } from 'src/admin/search-params/entities/search-params.entity';
-import { SecondaryActivity } from 'src/prospect-global/activities/secondary-activities/entities/secondary-activity.entity';
 import { Website } from 'src/prospect-global/websites/entities/website.entity';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { ILike, Not, Repository, UpdateResult } from 'typeorm';
+import { ResearchParamsProspectDto } from './dto/research-params-prospect.dto';
+import { UpdateProspectDto } from './dto/update-prospect.dto';
 const fs = require("fs")
 
 @Injectable()

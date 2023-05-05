@@ -1,15 +1,15 @@
 import { Body, Controller, Get, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateCallDto } from 'src/actions/calls/dto/create-call.dto';
+import { SentryService } from 'src/apis/sentry/sentry.service';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateCallDto } from 'src/actions/calls/dto/create-call.dto';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { CallsService } from 'src/services/calls/calls.service';
-import { SentryService } from 'src/services/sentry/sentry.service';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { CallsService } from './calls.service';
 
 
 @UseInterceptors(SentryInterceptor)

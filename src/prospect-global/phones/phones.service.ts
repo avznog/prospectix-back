@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdatePhoneDto } from 'src/dto/phones/update-phone.dto';
 import { Phone } from 'src/prospect-global/phones/entities/phone.entity';
 import { Repository, UpdateResult } from 'typeorm';
+import { UpdatePhoneDto } from './dto/update-phone.dto';
 
 @Injectable()
 export class PhonesService {

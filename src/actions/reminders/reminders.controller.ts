@@ -1,20 +1,19 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateReminderDto } from 'src/actions/reminders/dto/create-reminder.dto';
+import { Reminder } from 'src/actions/reminders/entities/reminder.entity';
+import { SentryService } from 'src/apis/sentry/sentry.service';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateReminderDto } from 'src/actions/reminders/dto/create-reminder.dto';
-import { ResearchParamsRemindersDto } from 'src/dto/reminders/research-params-reminders.dto';
-import { UpdateReminderDto } from 'src/dto/reminders/update-reminder.dto';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
-import { Reminder } from 'src/actions/reminders/entities/reminder.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { RemindersService } from 'src/services/reminders/reminders.service';
-import { SentryService } from 'src/services/sentry/sentry.service';
-
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { ResearchParamsRemindersDto } from './dto/research-params-reminders.dto';
+import { UpdateReminderDto } from './dto/update-reminder.dto';
+import { RemindersService } from './reminders.service';
 
 @UseInterceptors(SentryInterceptor)
 @Controller('reminders')

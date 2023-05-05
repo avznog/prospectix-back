@@ -4,8 +4,9 @@ import { MeetingsModule } from './meetings/meetings.module';
 import { RemindersModule } from './reminders/reminders.module';
 import { NegativeAnswersModule } from './negative-answers/negative-answers.module';
 import { SentEmailsModule } from './sent-emails/sent-emails.module';
+import { BookmarksModule } from './bookmarks/bookmarks.module';
 
 @Module({
-  imports: [CallsModule, MeetingsModule, RemindersModule, NegativeAnswersModule, SentEmailsModule]
+  imports: [BookmarksModule, CallsModule, MeetingsModule, RemindersModule, NegativeAnswersModule, SentEmailsModule]
 })
 export class ActionsModule {}

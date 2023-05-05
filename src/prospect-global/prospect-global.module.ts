@@ -4,8 +4,10 @@ import { EmailsModule } from './emails/emails.module';
 import { PhonesModule } from './phones/phones.module';
 import { ProspectsModule } from './prospects/prospects.module';
 import { WebsitesModule } from './websites/websites.module';
+import { ActivitiesModule } from './activities/activities.module';
+import { CitiesModule } from './cities/cities.module';
 
 @Module({
-  imports: [CountriesModule, EmailsModule, PhonesModule, ProspectsModule, WebsitesModule]
+  imports: [ActivitiesModule, CitiesModule, CountriesModule, EmailsModule, PhonesModule, ProspectsModule, WebsitesModule]
 })
 export class ProspectGlobalModule {}

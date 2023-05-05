@@ -1,19 +1,19 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateSentEmailDto } from 'src/actions/sent-emails/dto/create-sent-email.dto';
+import { SentEmail } from 'src/actions/sent-emails/entities/sent-email.entity';
+import { GoogleService } from 'src/apis/google/google.service';
+import { SentryService } from 'src/apis/sentry/sentry.service';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateSentEmailDto } from 'src/actions/sent-emails/dto/create-sent-email.dto';
-import { ResearchParamsSentEmailsDto } from 'src/dto/sent-emails/research-params-sent-emails.dto';
-import { sendEmailDto } from 'src/dto/sent-emails/send-email.dto';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
-import { SentEmail } from 'src/actions/sent-emails/entities/sent-email.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { GoogleService } from 'src/services/google/google.service';
-import { SentEmailsService } from 'src/services/sent-emails/sent-emails.service';
-import { SentryService } from 'src/services/sentry/sentry.service';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { ResearchParamsSentEmailsDto } from './dto/research-params-sent-emails.dto';
+import { SendEmailDto } from './dto/send-email.dto';
+import { SentEmailsService } from './sent-emails.service';
 
 
 @UseInterceptors(SentryInterceptor)
@@ -36,7 +36,7 @@ export class SentEmailsController {
 
   @Roles(RolesType.CDP, RolesType.ADMIN)
   @Post("send/:id")
-  async send(@Body() sendEmailDto: sendEmailDto, @CurrentUser() user: ProjectManager, @Param("id") idSentEmail: number){
+  async send(@Body() sendEmailDto: SendEmailDto, @CurrentUser() user: ProjectManager, @Param("id") idSentEmail: number){
     this.sentryService.setSentryUser(user);
     user = await this.googleService.updateTokens(user);
     return this.sentEmailsService.send(sendEmailDto, user, idSentEmail);

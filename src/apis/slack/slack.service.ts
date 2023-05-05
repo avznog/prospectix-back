@@ -6,9 +6,9 @@ import { ProjectManager } from 'src/users/project-managers/entities/project-mana
 import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
 import { Reminder } from 'src/actions/reminders/entities/reminder.entity';
 import { Between, Repository } from 'typeorm';
-import { CallsService } from '../calls/calls.service';
-import { MeetingsService } from '../meetings/meetings.service';
 import { UsersListResponse, WebClient } from '@slack/web-api';
+import { CallsService } from 'src/actions/calls/calls.service';
+import { MeetingsService } from 'src/actions/meetings/meetings.service';
 const fs = require('fs');
 
 @Injectable()

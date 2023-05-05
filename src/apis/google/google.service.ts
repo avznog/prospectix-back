@@ -3,12 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { OAuth2Client } from 'google-auth-library';
 import { MeetingType } from 'src/constants/meeting.type';
 import { CreateMeetingDto } from 'src/actions/meetings/dto/create-meeting.dto';
-import { sendEmailDto } from 'src/dto/sent-emails/send-email.dto';
 import { MailTemplate } from 'src/mails/mail-templates/entities/mail-template.entity';
 import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { Repository } from 'typeorm';
-import { MailTemplatesService } from '../mail-templates/mail-templates.service';
 import moment from 'moment';
+import { MailTemplatesService } from 'src/mails/mail-templates/mail-templates.service';
+import { SendEmailDto } from 'src/actions/sent-emails/dto/send-email.dto';
 
 // ! GOOGLE IMPORTS
 const path = require("path");
@@ -182,7 +182,7 @@ export class GoogleService {
 
 
   // ? send mail to client, with template from JISEP AND PM
-  async sendMail(sendEmailDto: sendEmailDto, mailTemplate: MailTemplate, pm: ProjectManager) {
+  async sendMail(sendEmailDto: SendEmailDto, mailTemplate: MailTemplate, pm: ProjectManager) {
     try {
       // ? content of the mail to send
       const mailContent = await this.mailTemplatesService.generateMailContent(pm, sendEmailDto, mailTemplate)

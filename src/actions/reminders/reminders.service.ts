@@ -1,16 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from "@nestjs/typeorm";
 import { lastDayOfWeek } from 'date-fns';
-import { StageType } from 'src/constants/stage.type';
-import { CreateReminderDto } from 'src/actions/reminders/dto/create-reminder.dto';
-import { ResearchParamsRemindersDto } from 'src/dto/reminders/research-params-reminders.dto';
-import { UpdateReminderDto } from 'src/dto/reminders/update-reminder.dto';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
-import { Reminder } from 'src/actions/reminders/entities/reminder.entity';
-import { Between, DeleteResult, ILike, Not, Repository, UpdateResult } from 'typeorm';
-import { PrimaryActivityService } from '../primary-activity/primary-activity.service';
-import { SecondaryActivitiesService } from '../secondary-activities/secondary-activities.service';
 import moment from 'moment';
+import { CreateReminderDto } from 'src/actions/reminders/dto/create-reminder.dto';
+import { Reminder } from 'src/actions/reminders/entities/reminder.entity';
+import { StageType } from 'src/constants/stage.type';
+import { PrimaryActivityService } from 'src/prospect-global/activities/primary-activities/primary-activity.service';
+import { SecondaryActivitiesService } from 'src/prospect-global/activities/secondary-activities/secondary-activities.service';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { Between, DeleteResult, ILike, Not, Repository, UpdateResult } from 'typeorm';
+import { ResearchParamsRemindersDto } from './dto/research-params-reminders.dto';
+import { UpdateReminderDto } from './dto/update-reminder.dto';
 
 @Injectable()
 export class RemindersService {

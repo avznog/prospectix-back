@@ -1,19 +1,18 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateBookmarkDto } from 'src/actions/bookmarks/dto/create-bookmark.dto';
+import { Bookmark } from 'src/actions/bookmarks/entities/bookmark.entity';
+import { SentryService } from 'src/apis/sentry/sentry.service';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateBookmarkDto } from 'src/actions/bookmarks/dto/create-bookmark.dto';
-import { ResearchParamsBookmarksDto } from 'src/dto/bookmarks/research-params-bookmarks.dto';
-import { Bookmark } from 'src/actions/bookmarks/entities/bookmark.entity';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { BookmarksService } from 'src/services/bookmarks/bookmarks.service';
-import { SentryService } from 'src/services/sentry/sentry.service';
-
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { DeleteResult } from 'typeorm';
+import { BookmarksService } from './bookmarks.service';
+import { ResearchParamsBookmarksDto } from './dto/research-params-bookmarks.dto';
 
 @UseInterceptors(SentryInterceptor)
 @Controller('bookmarks')

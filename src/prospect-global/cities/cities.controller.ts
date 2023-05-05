@@ -9,8 +9,8 @@ import { CreateCityDto } from 'src/prospect-global/cities/dto/create-city.dto';
 import { City } from 'src/prospect-global/cities/entities/city.entity';
 import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { CitiesService } from 'src/services/cities/cities.service';
-import { SentryService } from 'src/services/sentry/sentry.service';
+import { SentryService } from 'src/apis/sentry/sentry.service';
+import { CitiesService } from './cities.service';
 
 
 @UseInterceptors(SentryInterceptor)

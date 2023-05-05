@@ -1,16 +1,16 @@
 import { Body, Controller, Get, Param, Patch, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { SentryService } from 'src/apis/sentry/sentry.service';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { UpdateGoalDto } from 'src/dto/goals/update-goal.dto';
-import { Goal } from 'src/goals-global/goals/entities/goal.entity';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { GoalsService } from 'src/services/goals/goals.service';
-import { SentryService } from 'src/services/sentry/sentry.service';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { UpdateGoalDto } from './dto/update-goal.dto';
+import { Goal } from './entities/goal.entity';
+import { GoalsService } from './goals.service';
 
 
 @Controller('goals')

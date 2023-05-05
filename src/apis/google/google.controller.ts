@@ -6,10 +6,10 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { GoogleService } from 'src/services/google/google.service';
-import { SentryService } from 'src/services/sentry/sentry.service';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { SentryService } from '../sentry/sentry.service';
+import { GoogleService } from './google.service';
 
 
 @UseInterceptors(SentryInterceptor)

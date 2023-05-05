@@ -1,17 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { lastDayOfWeek } from 'date-fns';
-import { StageType } from 'src/constants/stage.type';
+import moment from 'moment';
 import { CreateMeetingDto } from 'src/actions/meetings/dto/create-meeting.dto';
-import { ResearchParamsMeetingsDto } from 'src/dto/meetings/research-params-meetings.dto';
-import { UpdateMeetingDto } from 'src/dto/meetings/update-meeting.dto';
 import { Meeting } from 'src/actions/meetings/entities/meeting.entity';
+import { GoogleService } from 'src/apis/google/google.service';
+import { StageType } from 'src/constants/stage.type';
+import { PrimaryActivityService } from 'src/prospect-global/activities/primary-activities/primary-activity.service';
+import { SecondaryActivitiesService } from 'src/prospect-global/activities/secondary-activities/secondary-activities.service';
 import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { Between, DeleteResult, ILike, In, Repository, UpdateResult } from 'typeorm';
-import { GoogleService } from '../google/google.service';
-import { PrimaryActivityService } from '../primary-activity/primary-activity.service';
-import { SecondaryActivitiesService } from '../secondary-activities/secondary-activities.service';
-import moment from 'moment';
+import { ResearchParamsMeetingsDto } from './dto/research-params-meetings.dto';
+import { UpdateMeetingDto } from './dto/update-meeting.dto';
 
 @Injectable()
 export class MeetingsService {

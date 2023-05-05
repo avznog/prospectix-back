@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateEmailDto } from 'src/dto/emails/update-email.dto';
 import { Email } from 'src/prospect-global/emails/entities/email.entity';
 import { Repository, UpdateResult } from 'typeorm';
+import { UpdateEmailDto } from './dto/update-email.dto';
 
 @Injectable()
 export class EmailsService {

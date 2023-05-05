@@ -8,8 +8,8 @@ import { RolesType } from 'src/auth/role.type';
 import { PrimaryActivity } from 'src/prospect-global/activities/primary-activities/entities/primary-activity.entity';
 import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { PrimaryActivityService } from 'src/services/primary-activity/primary-activity.service';
-import { SentryService } from 'src/services/sentry/sentry.service';
+import { PrimaryActivityService } from './primary-activity.service';
+import { SentryService } from 'src/apis/sentry/sentry.service';
 
 
 @UseInterceptors(SentryInterceptor)

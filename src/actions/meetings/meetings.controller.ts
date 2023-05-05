@@ -1,20 +1,19 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateMeetingDto } from 'src/actions/meetings/dto/create-meeting.dto';
+import { Meeting } from 'src/actions/meetings/entities/meeting.entity';
+import { SentryService } from 'src/apis/sentry/sentry.service';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateMeetingDto } from 'src/actions/meetings/dto/create-meeting.dto';
-import { ResearchParamsMeetingsDto } from 'src/dto/meetings/research-params-meetings.dto';
-import { UpdateMeetingDto } from 'src/dto/meetings/update-meeting.dto';
-import { Meeting } from 'src/actions/meetings/entities/meeting.entity';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { MeetingsService } from 'src/services/meetings/meetings.service';
-import { SentryService } from 'src/services/sentry/sentry.service';
-
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { ResearchParamsMeetingsDto } from './dto/research-params-meetings.dto';
+import { UpdateMeetingDto } from './dto/update-meeting.dto';
+import { MeetingsService } from './meetings.service';
 
 @UseInterceptors(SentryInterceptor)
 @Controller('meetings')

@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateWebsiteDto } from 'src/dto/websites/update-website.dto';
 import { Website } from 'src/prospect-global/websites/entities/website.entity';
 import { Repository, UpdateResult } from 'typeorm';
+import { UpdateWebsiteDto } from './dto/update-website.dto';
 
 @Injectable()
 export class WebsitesService {

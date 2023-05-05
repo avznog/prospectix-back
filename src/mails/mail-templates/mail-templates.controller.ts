@@ -1,20 +1,19 @@
 import { Controller, Get, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Body, Delete, Param, Patch } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
+import { SentryService } from 'src/apis/sentry/sentry.service';
 import { Roles } from 'src/auth/annotations/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
 import { CreateMailTemplateDto } from 'src/mails/mail-templates/dto/create-mail-template.dto';
-import { UpdateMailTemplateDto } from 'src/dto/mail-templates/update-mail-template.dto';
 import { MailTemplate } from 'src/mails/mail-templates/entities/mail-template.entity';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { MailTemplatesService } from 'src/services/mail-templates/mail-templates.service';
-import { SentryService } from 'src/services/sentry/sentry.service';
-
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { DeleteResult } from 'typeorm';
+import { UpdateMailTemplateDto } from './dto/update-mail-template.dto';
+import { MailTemplatesService } from './mail-templates.service';
 
 @Controller('mail-templates')
 @UseInterceptors(SentryInterceptor)

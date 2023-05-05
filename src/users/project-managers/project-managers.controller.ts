@@ -6,14 +6,14 @@ import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
 import { CreateProjectManagerDto } from 'src/users/project-managers/dto/create-project-manager.dto';
-import { ResearchParamsProjectManagersDto } from 'src/dto/project-managers/research-params-project-managers.dto';
-import { UpdateProjectManagerDto } from 'src/dto/project-managers/update-project-manager.dto';
 import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
-import { ProjectManagersService } from 'src/services/project-managers/project-managers.service';
-import { SentryService } from 'src/services/sentry/sentry.service';
 
 import { UpdateResult } from 'typeorm';
+import { SentryService } from 'src/apis/sentry/sentry.service';
+import { ResearchParamsProjectManagersDto } from './dto/research-params-project-managers.dto';
+import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
+import { ProjectManagersService } from './project-managers.service';
 
 @UseInterceptors(SentryInterceptor)
 @Controller('project-managers')
