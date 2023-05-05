@@ -6,7 +6,7 @@ import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
 import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
-import { CreateProspectDto } from 'src/dto/prospects/create-prospect.dto';
+import { CreateProspectDto } from 'src/prospect-global/prospects/dto/create-prospect.dto';
 import { ResearchParamsProspectDto } from 'src/dto/prospects/research-params-prospect.dto';
 import { UpdateProspectDto } from 'src/dto/prospects/update-prospect.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';

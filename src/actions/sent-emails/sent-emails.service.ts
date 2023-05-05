@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { lastDayOfWeek } from 'date-fns';
 import { StageType } from 'src/constants/stage.type';
-import { CreateSentEmailDto } from 'src/dto/sent-emails/create-sent-email.dto';
+import { CreateSentEmailDto } from 'src/actions/sent-emails/dto/create-sent-email.dto';
 import { ResearchParamsSentEmailsDto } from 'src/dto/sent-emails/research-params-sent-emails.dto';
 import { sendEmailDto } from 'src/dto/sent-emails/send-email.dto';
 import { MailTemplate } from 'src/entities/mail-templates/mail-template.entity';

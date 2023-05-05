@@ -5,7 +5,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateEventDto } from 'src/dto/events/create-event.dto';
+import { CreateEventDto } from 'src/admin/events/dto/create-event.dto';
 import { Event } from 'src/entities/events/event.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';

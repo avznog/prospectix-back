@@ -5,7 +5,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateMeetingDto } from 'src/dto/meetings/create-meeting.dto';
+import { CreateMeetingDto } from 'src/actions/meetings/dto/create-meeting.dto';
 import { ResearchParamsMeetingsDto } from 'src/dto/meetings/research-params-meetings.dto';
 import { UpdateMeetingDto } from 'src/dto/meetings/update-meeting.dto';
 import { Meeting } from 'src/entities/meetings/meeting.entity';

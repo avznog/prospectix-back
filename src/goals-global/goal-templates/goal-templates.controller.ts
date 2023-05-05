@@ -5,7 +5,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateGoalTemplateDto } from 'src/dto/goal-templates/create-goal-template.dto';
+import { CreateGoalTemplateDto } from 'src/goals-global/goal-templates/dto/create-goal-template.dto';
 import { UpdateGoalTemplateDto } from 'src/dto/goal-templates/update-goal-template.dto';
 import { GoalTemplate } from 'src/entities/goal-templates/goal-template.entity';
 import { Goal } from 'src/entities/goals/goal.entity';

@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateNegativeAnswerDto } from 'src/dto/negative-answers/create-negative-answer.dto';
+import { CreateNegativeAnswerDto } from 'src/actions/negative-answers/dto/create-negative-answer.dto';
 import { NegativeAnswer } from 'src/entities/negative-answers/negative-answer.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Between, MoreThan, Repository } from 'typeorm';

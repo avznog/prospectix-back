@@ -5,7 +5,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateBookmarkDto } from 'src/dto/bookmarks/create-bookmark.dto';
+import { CreateBookmarkDto } from 'src/actions/bookmarks/dto/create-bookmark.dto';
 import { ResearchParamsBookmarksDto } from 'src/dto/bookmarks/research-params-bookmarks.dto';
 import { Bookmark } from 'src/entities/bookmarks/bookmark.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';

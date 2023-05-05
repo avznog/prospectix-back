@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateGoalTemplateDto } from 'src/dto/goal-templates/create-goal-template.dto';
+import { CreateGoalTemplateDto } from 'src/goals-global/goal-templates/dto/create-goal-template.dto';
 import { UpdateGoalTemplateDto } from 'src/dto/goal-templates/update-goal-template.dto';
 import { GoalTemplate } from 'src/entities/goal-templates/goal-template.entity';
 import { Goal } from 'src/entities/goals/goal.entity';

@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OAuth2Client } from 'google-auth-library';
 import { MeetingType } from 'src/constants/meeting.type';
-import { CreateMeetingDto } from 'src/dto/meetings/create-meeting.dto';
+import { CreateMeetingDto } from 'src/actions/meetings/dto/create-meeting.dto';
 import { sendEmailDto } from 'src/dto/sent-emails/send-email.dto';
 import { MailTemplate } from 'src/entities/mail-templates/mail-template.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';

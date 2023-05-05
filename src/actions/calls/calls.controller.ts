@@ -5,7 +5,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateCallDto } from 'src/dto/calls/create-call.dto';
+import { CreateCallDto } from 'src/actions/calls/dto/create-call.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { CallsService } from 'src/services/calls/calls.service';

@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import moment from 'moment-timezone';
 import { StageType } from 'src/constants/stage.type';
-import { CreateBookmarkDto } from 'src/dto/bookmarks/create-bookmark.dto';
+import { CreateBookmarkDto } from 'src/actions/bookmarks/dto/create-bookmark.dto';
 import { ResearchParamsBookmarksDto } from 'src/dto/bookmarks/research-params-bookmarks.dto';
 import { Bookmark } from 'src/entities/bookmarks/bookmark.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';

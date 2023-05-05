@@ -6,7 +6,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateMailTemplateDto } from 'src/dto/mail-templates/create-mail-template.dto';
+import { CreateMailTemplateDto } from 'src/mails/mail-templates/dto/create-mail-template.dto';
 import { UpdateMailTemplateDto } from 'src/dto/mail-templates/update-mail-template.dto';
 import { MailTemplate } from 'src/entities/mail-templates/mail-template.entity';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';

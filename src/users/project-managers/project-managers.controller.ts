@@ -5,7 +5,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateProjectManagerDto } from 'src/dto/project-managers/create-project-manager.dto';
+import { CreateProjectManagerDto } from 'src/users/project-managers/dto/create-project-manager.dto';
 import { ResearchParamsProjectManagersDto } from 'src/dto/project-managers/research-params-project-managers.dto';
 import { UpdateProjectManagerDto } from 'src/dto/project-managers/update-project-manager.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';

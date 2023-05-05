@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { lastDayOfWeek } from 'date-fns';
 import { Call } from 'src/entities/calls/call.entity';
-import { CreateCallDto } from 'src/dto/calls/create-call.dto';
+import { CreateCallDto } from 'src/actions/calls/dto/create-call.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
 import { Between, Repository } from 'typeorm';
 import moment from 'moment';

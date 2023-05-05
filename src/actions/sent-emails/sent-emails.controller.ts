@@ -5,7 +5,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateSentEmailDto } from 'src/dto/sent-emails/create-sent-email.dto';
+import { CreateSentEmailDto } from 'src/actions/sent-emails/dto/create-sent-email.dto';
 import { ResearchParamsSentEmailsDto } from 'src/dto/sent-emails/research-params-sent-emails.dto';
 import { sendEmailDto } from 'src/dto/sent-emails/send-email.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';

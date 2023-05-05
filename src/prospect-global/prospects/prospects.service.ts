@@ -5,7 +5,7 @@ import { EventType } from 'src/constants/event.type';
 import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
 import { StageType } from 'src/constants/stage.type';
 import { VersionCityType, VersionPrimaryActivityType, VersionProspectType, VersionSecondaryActivityType } from 'src/constants/versions.type';
-import { CreateProspectDto } from 'src/dto/prospects/create-prospect.dto';
+import { CreateProspectDto } from 'src/prospect-global/prospects/dto/create-prospect.dto';
 import { ResearchParamsProspectDto } from 'src/dto/prospects/research-params-prospect.dto';
 import { UpdateProspectDto } from 'src/dto/prospects/update-prospect.dto';
 import { City } from 'src/prospect-global/cities/entities/city.entity';

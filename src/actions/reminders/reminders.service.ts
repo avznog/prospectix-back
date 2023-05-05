@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from "@nestjs/typeorm";
 import { lastDayOfWeek } from 'date-fns';
 import { StageType } from 'src/constants/stage.type';
-import { CreateReminderDto } from 'src/dto/reminders/create-reminder.dto';
+import { CreateReminderDto } from 'src/actions/reminders/dto/create-reminder.dto';
 import { ResearchParamsRemindersDto } from 'src/dto/reminders/research-params-reminders.dto';
 import { UpdateReminderDto } from 'src/dto/reminders/update-reminder.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';

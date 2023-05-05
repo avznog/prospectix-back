@@ -5,7 +5,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.model';
 import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
-import { CreateReminderDto } from 'src/dto/reminders/create-reminder.dto';
+import { CreateReminderDto } from 'src/actions/reminders/dto/create-reminder.dto';
 import { ResearchParamsRemindersDto } from 'src/dto/reminders/research-params-reminders.dto';
 import { UpdateReminderDto } from 'src/dto/reminders/update-reminder.dto';
 import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
