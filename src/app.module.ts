@@ -28,7 +28,7 @@ import { WebsitesController } from './controllers/websites/websites.controller';
 import { SecondaryActivity } from './entities/secondary-activities/secondary-activity.entity';
 import { Bookmark } from './entities/bookmarks/bookmark.entity';
 import { Call } from './entities/calls/call.entity';
-import { City } from './cities/entities/city.entity';
+import { City } from './prospect-global/cities/entities/city.entity';
 import { Country } from './entities/countries/country.entity';
 import { Email } from './entities/emails/email.entity';
 import { Event } from './entities/events/event.entity';
@@ -75,8 +75,16 @@ import { SearchParams } from './entities/search-params/search-params.entity';
 import { SearchParamsController } from './controllers/search-params/search-params.controller';
 import { SearchParamsService } from './services/search-params/search-params.service';
 import { SecondaryActivityModule } from './secondary-activity/secondary-activity.module';
-import { CitiesModule } from './cities/cities/cities.module';
-import { CitiesModule } from './cities/cities.module';
+import { CitiesModule } from './prospect-global/cities/cities/cities.module';
+import { CitiesModule } from './prospect-global/cities/cities.module';
+import { ActivitiesModule } from './prospect-global/activities/activities.module';
+import { ActionsModule } from './actions/actions.module';
+import { ProspectGlobalModule } from './prospect-global/prospect-global.module';
+import { UsersModule } from './users/users.module';
+import { ApisModule } from './apis/apis.module';
+import { MailsModule } from './mails/mails.module';
+import { AdminModule } from './admin/admin.module';
+import { GoalsGlobalModule } from './goals-global/goals-global.module';
 
 @Module({
   imports: [
@@ -108,6 +116,22 @@ import { CitiesModule } from './cities/cities.module';
     SecondaryActivityModule,
 
     CitiesModule,
+
+    ActivitiesModule,
+
+    ActionsModule,
+
+    ProspectGlobalModule,
+
+    UsersModule,
+
+    ApisModule,
+
+    MailsModule,
+
+    AdminModule,
+
+    GoalsGlobalModule,
 
   ],
   controllers: [AppController, SecondaryActivitiesController, BookmarksController, CitiesController, CallsController, CountriesController, EmailsController, EventsController, GoalTemplatesController, GoalsController, GoogleController, MailTemplatesController, MeetingsController, NegativeAnswersController, PhonesController, ProjectManagersController, ProspectsController, RemindersController, SentEmailsController, SlackController, WebsitesController, PrimaryActivityController, SearchParamsController],
