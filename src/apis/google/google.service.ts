@@ -193,12 +193,12 @@ export class GoogleService {
       // * pièces jointes (plaquette)
       const filePlaquetteJisep = {
         filename: "Plaquette Junior ISEP.pdf",
-        path: "src/templates/plaquette_jisep.pdf",
+        path: "../../mails/templates/plaquette_jisep.pdf",
       };
 
       const filePlaquetteSkema = {
         filename: "Plaquette Skema Consulting.pdf",
-        path: "src/templates/plaquette_skema.pdf"
+        path: "../../mails/templates/plaquette_skema.pdf"
       }
       const fileAttachments = []
       sendEmailDto.withPlaquetteJisep && fileAttachments.push(filePlaquetteJisep);

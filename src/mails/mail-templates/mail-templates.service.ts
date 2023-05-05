@@ -98,7 +98,7 @@ export class MailTemplatesService {
           clientName: sendEmailDto.clientName == '' ? '' : " " + sendEmailDto.clientName
         }
       }
-      let structureTemplate = await fs.readFile('src/templates/mail-structure.mustache', "utf-8")
+      let structureTemplate = await fs.readFile('../templates/mail-structure.mustache', "utf-8")
       structureTemplate = structureTemplate.replace("{{mail_content}}", mailTemplate.content).split(`class="ql-align-justify"`).join(`style="text-align: justify;"`).split("<p>").join(`<p style="text-align: justify;">`)
       return Mustache.render(structureTemplate, variables)
     } catch (error) {
