@@ -28,7 +28,7 @@ import { WebsitesController } from './controllers/websites/websites.controller';
 import { SecondaryActivity } from './entities/secondary-activities/secondary-activity.entity';
 import { Bookmark } from './entities/bookmarks/bookmark.entity';
 import { Call } from './entities/calls/call.entity';
-import { City } from './entities/cities/city.entity';
+import { City } from './cities/entities/city.entity';
 import { Country } from './entities/countries/country.entity';
 import { Email } from './entities/emails/email.entity';
 import { Event } from './entities/events/event.entity';
@@ -74,6 +74,9 @@ import { PrimaryActivity } from './entities/primary-activity/primary-activity.en
 import { SearchParams } from './entities/search-params/search-params.entity';
 import { SearchParamsController } from './controllers/search-params/search-params.controller';
 import { SearchParamsService } from './services/search-params/search-params.service';
+import { SecondaryActivityModule } from './secondary-activity/secondary-activity.module';
+import { CitiesModule } from './cities/cities/cities.module';
+import { CitiesModule } from './cities/cities.module';
 
 @Module({
   imports: [
@@ -101,6 +104,10 @@ import { SearchParamsService } from './services/search-params/search-params.serv
     }),
 
     ScheduleModule.forRoot(),
+
+    SecondaryActivityModule,
+
+    CitiesModule,
 
   ],
   controllers: [AppController, SecondaryActivitiesController, BookmarksController, CitiesController, CallsController, CountriesController, EmailsController, EventsController, GoalTemplatesController, GoalsController, GoogleController, MailTemplatesController, MeetingsController, NegativeAnswersController, PhonesController, ProjectManagersController, ProspectsController, RemindersController, SentEmailsController, SlackController, WebsitesController, PrimaryActivityController, SearchParamsController],

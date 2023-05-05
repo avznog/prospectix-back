@@ -8,7 +8,7 @@ import { VersionCityType, VersionPrimaryActivityType, VersionProspectType, Versi
 import { CreateProspectDto } from 'src/dto/prospects/create-prospect.dto';
 import { ResearchParamsProspectDto } from 'src/dto/prospects/research-params-prospect.dto';
 import { UpdateProspectDto } from 'src/dto/prospects/update-prospect.dto';
-import { City } from 'src/entities/cities/city.entity';
+import { City } from 'src/cities/entities/city.entity';
 import { Country } from 'src/entities/countries/country.entity';
 import { Email } from 'src/entities/emails/email.entity';
 import { Event } from 'src/entities/events/event.entity';

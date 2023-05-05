@@ -4,7 +4,7 @@ import { Bookmark } from 'src/entities/bookmarks/bookmark.entity';
 import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
 import { StageType } from 'src/constants/stage.type';
 import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
-import { City } from 'src/entities/cities/city.entity';
+import { City } from 'src/cities/entities/city.entity';
 import { Country } from 'src/entities/countries/country.entity';
 import { Email } from 'src/entities/emails/email.entity';
 import { Event } from 'src/entities/events/event.entity';
