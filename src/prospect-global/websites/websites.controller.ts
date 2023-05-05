@@ -6,7 +6,7 @@ import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { RolesType } from 'src/auth/role.type';
 import { UpdateWebsiteDto } from 'src/dto/websites/update-website.dto';
-import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { SentryInterceptor } from 'src/sentry.interceptor';
 import { SentryService } from 'src/services/sentry/sentry.service';
 

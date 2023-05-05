@@ -1,4 +1,4 @@
-import { Prospect } from "src/entities/prospects/prospect.entity";
+import { Prospect } from "src/prospect-global/prospects/entities/prospect.entity";
 
 export interface sendEmailDto {
   clientName: string;

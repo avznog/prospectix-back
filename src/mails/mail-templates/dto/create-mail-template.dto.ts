@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { ProjectManager } from "src/entities/project-managers/project-manager.entity";
+import { ProjectManager } from "src/users/project-managers/entities/project-manager.entity";
 
 export class CreateMailTemplateDto {
 

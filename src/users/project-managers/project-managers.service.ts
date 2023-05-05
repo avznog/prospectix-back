@@ -4,7 +4,7 @@ import TokenPayload from 'src/auth/interfaces/tokenPayload.interface';
 import { CreateProjectManagerDto } from 'src/users/project-managers/dto/create-project-manager.dto';
 import { ResearchParamsProjectManagersDto } from 'src/dto/project-managers/research-params-project-managers.dto';
 import { UpdateProjectManagerDto } from 'src/dto/project-managers/update-project-manager.dto';
-import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { Repository, UpdateResult } from 'typeorm';
 
 @Injectable()

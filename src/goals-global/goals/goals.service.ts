@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateGoalDto } from 'src/dto/goals/update-goal.dto';
-import { GoalTemplate } from 'src/entities/goal-templates/goal-template.entity';
-import { Goal } from 'src/entities/goals/goal.entity';
-import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
+import { GoalTemplate } from 'src/goals-global/goal-templates/entities/goal-template.entity';
+import { Goal } from 'src/goals-global/goals/entities/goal.entity';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

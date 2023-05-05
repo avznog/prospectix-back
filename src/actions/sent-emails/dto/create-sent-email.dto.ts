@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Email } from 'src/entities/emails/email.entity';
-import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
-import { Prospect } from 'src/entities/prospects/prospect.entity';
+import { Email } from 'src/prospect-global/emails/entities/email.entity';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
 
 export class CreateSentEmailDto {
   @ApiProperty({

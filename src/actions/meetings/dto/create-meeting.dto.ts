@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { MeetingType } from 'src/constants/meeting.type';
-import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
-import { Prospect } from 'src/entities/prospects/prospect.entity';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
 
 export class CreateMeetingDto {
   @ApiProperty({

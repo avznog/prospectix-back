@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEventDto } from 'src/admin/events/dto/create-event.dto';
-import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { Repository } from 'typeorm';
-import { Event } from 'src/entities/events/event.entity';
+import { Event } from 'src/admin/events/entities/event.entity';
 import moment from 'moment';
 @Injectable()
 export class EventsService {

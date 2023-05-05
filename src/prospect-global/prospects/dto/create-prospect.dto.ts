@@ -1,16 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Reminder } from 'src/entities/reminders/reminder.entity';
-import { Bookmark } from 'src/entities/bookmarks/bookmark.entity';
+import { Reminder } from 'src/actions/reminders/entities/reminder.entity';
+import { Bookmark } from 'src/actions/bookmarks/entities/bookmark.entity';
 import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
 import { StageType } from 'src/constants/stage.type';
-import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
+import { SecondaryActivity } from 'src/prospect-global/activities/secondary-activities/entities/secondary-activity.entity';
 import { City } from 'src/prospect-global/cities/entities/city.entity';
-import { Country } from 'src/entities/countries/country.entity';
-import { Email } from 'src/entities/emails/email.entity';
-import { Event } from 'src/entities/events/event.entity';
-import { Meeting } from 'src/entities/meetings/meeting.entity';
-import { Phone } from 'src/entities/phones/phone.entity';
-import { Website } from 'src/entities/websites/website.entity';
+import { Country } from 'src/prospect-global/countries/entities/country.entity';
+import { Email } from 'src/prospect-global/emails/entities/email.entity';
+import { Event } from 'src/admin/events/entities/event.entity';
+import { Meeting } from 'src/actions/meetings/entities/meeting.entity';
+import { Phone } from 'src/prospect-global/phones/entities/phone.entity';
+import { Website } from 'src/prospect-global/websites/entities/website.entity';
 import { VersionProspectType } from 'src/constants/versions.type';
 
 export class CreateProspectDto {

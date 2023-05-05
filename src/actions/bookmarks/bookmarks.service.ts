@@ -4,8 +4,8 @@ import moment from 'moment-timezone';
 import { StageType } from 'src/constants/stage.type';
 import { CreateBookmarkDto } from 'src/actions/bookmarks/dto/create-bookmark.dto';
 import { ResearchParamsBookmarksDto } from 'src/dto/bookmarks/research-params-bookmarks.dto';
-import { Bookmark } from 'src/entities/bookmarks/bookmark.entity';
-import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
+import { Bookmark } from 'src/actions/bookmarks/entities/bookmark.entity';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { DeleteResult, ILike, Not, Repository } from 'typeorm';
 
 @Injectable()

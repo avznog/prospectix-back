@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateNegativeAnswerDto } from 'src/actions/negative-answers/dto/create-negative-answer.dto';
-import { NegativeAnswer } from 'src/entities/negative-answers/negative-answer.entity';
-import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
+import { NegativeAnswer } from 'src/actions/negative-answers/entities/negative-answer.entity';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { Between, MoreThan, Repository } from 'typeorm';
 import { SecondaryActivitiesService } from '../secondary-activities/secondary-activities.service';
 import { PrimaryActivityService } from '../primary-activity/primary-activity.service';

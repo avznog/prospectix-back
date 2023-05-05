@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { VersionSecondaryActivityType } from "src/constants/versions.type";
-import { PrimaryActivity } from "src/entities/primary-activity/primary-activity.entity";
+import { PrimaryActivity } from "src/prospect-global/activities/primary-activities/entities/primary-activity.entity";
 
 export class CreateSecondaryActivityDto {
   @ApiProperty({

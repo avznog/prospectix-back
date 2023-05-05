@@ -1,4 +1,4 @@
-import { SearchParams } from "src/entities/search-params/search-params.entity";
+import { SearchParams } from "src/admin/search-params/entities/search-params.entity";
 
 export interface ResearchParamsProspectDto {
   keyword?: string;

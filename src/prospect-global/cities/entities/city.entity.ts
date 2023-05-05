@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { VersionCityType } from 'src/constants/versions.type';
-import { Prospect } from 'src/entities/prospects/prospect.entity';
+import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
 import {
   BaseEntity,
   Column,

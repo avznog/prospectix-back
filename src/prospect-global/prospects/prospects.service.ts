@@ -9,15 +9,15 @@ import { CreateProspectDto } from 'src/prospect-global/prospects/dto/create-pros
 import { ResearchParamsProspectDto } from 'src/dto/prospects/research-params-prospect.dto';
 import { UpdateProspectDto } from 'src/dto/prospects/update-prospect.dto';
 import { City } from 'src/prospect-global/cities/entities/city.entity';
-import { Country } from 'src/entities/countries/country.entity';
-import { Email } from 'src/entities/emails/email.entity';
-import { Event } from 'src/entities/events/event.entity';
-import { Phone } from 'src/entities/phones/phone.entity';
-import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
-import { Prospect } from 'src/entities/prospects/prospect.entity';
-import { SearchParams } from 'src/entities/search-params/search-params.entity';
-import { SecondaryActivity } from 'src/entities/secondary-activities/secondary-activity.entity';
-import { Website } from 'src/entities/websites/website.entity';
+import { Country } from 'src/prospect-global/countries/entities/country.entity';
+import { Email } from 'src/prospect-global/emails/entities/email.entity';
+import { Event } from 'src/admin/events/entities/event.entity';
+import { Phone } from 'src/prospect-global/phones/entities/phone.entity';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
+import { SearchParams } from 'src/admin/search-params/entities/search-params.entity';
+import { SecondaryActivity } from 'src/prospect-global/activities/secondary-activities/entities/secondary-activity.entity';
+import { Website } from 'src/prospect-global/websites/entities/website.entity';
 import { ILike, Not, Repository, UpdateResult } from 'typeorm';
 const fs = require("fs")
 

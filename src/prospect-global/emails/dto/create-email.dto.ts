@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prospect } from 'src/entities/prospects/prospect.entity';
+import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
 
 export class CreateEmailDto {
   @ApiProperty({

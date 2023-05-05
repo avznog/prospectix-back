@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { ProjectManagersService } from 'src/services/project-managers/project-managers.service';
 import { AuthController } from './auth.controller';
 import { Auth } from './entities/auth.entity';

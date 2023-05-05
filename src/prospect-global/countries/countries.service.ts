@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCountryDto } from 'src/prospect-global/countries/dto/create-country.dto';
-import { Country } from 'src/entities/countries/country.entity';
+import { Country } from 'src/prospect-global/countries/entities/country.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

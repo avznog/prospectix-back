@@ -4,8 +4,8 @@ import Mustache from 'mustache';
 import { CreateMailTemplateDto } from 'src/mails/mail-templates/dto/create-mail-template.dto';
 import { UpdateMailTemplateDto } from 'src/dto/mail-templates/update-mail-template.dto';
 import { sendEmailDto } from 'src/dto/sent-emails/send-email.dto';
-import { MailTemplate } from 'src/entities/mail-templates/mail-template.entity';
-import { ProjectManager } from 'src/entities/project-managers/project-manager.entity';
+import { MailTemplate } from 'src/mails/mail-templates/entities/mail-template.entity';
+import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { DeleteResult, Repository } from 'typeorm';
 const fs = require("fs").promises
 
