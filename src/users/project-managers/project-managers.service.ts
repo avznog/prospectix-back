@@ -90,4 +90,20 @@ export class ProjectManagersService {
       throw new HttpException("Impossible de réupérer les project managers demandés", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
+
+  async findAllForMeetings() {
+    try {
+      return await this.pmRepository.find({
+        where: {
+          disabled: false,
+          statsEnabled: true,
+          objectived: true,
+          admin: false
+        }
+      })
+    } catch (error) {
+      console.log(error);
+      throw new HttpException("Error while fetching all pms for meetings", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }
