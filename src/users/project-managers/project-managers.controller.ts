@@ -73,4 +73,12 @@ export class ProjectManagersController {
     this.sentryService.setSentryUser(user);
     return this.pmService.enable(id);
   }
+
+  // find all projectmanagers who we can give a meeting to
+  @Get("find-all-for-meetings")
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  findAllForMeetings(@CurrentUser() user: ProjectManager) : Promise<ProjectManager[]> {
+    this.sentryService.setSentryUser(user);
+    return this.pmService.findAllForMeetings();
+  } 
 }
