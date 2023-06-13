@@ -47,7 +47,7 @@ export class SentEmailsService {
         researchParamsSentEmailsDto.keyword && [
           {
             prospect: {
-              stage: !sent ? StageType.MAIL : Not(StageType.MAIL),
+              stage: !sent ? StageType.MAIL : StageType.MAIL_SENT,
               companyName: ILike(`%${researchParamsSentEmailsDto.keyword}%`)
             },
             pm: {
@@ -57,7 +57,7 @@ export class SentEmailsService {
           },
           {
             prospect: {
-              stage: !sent ? StageType.MAIL : Not(StageType.MAIL),
+              stage: !sent ? StageType.MAIL : StageType.MAIL_SENT,
               phone: {
                 number: ILike(`${researchParamsSentEmailsDto.keyword}`)
               }
@@ -72,7 +72,7 @@ export class SentEmailsService {
         [
           {
             prospect: {
-              stage: !sent ? StageType.MAIL : Not(StageType.MAIL)
+              stage: !sent ? StageType.MAIL : StageType.MAIL_SENT
             },
             pm: {
               pseudo: user.pseudo
@@ -285,6 +285,28 @@ export class SentEmailsService {
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible de marquer le mail comme envoyé séparément", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async createAndSendSeparately(createSendEmailDto: CreateSentEmailDto, user: ProjectManager, object: string) {
+    try {
+      const sentEmail = await this.create(createSendEmailDto, user);
+      this.sendSeparately(sentEmail.id, object);
+      return await this.sentEmailRepository.findOne({where: { id: sentEmail.id }, relations: ["prospect", "prospect.secondaryActivity", "prospect.secondaryActivity.primaryActivity", "prospect.city", "prospect.phone", "prospect.country","prospect.email", "prospect.website"]});
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Failed to send", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async createAndSend(createSentEmailDto: CreateSentEmailDto, user: ProjectManager, sendEmailDto: SendEmailDto) : Promise<SentEmail> {
+    try {
+      const sentEmail = await this.create(createSentEmailDto, user);
+      this.send(sendEmailDto, user, sentEmail.id)
+      return await this.sentEmailRepository.findOne({where: { id: sentEmail.id }, relations: ["prospect", "prospect.secondaryActivity", "prospect.secondaryActivity.primaryActivity", "prospect.city", "prospect.phone", "prospect.country","prospect.email", "prospect.website"]});
+    } catch (error) {
+      console.log(error)
+      throw new HttpException("Failed to send", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 }

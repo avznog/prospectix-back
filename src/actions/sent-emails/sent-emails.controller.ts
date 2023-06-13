@@ -83,4 +83,17 @@ export class SentEmailsController {
     this.sentryService.setSentryUser(user);
     return this.sentEmailsService.sendSeparately(idSentEmail, object.object)
   }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Post("create-and-send")
+  createAndSend(@Body() content: { createSentEmailDto: CreateSentEmailDto, sendEmailDto: SendEmailDto }, @CurrentUser() user: ProjectManager) : Promise<SentEmail> {
+    return this.sentEmailsService.createAndSend(content.createSentEmailDto, user, content.sendEmailDto);
+  }
+
+  @Roles(RolesType.CDP, RolesType.ADMIN)
+  @Post("create-and-send-separately")
+  createAndSendSeparately(@Body() content: { createSentEmailDto: CreateSentEmailDto, object: string }, @CurrentUser() user: ProjectManager) : Promise<SentEmail> {
+    console.log(content)
+    return this.sentEmailsService.createAndSendSeparately(content.createSentEmailDto, user, content.object);
+  }
 }
