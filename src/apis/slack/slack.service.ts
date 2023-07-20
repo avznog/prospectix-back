@@ -69,7 +69,7 @@ export class SlackService {
       const message = {
         text: `🏆 Nouveau Champion ! ${user.firstname} ${user.name} a décroché son 3ème rendez-vous de la semaine`
       }
-      return this.httpService.post(this.webhookChampChannel, message).subscribe()
+      // return this.httpService.post(this.webhookChampChannel, message).subscribe()
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible d'envoyer la notification de champion", HttpStatus.INTERNAL_SERVER_ERROR)
@@ -77,7 +77,7 @@ export class SlackService {
   }
 
   //  ? Cron tab every sunday
-  @Cron("00 17 * * 0")
+  // @Cron("00 17 * * 0")
   // ? updated by Gauthier Itart-Longueville, 07 82 09 43 77, allez le dm
   async sendWeekRecap() {
     try {
@@ -120,7 +120,7 @@ export class SlackService {
       const message = {
         text: `🚨🚨🚨 Alerte ! Nous avons un fraudeur : *${user.firstname} ${user.name}* a appelé ${prospect.companyName} aujourd'hui à *${(new Date().toLocaleTimeString())}*`
       }
-      return this.httpService.post(this.webhookFraudChannel, message).subscribe()
+      // return this.httpService.post(this.webhookFraudChannel, message).subscribe()
     } catch (error) {
       console.log(error)
       throw new HttpException("Impossible d'envoyer la notification", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -128,7 +128,7 @@ export class SlackService {
   }
 
   // ! TO CHANGE TO EVERY 5 mn
-  @Cron('*/5 * * * *')
+  // @Cron('*/5 * * * *')
   async getSlackUsers() {
     try {
       // ? get list of users from slack 
@@ -144,7 +144,7 @@ export class SlackService {
       
   }
   // ! CRON WORKING EVERY MINUTES, CHECKING IF U HAVE A REMINDER IN 3 H -> then send slack message
-  @Cron("* * * * *")
+  // @Cron("* * * * *")
   async sendPmReminder() {
     try {
 

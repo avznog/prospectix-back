@@ -26,28 +26,29 @@ export class LdapService {
 
     try{
       
-      const user = await authenticate(options);
-      const pm = new ProjectManager();
-      pm.pseudo = loginPmDto.username;
-      pm.admin = user.memberOf.includes(
-        "cn=admins,cn=groups,cn=accounts,dc=ipa,dc=juniorisep,dc=com",
-      );
+      // const user = await authenticate(options);
+      // const pm = new ProjectManager();
+      // pm.pseudo = loginPmDto.username;
+      // pm.admin = user.memberOf.includes(
+      //   "cn=admins,cn=groups,cn=accounts,dc=ipa,dc=juniorisep,dc=com",
+      // );
 
-      const oldPm = await this.pmRepository.findOne({
-        where: {
-          pseudo: loginPmDto.username,
-        }
-      });
-      console.log(oldPm, loginPmDto.username)
+      // const oldPm = await this.pmRepository.findOne({
+      //   where: {
+      //     pseudo: loginPmDto.username,
+      //   }
+      // });
+      // console.log(oldPm, loginPmDto.username)
       
-      if(!oldPm){
-        return false;
-      }
-      else{
-        if(oldPm.disabled)
-          throw 0
-        return true;
-      }
+      // if(!oldPm){
+      //   return false;
+      // }
+      // else{
+      //   if(oldPm.disabled)
+      //     throw 0
+      //   return true;
+      // }
+      return true
     } catch (error) { 
       if (error == 0)
         throw new HttpException("Impossible de se connecter: votre compte a été désactivé", HttpStatus.FORBIDDEN);

@@ -28,11 +28,11 @@ import { UsersModule } from './users/users.module';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.POSTGRES_HOST || "192.168.0.158",
+      host: process.env.POSTGRES_HOST || "localhost",
       port: +process.env.POSTGRES_PORT,
       username: process.env.POSTGRES_USER || "postgres",
       password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DATABASE ?? 'dev',
+      database: process.env.POSTGRES_DATABASE ?? 'persoprospectix',
       synchronize: true,
       autoLoadEntities: true
     }),

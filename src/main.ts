@@ -1,17 +1,11 @@
 import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { AppModule } from './app.module';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
-import * as Sentry from '@sentry/node';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Sentry configuration
-  Sentry.init({
-    dsn: process.env.SENTRYDSN || "https://601b8ece82ff4a42b7e10b6354c15c27@o231724.ingest.sentry.io/4504414245421056", // ? If no sentry dns on env, use prosepctix dev sentry
-    environment: process.env.BASE_URL == "https://staging.prospectix.juniorisep.com"? "staging" : process.env.BASE_URL == "https://prospectix.juniorisep.com" ? "production" : "dev"
-  });
   app.use(cookieParser());
   app.enableCors({
     origin: process.env.BASE_URL,
