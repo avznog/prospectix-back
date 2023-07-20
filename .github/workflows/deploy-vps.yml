@@ -52,4 +52,4 @@ jobs:
             docker compose -f /home/prospectix/docker-compose.yml down
             docker system prune -f
             docker compose -f /home/prospectix/docker-compose.yml pull
-            docker compose -f /home/prospectix/docker-compose.yml up
+            docker compose -f /home/prospectix/docker-compose.yml up -d
