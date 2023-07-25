@@ -1,54 +1,59 @@
-name: Deploy prospectix back to vps
+name: Deploy Prospectix back on vps
 
 on:
   push:
     branches: ["master"]
-
+  workflow_dispatch:
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{github.repository}}
 jobs:
-  build:
+  build-and-push-image:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
-      
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Installing yarn
-        uses: actions/setup-node@v3
+      - name: Log in to the container registry
+        uses: docker/login-action@v2
         with:
-          cache: 'yarn'
-      - run: yarn install --immutable --silent
-      - run: yarn run build
+          registry: ${{env.REGISTRY}}
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
 
-      - uses: actions/upload-artifact@v2
-        with: 
-          name: prospectix-back-dist
-          path: dist/
-
-  docker:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v2
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
         with:
-          name: prospectix-back-dist
-      - run: docker build . --file Dockerfile --tag ${{secrets.DOCKER_IMAGE}}:master
-      - run: docker login -u ${{secrets.DOCKER_LOGIN}} -p ${{secrets.DOCKER_TOKEN}}
-      - run: docker push ${{secrets.DOCKER_IMAGE}}:master
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - name: Build and push the docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{steps.meta.outputs.tags}}
+          labels: ${{steps.meta.outputs.labels}}
   deploy:
     runs-on: ubuntu-latest
-    needs: docker
+
+    needs: build-and-push-image
+
     steps:
       - uses: actions/checkout@v3
+
       - name: Deploy compose on VPS
+
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{secrets.VPS}}
           username: ${{secrets.VPS_USERNAME}}
           key: ${{secrets.VPS_PRIVATE_KEY}}
           script: |
-            docker login -u ${{secrets.DOCKER_LOGIN}} -p ${{secrets.DOCKER_TOKEN}}
             docker compose -f /home/prospectix/docker-compose.yml down
             docker system prune -f
             docker compose -f /home/prospectix/docker-compose.yml pull
