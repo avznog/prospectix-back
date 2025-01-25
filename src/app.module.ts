@@ -34,7 +34,8 @@ import { UsersModule } from './users/users.module';
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE ?? 'postgres',
       synchronize: true,
-      autoLoadEntities: true
+      autoLoadEntities: true,
+      ssl: true
     }),
     ScheduleModule.forRoot(),
     ActionsModule,
