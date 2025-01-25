@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import TokenPayload from 'src/auth/interfaces/tokenPayload.interface';
-import { CreateProjectManagerDto } from 'src/users/project-managers/dto/create-project-manager.dto';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import TokenPayload from '../../auth/interfaces/tokenPayload.interface';
+import { CreateProjectManagerDto } from '../../users/project-managers/dto/create-project-manager.dto';
+import { ProjectManager } from '../../users/project-managers/entities/project-manager.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { UpdateProjectManagerDto } from './dto/update-project-manager.dto';
 import { ResearchParamsProjectManagersDto } from './dto/research-params-project-managers.dto';

@@ -1,14 +1,14 @@
 import { Body, Controller, Get, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateCallDto } from 'src/actions/calls/dto/create-call.dto';
-import { SentryService } from 'src/apis/sentry/sentry.service';
-import { Roles } from 'src/auth/annotations/roles.decorator';
-import { CurrentUser } from 'src/auth/decorators/current-user.model';
-import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { RolesType } from 'src/auth/role.type';
-import { SentryInterceptor } from 'src/sentry.interceptor';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { CreateCallDto } from '../../actions/calls/dto/create-call.dto';
+import { SentryService } from '../../apis/sentry/sentry.service';
+import { Roles } from '../../auth/annotations/roles.decorator';
+import { CurrentUser } from '../../auth/decorators/current-user.model';
+import JwtAuthGuard from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { RolesType } from '../../auth/role.type';
+import { SentryInterceptor } from '../../sentry.interceptor';
+import { ProjectManager } from '../../users/project-managers/entities/project-manager.entity';
 import { CallsService } from './calls.service';
 
 

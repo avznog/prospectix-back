@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { EventType } from 'src/constants/event.type';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
-import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
+import { EventType } from '../../../constants/event.type';
+import { ProjectManager } from '../../../users/project-managers/entities/project-manager.entity';
+import { Prospect } from '../../../prospect-global/prospects/entities/prospect.entity';
 
 export class CreateEventDto {
   @ApiProperty({

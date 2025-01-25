@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PrimaryActivity } from './entities/primary-activity.entity';
 import { PrimaryActivityController } from './primary-activity.controller';
 import { PrimaryActivityService } from './primary-activity.service';
-import { SearchParams } from 'src/admin/search-params/entities/search-params.entity';
-import { SentryService } from 'src/apis/sentry/sentry.service';
+import { SearchParams } from '../../../admin/search-params/entities/search-params.entity';
+import { SentryService } from '../../../apis/sentry/sentry.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PrimaryActivity, SearchParams])],

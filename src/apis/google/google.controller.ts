@@ -1,13 +1,13 @@
 import { Controller, Get, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Param } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/auth/annotations/roles.decorator';
-import { CurrentUser } from 'src/auth/decorators/current-user.model';
-import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { RolesType } from 'src/auth/role.type';
-import { SentryInterceptor } from 'src/sentry.interceptor';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { Roles } from '../../auth/annotations/roles.decorator';
+import { CurrentUser } from '../../auth/decorators/current-user.model';
+import JwtAuthGuard from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { RolesType } from '../../auth/role.type';
+import { SentryInterceptor } from '../../sentry.interceptor';
+import { ProjectManager } from '../../users/project-managers/entities/project-manager.entity';
 import { SentryService } from '../sentry/sentry.service';
 import { GoogleService } from './google.service';
 

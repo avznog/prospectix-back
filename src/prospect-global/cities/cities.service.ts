@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import moment from 'moment';
-import { CreateCityDto } from 'src/prospect-global/cities/dto/create-city.dto';
-import { City } from 'src/prospect-global/cities/entities/city.entity';
-import { SearchParams } from 'src/admin/search-params/entities/search-params.entity';
+import { CreateCityDto } from '../../prospect-global/cities/dto/create-city.dto';
+import { City } from '../../prospect-global/cities/entities/city.entity';
+import { SearchParams } from '../../admin/search-params/entities/search-params.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

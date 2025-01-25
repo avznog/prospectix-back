@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OAuth2Client } from 'google-auth-library';
-import { MeetingType } from 'src/constants/meeting.type';
-import { CreateMeetingDto } from 'src/actions/meetings/dto/create-meeting.dto';
-import { MailTemplate } from 'src/mails/mail-templates/entities/mail-template.entity';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { MeetingType } from '../../constants/meeting.type';
+import { CreateMeetingDto } from '../../actions/meetings/dto/create-meeting.dto';
+import { MailTemplate } from '../../mails/mail-templates/entities/mail-template.entity';
+import { ProjectManager } from '../../users/project-managers/entities/project-manager.entity';
 import { Repository } from 'typeorm';
 import moment from 'moment';
-import { MailTemplatesService } from 'src/mails/mail-templates/mail-templates.service';
-import { SendEmailDto } from 'src/actions/sent-emails/dto/send-email.dto';
+import { MailTemplatesService } from '../../mails/mail-templates/mail-templates.service';
+import { SendEmailDto } from '../../actions/sent-emails/dto/send-email.dto';
 
 // ! GOOGLE IMPORTS
 const path = require("path");
@@ -193,12 +193,12 @@ export class GoogleService {
       // * pièces jointes (plaquette)
       const filePlaquetteJisep = {
         filename: "Plaquette Junior ISEP.pdf",
-        path: "src/mails/templates/plaquette_jisep.pdf",
+        path: "../../mails/templates/plaquette_jisep.pdf",
       };
 
       const filePlaquetteSkema = {
         filename: "Plaquette Skema Consulting.pdf",
-        path: "src/mails/templates/plaquette_skema.pdf"
+        path: "../../mails/templates/plaquette_skema.pdf"
       }
       const fileAttachments = []
       sendEmailDto.withPlaquetteJisep && fileAttachments.push(filePlaquetteJisep);

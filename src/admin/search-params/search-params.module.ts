@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SearchParams } from './entities/search-params.entity';
 import { SearchParamsController } from './search-params.controller';
 import { SearchParamsService } from './search-params.service';
-import { SentryService } from 'src/apis/sentry/sentry.service';
+import { SentryService } from '../../apis/sentry/sentry.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([SearchParams])],

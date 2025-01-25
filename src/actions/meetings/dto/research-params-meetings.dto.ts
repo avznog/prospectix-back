@@ -1,4 +1,4 @@
-import { MeetingType } from "src/constants/meeting.type";
+import { MeetingType } from "../../../constants/meeting.type";
 
 export interface ResearchParamsMeetingsDto {
   take?: number;

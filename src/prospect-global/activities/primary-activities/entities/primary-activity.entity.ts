@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { SecondaryActivity } from "../../secondary-activities/entities/secondary-activity.entity";
 import { ApiProperty } from "@nestjs/swagger";
-import { VersionPrimaryActivityType } from "src/constants/versions.type";
+import { VersionPrimaryActivityType } from "../../../../constants/versions.type";
 
 @Entity()
 export class PrimaryActivity {
