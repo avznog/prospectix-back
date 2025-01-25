@@ -34,6 +34,18 @@ $ npm install
 
 ## Running the app
 
+### Required env variables
+To run the app, you need to include some env variables.
+```
+JWT_ACCESS_TOKEN_SECRET=my-jwt-access-token-secret
+JWT_ACCESS_TOKEN_EXPIRATION_TIME=3600
+JWT_REFRESH_TOKEN_SECRET=my-jwt-refresh-token-secret
+JWT_REFRESH_TOKEN_EXPIRATION_TIME=86400
+POSTGRES_PASSWORD=postgres
+GOOGLE_CREDENTIALS=service-account-google
+BASE_URL=the-frontend-url
+
+```
 ```bash
 # development
 $ npm run start

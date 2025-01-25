@@ -41,7 +41,7 @@ export class GoogleService {
     private readonly mailTemplatesService: MailTemplatesService
   ) {
 
-    const credentials = require(path.join(process.cwd(), process.env.CREDENTIALS_PATH))
+    const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
     oauth2Client = new google.auth.OAuth2(
       credentials.web.client_id,
       credentials.web.client_secret,
