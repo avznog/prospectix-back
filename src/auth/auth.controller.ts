@@ -1,7 +1,7 @@
 import { Body, ClassSerializerInterceptor, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, Res, UnauthorizedException, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
-import { SentryInterceptor } from 'src/sentry.interceptor';
+import { SentryInterceptor } from '../sentry.interceptor';
 import { LoginPmDto } from './dto/login-project-manager.dto';
 import JwtRefreshGuard from './guards/jwt-refresh.guard';
 import { AuthService } from './services/auth.service';

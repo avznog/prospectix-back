@@ -1,19 +1,20 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+
+import { UseInterceptors, Controller, UseGuards, Get, Post, Body, Query, Patch, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { SentryService } from 'src/apis/sentry/sentry.service';
-import { Roles } from 'src/auth/annotations/roles.decorator';
-import { CurrentUser } from 'src/auth/decorators/current-user.model';
-import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { RolesType } from 'src/auth/role.type';
-import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
-import { CreateProspectDto } from 'src/prospect-global/prospects/dto/create-prospect.dto';
-import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
-import { SentryInterceptor } from 'src/sentry.interceptor';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
 import { UpdateResult } from 'typeorm';
+import { SentryService } from '../../apis/sentry/sentry.service';
+import { Roles } from '../../auth/annotations/roles.decorator';
+import { CurrentUser } from '../../auth/decorators/current-user.model';
+import JwtAuthGuard from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { RolesType } from '../../auth/role.type';
+import { ReasonDisabledType } from '../../constants/reasonDisabled.type';
+import { SentryInterceptor } from '../../sentry.interceptor';
+import { ProjectManager } from '../../users/project-managers/entities/project-manager.entity';
+import { CreateProspectDto } from './dto/create-prospect.dto';
 import { ResearchParamsProspectDto } from './dto/research-params-prospect.dto';
 import { UpdateProspectDto } from './dto/update-prospect.dto';
+import { Prospect } from './entities/prospect.entity';
 import { ProspectsService } from './prospects.service';
 
 @UseInterceptors(SentryInterceptor)

@@ -1,14 +1,14 @@
 import { Controller, Get, Param, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { SentryService } from 'src/apis/sentry/sentry.service';
-import { Roles } from 'src/auth/annotations/roles.decorator';
-import { CurrentUser } from 'src/auth/decorators/current-user.model';
-import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { RolesType } from 'src/auth/role.type';
-import { SecondaryActivity } from 'src/prospect-global/activities/secondary-activities/entities/secondary-activity.entity';
-import { SentryInterceptor } from 'src/sentry.interceptor';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { SentryService } from '../../../apis/sentry/sentry.service';
+import { Roles } from '../../../auth/annotations/roles.decorator';
+import { CurrentUser } from '../../../auth/decorators/current-user.model';
+import JwtAuthGuard from '../../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../../auth/guards/roles.guard';
+import { RolesType } from '../../../auth/role.type';
+import { SecondaryActivity } from '../../../prospect-global/activities/secondary-activities/entities/secondary-activity.entity';
+import { SentryInterceptor } from '../../../sentry.interceptor';
+import { ProjectManager } from '../../../users/project-managers/entities/project-manager.entity';
 import { SecondaryActivitiesService } from './secondary-activities.service';
 
 

@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import moment from 'moment';
-import { CreateNegativeAnswerDto } from 'src/actions/negative-answers/dto/create-negative-answer.dto';
-import { NegativeAnswer } from 'src/actions/negative-answers/entities/negative-answer.entity';
-import { PrimaryActivityService } from 'src/prospect-global/activities/primary-activities/primary-activity.service';
-import { SecondaryActivitiesService } from 'src/prospect-global/activities/secondary-activities/secondary-activities.service';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { CreateNegativeAnswerDto } from '../../actions/negative-answers/dto/create-negative-answer.dto';
+import { NegativeAnswer } from '../../actions/negative-answers/entities/negative-answer.entity';
+import { PrimaryActivityService } from '../../prospect-global/activities/primary-activities/primary-activity.service';
+import { SecondaryActivitiesService } from '../../prospect-global/activities/secondary-activities/secondary-activities.service';
+import { ProjectManager } from '../../users/project-managers/entities/project-manager.entity';
 import { Between, MoreThan, Repository } from 'typeorm';
 
 @Injectable()

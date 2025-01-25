@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Bookmark } from 'src/actions/bookmarks/entities/bookmark.entity';
-import { Call } from 'src/actions/calls/entities/call.entity';
-import { Event } from 'src/admin/events/entities/event.entity';
-import { Goal } from 'src/goals-global/goals/entities/goal.entity';
-import { MailTemplate } from 'src/mails/mail-templates/entities/mail-template.entity';
-import { Meeting } from 'src/actions/meetings/entities/meeting.entity';
-import { NegativeAnswer } from 'src/actions/negative-answers/entities/negative-answer.entity';
-import { Reminder } from 'src/actions/reminders/entities/reminder.entity';
-import { SentEmail } from 'src/actions/sent-emails/entities/sent-email.entity';
+import { Bookmark } from '../../../actions/bookmarks/entities/bookmark.entity';
+import { Call } from '../../../actions/calls/entities/call.entity';
+import { Event } from '../../../admin/events/entities/event.entity';
+import { Goal } from '../../../goals-global/goals/entities/goal.entity';
+import { MailTemplate } from '../../../mails/mail-templates/entities/mail-template.entity';
+import { Meeting } from '../../../actions/meetings/entities/meeting.entity';
+import { NegativeAnswer } from '../../../actions/negative-answers/entities/negative-answer.entity';
+import { Reminder } from '../../../actions/reminders/entities/reminder.entity';
+import { SentEmail } from '../../../actions/sent-emails/entities/sent-email.entity';
 import {
   BaseEntity,
   Column,

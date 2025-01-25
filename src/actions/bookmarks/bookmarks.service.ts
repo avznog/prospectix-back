@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import moment from 'moment-timezone';
-import { CreateBookmarkDto } from 'src/actions/bookmarks/dto/create-bookmark.dto';
-import { Bookmark } from 'src/actions/bookmarks/entities/bookmark.entity';
-import { StageType } from 'src/constants/stage.type';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { CreateBookmarkDto } from '../../actions/bookmarks/dto/create-bookmark.dto';
+import { Bookmark } from '../../actions/bookmarks/entities/bookmark.entity';
+import { StageType } from '../../constants/stage.type';
+import { ProjectManager } from '../../users/project-managers/entities/project-manager.entity';
 import { DeleteResult, ILike, Not, Repository } from 'typeorm';
 import { ResearchParamsBookmarksDto } from './dto/research-params-bookmarks.dto';
 

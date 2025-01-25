@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { GoalTemplate } from "src/goals-global/goal-templates/entities/goal-template.entity";
-import { ProjectManager } from "src/users/project-managers/entities/project-manager.entity";
+import { GoalTemplate } from "../../../goals-global/goal-templates/entities/goal-template.entity";
+import { ProjectManager } from "../../../users/project-managers/entities/project-manager.entity";
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()

@@ -1,13 +1,13 @@
 import { Body, Controller, Get, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/auth/annotations/roles.decorator';
-import { CurrentUser } from 'src/auth/decorators/current-user.model';
-import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { RolesType } from 'src/auth/role.type';
-import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
-import { SentryInterceptor } from 'src/sentry.interceptor';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { Roles } from '../../auth/annotations/roles.decorator';
+import { CurrentUser } from '../../auth/decorators/current-user.model';
+import JwtAuthGuard from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { RolesType } from '../../auth/role.type';
+import { Prospect } from '../../prospect-global/prospects/entities/prospect.entity';
+import { SentryInterceptor } from '../../sentry.interceptor';
+import { ProjectManager } from '../../users/project-managers/entities/project-manager.entity';
 import { SentryService } from '../sentry/sentry.service';
 import { SlackService } from './slack.service';
 

@@ -3,9 +3,8 @@ import { CitiesService } from './cities.service';
 import { CitiesController } from './cities.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { City } from './entities/city.entity';
-import { SearchParams } from 'src/admin/search-params/entities/search-params.entity';
-import { SentryService } from 'src/apis/sentry/sentry.service';
-
+import { SentryService } from '../../apis/sentry/sentry.service';
+import { SearchParams } from '../../admin/search-params/entities/search-params.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([City, SearchParams])],

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { VersionCityType } from "src/constants/versions.type";
+import { VersionCityType } from "../../../constants/versions.type";
 
 export class CreateCityDto {
   @ApiProperty({

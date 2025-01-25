@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/minimal';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { ProjectManager } from '../../users/project-managers/entities/project-manager.entity';
 
 @Injectable()
 export class SentryService {
