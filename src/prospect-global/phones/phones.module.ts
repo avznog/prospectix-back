@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Phone } from './entities/phone.entity';
 import { PhonesController } from './phones.controller';
 import { PhonesService } from './phones.service';
-import { SentryService } from 'src/apis/sentry/sentry.service';
+import { SentryService } from '../../apis/sentry/sentry.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Phone])],

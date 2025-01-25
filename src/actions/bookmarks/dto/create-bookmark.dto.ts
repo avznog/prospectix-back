@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
-import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
+import { ProjectManager } from '../../../users/project-managers/entities/project-manager.entity';
+import { Prospect } from '../../../prospect-global/prospects/entities/prospect.entity';
 
 export class CreateBookmarkDto {
   @ApiProperty({

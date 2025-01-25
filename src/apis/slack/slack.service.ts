@@ -2,13 +2,13 @@ import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
-import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
-import { Reminder } from 'src/actions/reminders/entities/reminder.entity';
+import { ProjectManager } from '../../users/project-managers/entities/project-manager.entity';
+import { Prospect } from '../../prospect-global/prospects/entities/prospect.entity';
+import { Reminder } from '../../actions/reminders/entities/reminder.entity';
 import { Between, Repository } from 'typeorm';
 import { UsersListResponse, WebClient } from '@slack/web-api';
-import { CallsService } from 'src/actions/calls/calls.service';
-import { MeetingsService } from 'src/actions/meetings/meetings.service';
+import { CallsService } from '../../actions/calls/calls.service';
+import { MeetingsService } from '../../actions/meetings/meetings.service';
 const fs = require('fs');
 
 @Injectable()

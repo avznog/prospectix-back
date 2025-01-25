@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ProjectManager } from "src/users/project-managers/entities/project-manager.entity";
+import { ProjectManager } from "../../users/project-managers/entities/project-manager.entity";
 import { Repository } from "typeorm";
 import { GoalTemplate } from "../goal-templates/entities/goal-template.entity";
 import { UpdateGoalDto } from "./dto/update-goal.dto";

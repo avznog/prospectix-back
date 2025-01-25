@@ -1,18 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
-import { StageType } from 'src/constants/stage.type';
-import { Bookmark } from 'src/actions/bookmarks/entities/bookmark.entity';
-import { Call } from 'src/actions/calls/entities/call.entity';
-import { City } from 'src/prospect-global/cities/entities/city.entity';
-import { Country } from 'src/prospect-global/countries/entities/country.entity';
-import { Email } from 'src/prospect-global/emails/entities/email.entity';
-import { Event } from 'src/admin/events/entities/event.entity';
-import { Meeting } from 'src/actions/meetings/entities/meeting.entity';
-import { NegativeAnswer } from 'src/actions/negative-answers/entities/negative-answer.entity';
-import { Phone } from 'src/prospect-global/phones/entities/phone.entity';
-import { Reminder } from 'src/actions/reminders/entities/reminder.entity';
-import { SentEmail } from 'src/actions/sent-emails/entities/sent-email.entity';
-import { Website } from 'src/prospect-global/websites/entities/website.entity';
+import { ReasonDisabledType } from '../../../constants/reasonDisabled.type';
+import { StageType } from '../../../constants/stage.type';
+import { Bookmark } from '../../../actions/bookmarks/entities/bookmark.entity';
+import { Call } from '../../../actions/calls/entities/call.entity';
+import { City } from '../../../prospect-global/cities/entities/city.entity';
+import { Country } from '../../../prospect-global/countries/entities/country.entity';
+import { Email } from '../../../prospect-global/emails/entities/email.entity';
+import { Event } from '../../../admin/events/entities/event.entity';
+import { Meeting } from '../../../actions/meetings/entities/meeting.entity';
+import { NegativeAnswer } from '../../../actions/negative-answers/entities/negative-answer.entity';
+import { Phone } from '../../../prospect-global/phones/entities/phone.entity';
+import { Reminder } from '../../../actions/reminders/entities/reminder.entity';
+import { SentEmail } from '../../../actions/sent-emails/entities/sent-email.entity';
+import { Website } from '../../../prospect-global/websites/entities/website.entity';
 import {
   BaseEntity,
   Column,
@@ -24,7 +24,7 @@ import {
   PrimaryGeneratedColumn
 } from 'typeorm';
 import { SecondaryActivity } from '../../activities/secondary-activities/entities/secondary-activity.entity';
-import { VersionProspectType } from 'src/constants/versions.type';
+import { VersionProspectType } from '../../../constants/versions.type';
 
 @Entity()
 export class Prospect extends BaseEntity {

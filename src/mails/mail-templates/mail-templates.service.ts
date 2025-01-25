@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Mustache from 'mustache';
-import { SendEmailDto } from 'src/actions/sent-emails/dto/send-email.dto';
-import { CreateMailTemplateDto } from 'src/mails/mail-templates/dto/create-mail-template.dto';
-import { MailTemplate } from 'src/mails/mail-templates/entities/mail-template.entity';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
+import { SendEmailDto } from '../../actions/sent-emails/dto/send-email.dto';
+import { CreateMailTemplateDto } from '../../mails/mail-templates/dto/create-mail-template.dto';
+import { MailTemplate } from '../../mails/mail-templates/entities/mail-template.entity';
+import { ProjectManager } from '../../users/project-managers/entities/project-manager.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { UpdateMailTemplateDto } from './dto/update-mail-template.dto';
 const fs = require("fs").promises
@@ -98,7 +98,7 @@ export class MailTemplatesService {
           clientName: sendEmailDto.clientName == '' ? '' : " " + sendEmailDto.clientName
         }
       }
-      let structureTemplate = await fs.readFile('src/mails/templates/mail-structure.mustache', "utf-8")
+      let structureTemplate = await fs.readFile('../../mails/templates/mail-structure.mustache', "utf-8")
       structureTemplate = structureTemplate.replace("{{mail_content}}", mailTemplate.content).split(`class="ql-align-justify"`).join(`style="text-align: justify;"`).split("<p>").join(`<p style="text-align: justify;">`)
       return Mustache.render(structureTemplate, variables)
     } catch (error) {

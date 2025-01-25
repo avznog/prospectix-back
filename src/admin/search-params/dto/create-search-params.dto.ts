@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { VersionProspectType, VersionCityType, VersionSecondaryActivityType, VersionPrimaryActivityType } from "src/constants/versions.type";
+import { VersionProspectType, VersionCityType, VersionSecondaryActivityType, VersionPrimaryActivityType } from "../../../constants/versions.type";
 
 export class CreateSearchParamsDto {
 

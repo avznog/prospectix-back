@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Goal } from "src/goals-global/goals/entities/goal.entity";
+import { Goal } from "../../../goals-global/goals/entities/goal.entity";
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()

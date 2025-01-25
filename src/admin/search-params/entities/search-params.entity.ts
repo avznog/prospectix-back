@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { VersionCityType, VersionPrimaryActivityType, VersionProspectType, VersionSecondaryActivityType } from "src/constants/versions.type";
+import { VersionCityType, VersionPrimaryActivityType, VersionProspectType, VersionSecondaryActivityType } from "../../../constants/versions.type";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()

@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Event } from './entities/event.entity';
 import { EventsController } from './events.controller';
 import { EventsService } from './events.service';
-import { SentryService } from 'src/apis/sentry/sentry.service';
+import { SentryService } from '../../apis/sentry/sentry.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Event])],

@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PrimaryActivity } from 'src/prospect-global/activities/primary-activities/entities/primary-activity.entity';
-import { SearchParams } from 'src/admin/search-params/entities/search-params.entity';
+import { PrimaryActivity } from '../../../prospect-global/activities/primary-activities/entities/primary-activity.entity';
+import { SearchParams } from '../../../admin/search-params/entities/search-params.entity';
 import { MoreThan, Repository } from 'typeorm';
 
 @Injectable()

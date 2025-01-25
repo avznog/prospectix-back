@@ -1,17 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Reminder } from 'src/actions/reminders/entities/reminder.entity';
-import { Bookmark } from 'src/actions/bookmarks/entities/bookmark.entity';
-import { ReasonDisabledType } from 'src/constants/reasonDisabled.type';
-import { StageType } from 'src/constants/stage.type';
-import { SecondaryActivity } from 'src/prospect-global/activities/secondary-activities/entities/secondary-activity.entity';
-import { City } from 'src/prospect-global/cities/entities/city.entity';
-import { Country } from 'src/prospect-global/countries/entities/country.entity';
-import { Email } from 'src/prospect-global/emails/entities/email.entity';
-import { Event } from 'src/admin/events/entities/event.entity';
-import { Meeting } from 'src/actions/meetings/entities/meeting.entity';
-import { Phone } from 'src/prospect-global/phones/entities/phone.entity';
-import { Website } from 'src/prospect-global/websites/entities/website.entity';
-import { VersionProspectType } from 'src/constants/versions.type';
+import { Reminder } from '../../../actions/reminders/entities/reminder.entity';
+import { Bookmark } from '../../../actions/bookmarks/entities/bookmark.entity';
+import { ReasonDisabledType } from '../../../constants/reasonDisabled.type';
+import { StageType } from '../../../constants/stage.type';
+import { SecondaryActivity } from '../../../prospect-global/activities/secondary-activities/entities/secondary-activity.entity';
+import { City } from '../../../prospect-global/cities/entities/city.entity';
+import { Country } from '../../../prospect-global/countries/entities/country.entity';
+import { Email } from '../../../prospect-global/emails/entities/email.entity';
+import { Event } from '../../../admin/events/entities/event.entity';
+import { Meeting } from '../../../actions/meetings/entities/meeting.entity';
+import { Phone } from '../../../prospect-global/phones/entities/phone.entity';
+import { Website } from '../../../prospect-global/websites/entities/website.entity';
+import { VersionProspectType } from '../../../constants/versions.type';
 
 export class CreateProspectDto {
   @ApiProperty({

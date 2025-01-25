@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { ProjectManager } from "src/users/project-managers/entities/project-manager.entity";
+import { ProjectManager } from "../../../users/project-managers/entities/project-manager.entity";
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()

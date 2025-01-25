@@ -1,19 +1,20 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { CreateMeetingDto } from 'src/actions/meetings/dto/create-meeting.dto';
-import { Meeting } from 'src/actions/meetings/entities/meeting.entity';
-import { SentryService } from 'src/apis/sentry/sentry.service';
-import { Roles } from 'src/auth/annotations/roles.decorator';
-import { CurrentUser } from 'src/auth/decorators/current-user.model';
-import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { RolesType } from 'src/auth/role.type';
-import { SentryInterceptor } from 'src/sentry.interceptor';
-import { ProjectManager } from 'src/users/project-managers/entities/project-manager.entity';
-import { DeleteResult, UpdateResult } from 'typeorm';
-import { ResearchParamsMeetingsDto } from './dto/research-params-meetings.dto';
-import { UpdateMeetingDto } from './dto/update-meeting.dto';
-import { MeetingsService } from './meetings.service';
+import { UseInterceptors, Controller, UseGuards, Post, Body, Delete, Param, Get, Query, Patch } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
+import { DeleteResult, UpdateResult } from "typeorm";
+import { SentryService } from "../../apis/sentry/sentry.service";
+import { Roles } from "../../auth/annotations/roles.decorator";
+import { CurrentUser } from "../../auth/decorators/current-user.model";
+import JwtAuthGuard from "../../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../../auth/guards/roles.guard";
+import { RolesType } from "../../auth/role.type";
+import { SentryInterceptor } from "../../sentry.interceptor";
+import { ProjectManager } from "../../users/project-managers/entities/project-manager.entity";
+import { CreateMeetingDto } from "./dto/create-meeting.dto";
+import { ResearchParamsMeetingsDto } from "./dto/research-params-meetings.dto";
+import { UpdateMeetingDto } from "./dto/update-meeting.dto";
+import { Meeting } from "./entities/meeting.entity";
+import { MeetingsService } from "./meetings.service";
+
 
 @UseInterceptors(SentryInterceptor)
 @Controller('meetings')

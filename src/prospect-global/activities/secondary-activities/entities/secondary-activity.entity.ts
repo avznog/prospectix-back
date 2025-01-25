@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
 import {
   BaseEntity,
   Column,
@@ -9,7 +8,8 @@ import {
   ManyToOne
 } from 'typeorm';
 import { PrimaryActivity } from '../../primary-activities/entities/primary-activity.entity';
-import { VersionSecondaryActivityType } from 'src/constants/versions.type';
+import { VersionSecondaryActivityType } from '../../../../constants/versions.type';
+import { Prospect } from '../../../prospects/entities/prospect.entity';
 
 @Entity()
 export class SecondaryActivity extends BaseEntity {

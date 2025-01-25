@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SearchParams } from 'src/admin/search-params/entities/search-params.entity';
+import { SearchParams } from '../../admin/search-params/entities/search-params.entity';
 import { Repository } from 'typeorm';
 import { UpdateSearchParamsDto } from './dto/update-search-params.dto';
 

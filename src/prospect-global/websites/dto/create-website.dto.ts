@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prospect } from 'src/prospect-global/prospects/entities/prospect.entity';
+import { Prospect } from '../../../prospect-global/prospects/entities/prospect.entity';
 
 export class CreateWebsiteDto {
   @ApiProperty({
