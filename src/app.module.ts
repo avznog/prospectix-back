@@ -32,9 +32,10 @@ import { UsersModule } from './users/users.module';
       port: +process.env.POSTGRES_PORT,
       username: process.env.POSTGRES_USER || "postgres",
       password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DATABASE ?? 'persoprospectix',
+      database: process.env.POSTGRES_DATABASE ?? 'postgres',
       synchronize: true,
-      autoLoadEntities: true
+      autoLoadEntities: true,
+      ssl: true
     }),
     ScheduleModule.forRoot(),
     ActionsModule,
