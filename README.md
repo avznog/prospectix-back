@@ -42,7 +42,7 @@ JWT_ACCESS_TOKEN_EXPIRATION_TIME=3600
 JWT_REFRESH_TOKEN_SECRET=my-jwt-refresh-token-secret
 JWT_REFRESH_TOKEN_EXPIRATION_TIME=86400
 POSTGRES_PASSWORD=postgres
-CREDENTIALS_PATH=the-path-to-the-google-credentials
+GOOGLE_CREDENTIALS=service-account-google
 BASE_URL=the-frontend-url
 
 ```
